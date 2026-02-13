@@ -14,15 +14,22 @@
 #   kill $(cat .auto-loop.pid)  # Force stop
 #
 # Config (env vars):
-#   MODEL=...                   # Optional Codex model override (default: Codex config)
+#   ENGINE=claude               # Engine selection: claude|codex (default: claude)
+#   MODEL=...                   # Optional model override (empty = engine default)
+#   CLAUDE_BIN=...              # Optional Claude executable override
+#   CLAUDE_PERMISSION_MODE=bypassPermissions
+#                               # Claude permission mode (default: bypassPermissions)
 #   CODEX_BIN=...               # Optional Codex executable override
 #   CODEX_SANDBOX_MODE=danger-full-access
+#                               # Codex sandbox mode (only for ENGINE=codex)
 #   LOOP_INTERVAL=30            # Seconds between cycles (default: 30)
 #   CYCLE_TIMEOUT_SECONDS=1800  # Max seconds per cycle before force-kill
 #   MAX_CONSECUTIVE_ERRORS=5    # Circuit breaker threshold
 #   COOLDOWN_SECONDS=300        # Cooldown after circuit break
 #   LIMIT_WAIT_SECONDS=3600     # Wait on usage limit
 #   MAX_LOGS=200                # Max cycle logs to keep
+#   AUTO_LOOP_PROTECT_GITIGNORE=1
+#                               # Restore .gitignore if a cycle mutates it
 # ============================================================
 
 set -euo pipefail
