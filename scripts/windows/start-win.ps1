@@ -83,19 +83,35 @@ $paths = Get-RepoPaths
 $repoWin = $paths.RepoWin
 $repoWsl = $paths.RepoWsl
 
+if ($PSBoundParameters.ContainsKey("Engine")) {
+    $engineNormalized = $Engine.ToLowerInvariant()
+    if ($engineNormalized -notin @("claude", "codex")) {
+        throw "Unsupported Engine '$Engine'. Use 'claude' or 'codex'."
+    }
+    $Engine = $engineNormalized
+}
+
 if ($PSBoundParameters.ContainsKey("CycleTimeoutSeconds") -and $CycleTimeoutSeconds -lt 300) {
     Write-Warning "CycleTimeoutSeconds=$CycleTimeoutSeconds is very low for real cycles and may cause frequent timeouts. Recommended: 900-1800."
 }
 
 $envLines = @()
+if ($PSBoundParameters.ContainsKey("Engine")) { $envLines += "ENGINE=$Engine" }
 if ($PSBoundParameters.ContainsKey("Model")) { $envLines += "MODEL=$Model" }
+if ($PSBoundParameters.ContainsKey("ClaudePermissionMode")) { $envLines += "CLAUDE_PERMISSION_MODE=$ClaudePermissionMode" }
+if ($PSBoundParameters.ContainsKey("ClaudeBin")) { $envLines += "CLAUDE_BIN=$ClaudeBin" }
+if ($PSBoundParameters.ContainsKey("CodexBin")) { $envLines += "CODEX_BIN=$CodexBin" }
 if ($PSBoundParameters.ContainsKey("LoopInterval")) { $envLines += "LOOP_INTERVAL=$LoopInterval" }
 if ($PSBoundParameters.ContainsKey("CycleTimeoutSeconds")) { $envLines += "CYCLE_TIMEOUT_SECONDS=$CycleTimeoutSeconds" }
 if ($PSBoundParameters.ContainsKey("MaxConsecutiveErrors")) { $envLines += "MAX_CONSECUTIVE_ERRORS=$MaxConsecutiveErrors" }
 if ($PSBoundParameters.ContainsKey("CooldownSeconds")) { $envLines += "COOLDOWN_SECONDS=$CooldownSeconds" }
 if ($PSBoundParameters.ContainsKey("LimitWaitSeconds")) { $envLines += "LIMIT_WAIT_SECONDS=$LimitWaitSeconds" }
 if ($PSBoundParameters.ContainsKey("MaxLogs")) { $envLines += "MAX_LOGS=$MaxLogs" }
-if ($PSBoundParameters.ContainsKey("CodexSandboxMode")) { $envLines += "CODEX_SANDBOX_MODE=$CodexSandboxMode" }
+if ($PSBoundParameters.ContainsKey("SandboxMode")) {
+    $envLines += "CODEX_SANDBOX_MODE=$SandboxMode"
+} elseif ($PSBoundParameters.ContainsKey("CodexSandboxMode")) {
+    $envLines += "CODEX_SANDBOX_MODE=$CodexSandboxMode"
+}
 
 Write-AutoLoopEnv -RepoWin $repoWin -EnvLines $envLines
 
