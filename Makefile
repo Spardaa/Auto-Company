@@ -82,8 +82,13 @@ endif
 
 # === Interactive ===
 
-team: ## Start interactive Codex session
-	cd "$(CURDIR)" && codex
+team: ## Start selected engine interactive session (ENGINE=claude|codex)
+	@engine="$$(printf '%s' "$(ENGINE)" | tr '[:upper:]' '[:lower:]')"; \
+	if [ "$$engine" != "claude" ] && [ "$$engine" != "codex" ]; then \
+		echo "Unsupported ENGINE='$(ENGINE)'. Use ENGINE=claude or ENGINE=codex."; \
+		exit 1; \
+	fi; \
+	cd "$(CURDIR)" && "$$engine"
 
 # === Maintenance ===
 
