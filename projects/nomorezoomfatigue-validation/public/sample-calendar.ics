@@ -1,0 +1,134 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NoMoreZoomFatigue//Sample Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+
+BEGIN:VEVENT
+DTSTART:20260302T090000Z
+DTEND:20260302T093000Z
+SUMMARY:Daily Standup
+DESCRIPTION:Quick sync on blockers and progress
+ATTENDEE:mailto:person1@example.com
+ATTENDEE:mailto:person2@example.com
+ATTENDEE:mailto:person3@example.com
+RRULE:FREQ=DAILY;COUNT=5
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260302T140000Z
+DTEND:20260302T150000Z
+SUMMARY:Product Review Meeting
+DESCRIPTION:Monthly review of product roadmap and KPIs
+ATTENDEE:mailto:person1@example.com
+ATTENDEE:mailto:person2@example.com
+ATTENDEE:mailto:person3@example.com
+ATTENDEE:mailto:person4@example.com
+ATTENDEE:mailto:person5@example.com
+ATTENDEE:mailto:person6@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260303T100000Z
+DTEND:20260303T110000Z
+SUMMARY:Client Discovery Call
+DESCRIPTION:Initial discovery call with potential enterprise client to understand their needs and present our solution
+ATTENDEE:mailto:sales@example.com
+ATTENDEE:mailto:client@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260303T130000Z
+DTEND:20260303T133000Z
+SUMMARY:1:1 with Manager
+DESCRIPTION:Weekly one-on-one to discuss career growth and current projects
+ATTENDEE:mailto:employee@example.com
+ATTENDEE:mailto:manager@example.com
+RRULE:FREQ=WEEKLY;COUNT=4
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260304T090000Z
+DTEND:20260304T103000Z
+SUMMARY:Sprint Planning
+DESCRIPTION:Bi-weekly sprint planning session for the engineering team
+ATTENDEE:mailto:dev1@example.com
+ATTENDEE:mailto:dev2@example.com
+ATTENDEE:mailto:dev3@example.com
+ATTENDEE:mailto:dev4@example.com
+ATTENDEE:mailto:pm@example.com
+ATTENDEE:mailto:designer@example.com
+ATTENDEE:mailto:qa@example.com
+ATTENDEE:mailto:scrum@example.com
+RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260304T150000Z
+DTEND:20260304T160000Z
+SUMMARY:All Hands Meeting
+DESCRIPTION:Company-wide all hands meeting with Q&A
+ATTENDEE:mailto:everyone@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260305T110000Z
+DTEND:20260305T113000Z
+SUMMARY:Design Review
+DESCRIPTION:Review latest UI mockups for the dashboard redesign
+ATTENDEE:mailto:designer@example.com
+ATTENDEE:mailto:pm@example.com
+ATTENDEE:mailto:dev@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260305T140000Z
+DTEND:20260305T150000Z
+SUMMARY:Technical Architecture Discussion
+DESCRIPTION:Deep dive into the new microservices architecture proposal with detailed documentation and diagrams
+ATTENDEE:mailto:arch1@example.com
+ATTENDEE:mailto:arch2@example.com
+ATTENDEE:mailto:dev1@example.com
+ATTENDEE:mailto:dev2@example.com
+ATTENDEE:mailto:cto@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260306T090000Z
+DTEND:20260306T091500Z
+SUMMARY:Quick Sync
+DESCRIPTION:Quick sync
+ATTENDEE:mailto:person1@example.com
+ATTENDEE:mailto:person2@example.com
+RRULE:FREQ=DAILY;COUNT=10
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260306T100000Z
+DTEND:20260306T120000Z
+SUMMARY:Quarterly Business Review
+DESCRIPTION:Q1 business review with leadership team covering revenue, metrics, and strategic initiatives
+ATTENDEE:mailto:ceo@example.com
+ATTENDEE:mailto:cfo@example.com
+ATTENDEE:mailto:cmo@example.com
+ATTENDEE:mailto:cto@example.com
+ATTENDEE:mailto:vp1@example.com
+ATTENDEE:mailto:vp2@example.com
+ATTENDEE:mailto:vp3@example.com
+ATTENDEE:mailto:vp4@example.com
+ATTENDEE:mailto:finance@example.com
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20260306T140000Z
+DTEND:20260306T143000Z
+SUMMARY:Customer Support Sync
+DESCRIPTION:Weekly sync on customer issues and support metrics
+ATTENDEE:mailto:support1@example.com
+ATTENDEE:mailto:support2@example.com
+ATTENDEE:mailto:support3@example.com
+ATTENDEE:mailto:cs@example.com
+RRULE:FREQ=WEEKLY;COUNT=8
+END:VEVENT
+
+END:VCALENDAR

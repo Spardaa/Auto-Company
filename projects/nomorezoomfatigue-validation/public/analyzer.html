@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Cost Analyzer | NoMoreZoomFatigue</title>
+    <meta name="description" content="Calculate the real cost of your meetings. Upload your calendar and discover your meeting tax.">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo">NoMoreZoomFatigue</a>
+            <p class="tagline">Discover your meeting tax</p>
+        </header>
+
+        <!-- Upload Section -->
+        <section id="upload-section" class="card">
+            <h1>How much are your meetings really costing you?</h1>
+            <p class="subtitle">Upload your calendar (.ics file) to find out. Your data never leaves your browser.</p>
+
+            <div class="upload-area" id="drop-zone">
+                <div class="upload-icon">📅</div>
+                <p>Drag & drop your .ics file here</p>
+                <p class="or">or</p>
+                <label class="btn btn-primary">
+                    Choose File
+                    <input type="file" id="file-input" accept=".ics" hidden>
+                </label>
+                <p class="help-text">Export from Google Calendar, Outlook, or any calendar app</p>
+            </div>
+
+            <div class="settings">
+                <label>
+                    Your hourly rate ($):
+                    <input type="number" id="hourly-rate" value="75" min="1">
+                </label>
+                <label>
+                    Average attendees per meeting:
+                    <input type="number" id="avg-attendees" value="4" min="1">
+                </label>
+            </div>
+        </section>
+
+        <!-- Results Section (hidden initially) -->
+        <section id="results-section" class="hidden">
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="card summary-card">
+                    <div class="summary-icon">💰</div>
+                    <div class="summary-value" id="total-cost">$0</div>
+                    <div class="summary-label">Total Meeting Cost</div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-icon">⏰</div>
+                    <div class="summary-value" id="total-hours">0h</div>
+                    <div class="summary-label">Hours in Meetings</div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-value" id="meeting-count">0</div>
+                    <div class="summary-label">Meetings Analyzed</div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-icon">📉</div>
+                    <div class="summary-value" id="avg-roi">0</div>
+                    <div class="summary-label">Avg ROI Score</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-container">
+                <div class="card chart-card">
+                    <h3>Cost by Day of Week</h3>
+                    <canvas id="day-chart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <h3>ROI Distribution</h3>
+                    <canvas id="roi-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Shocking Insights -->
+            <div class="card insights-card">
+                <h2>💡 Shocking Insights</h2>
+                <div id="insights-list"></div>
+            </div>
+
+            <!-- Meeting List -->
+            <div class="card">
+                <h2>Meeting Details</h2>
+                <div class="meeting-list" id="meeting-list"></div>
+            </div>
+
+            <!-- Share Section -->
+            <div class="card share-card">
+                <h3>Share Your Results</h3>
+                <p>Help others discover their meeting tax</p>
+                <div class="share-buttons">
+                    <button class="btn btn-share btn-twitter" onclick="shareOnTwitter()">
+                        𝕏 Twitter
+                    </button>
+                    <button class="btn btn-share btn-linkedin" onclick="shareOnLinkedIn()">
+                        LinkedIn
+                    </button>
+                    <button class="btn btn-share btn-copy" onclick="copyResults()">
+                        📋 Copy Results
+                    </button>
+                </div>
+            </div>
+
+            <!-- Email Signup -->
+            <div class="card cta-card">
+                <h3>Want to reduce your meeting tax?</h3>
+                <p>Get weekly tips on running fewer, better meetings.</p>
+                <form action="https://formsubmit.co/your-email@example.com" method="POST">
+                    <input type="email" name="email" placeholder="your@email.com" required>
+                    <input type="hidden" name="_subject" value="New subscriber from Meeting Analyzer">
+                    <input type="hidden" name="_next" value="success.html">
+                    <button type="submit" class="btn btn-primary">Get Free Tips</button>
+                </form>
+            </div>
+
+            <!-- Analyze Another -->
+            <div class="center">
+                <button class="btn btn-secondary" onclick="resetAnalyzer()">Analyze Another Calendar</button>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Made with ❤️ for meeting-weary humans | <a href="index.html">Home</a></p>
+    </footer>
+
+    <script>
+        // Global state
+        let meetings = [];
+        let dayChart = null;
+        let roiChart = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+
+            // Drag and drop handlers
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file && file.name.endsWith('.ics')) {
+                    processFile(file);
+                } else {
+                    alert('Please upload an .ics file');
+                }
+            });
+
+            // File input handler
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    processFile(file);
+                }
+            });
+
+            // Track usage
+            trackUsage();
+        });
+
+        // Process uploaded file
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                meetings = parseICS(content);
+                if (meetings.length > 0) {
+                    analyzeMeetings();
+                    document.getElementById('upload-section').classList.add('hidden');
+                    document.getElementById('results-section').classList.remove('hidden');
+                } else {
+                    alert('No meetings found in this file. Please try another calendar export.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Parse ICS file
+        function parseICS(content) {
+            const meetings = [];
+            const events = content.split('BEGIN:VEVENT');
+
+            for (const event of events.slice(1)) {
+                const meeting = {};
+
+                // Extract summary (title)
+                const summaryMatch = event.match(/SUMMARY:(.+)/);
+                meeting.title = summaryMatch ? summaryMatch[1].trim() : 'Untitled Meeting';
+
+                // Extract start time
+                const startMatch = event.match(/DTSTART(?:;[^:]+)?:(.+)/);
+                if (startMatch) {
+                    meeting.start = parseICSDate(startMatch[1]);
+                }
+
+                // Extract end time
+                const endMatch = event.match(/DTEND(?:;[^:]+)?:(.+)/);
+                if (endMatch) {
+                    meeting.end = parseICSDate(endMatch[1]);
+                }
+
+                // Calculate duration
+                if (meeting.start && meeting.end) {
+                    meeting.duration = (meeting.end - meeting.start) / (1000 * 60 * 60); // hours
+                } else {
+                    meeting.duration = 0.5; // default 30 min
+                }
+
+                // Extract description
+                const descMatch = event.match(/DESCRIPTION:(.+)/);
+                meeting.description = descMatch ? descMatch[1].trim() : '';
+
+                // Count attendees (rough estimate from ORGANIZER and ATTENDEE lines)
+                const attendeeMatches = event.match(/ATTENDEE/g);
+                meeting.attendees = attendeeMatches ? Math.max(attendeeMatches.length, 1) : parseInt(document.getElementById('avg-attendees').value);
+
+                // Check if recurring
+                meeting.recurring = event.includes('RRULE:');
+
+                // Only add if we have a valid date
+                if (meeting.start) {
+                    meetings.push(meeting);
+                }
+            }
+
+            return meetings;
+        }
+
+        // Parse ICS date format
+        function parseICSDate(dateStr) {
+            // Handle various ICS date formats
+            dateStr = dateStr.trim();
+
+            // Format: YYYYMMDDTHHMMSSZ or YYYYMMDDTHHMMSS
+            if (dateStr.includes('T')) {
+                const cleaned = dateStr.replace(/[Z]/g, '');
+                const year = parseInt(cleaned.substring(0, 4));
+                const month = parseInt(cleaned.substring(4, 6)) - 1;
+                const day = parseInt(cleaned.substring(6, 8));
+                const hour = parseInt(cleaned.substring(9, 11));
+                const min = parseInt(cleaned.substring(11, 13));
+                const sec = parseInt(cleaned.substring(13, 15) || '0');
+                return new Date(Date.UTC(year, month, day, hour, min, sec));
+            }
+
+            // Format: YYYYMMDD (all-day event)
+            const year = parseInt(dateStr.substring(0, 4));
+            const month = parseInt(dateStr.substring(4, 6)) - 1;
+            const day = parseInt(dateStr.substring(6, 8));
+            return new Date(year, month, day, 9, 0, 0); // Assume 9am
+        }
+
+        // Analyze meetings and display results
+        function analyzeMeetings() {
+            const hourlyRate = parseFloat(document.getElementById('hourly-rate').value) || 75;
+            const avgAttendees = parseInt(document.getElementById('avg-attendees').value) || 4;
+
+            let totalCost = 0;
+            let totalHours = 0;
+            const dayCosts = [0, 0, 0, 0, 0, 0, 0]; // Sun-Sat
+            const roiScores = [];
+
+            // Calculate costs and ROI for each meeting
+            meetings.forEach(meeting => {
+                // Cost = duration × hourly rate × attendees
+                meeting.cost = meeting.duration * hourlyRate * (meeting.attendees || avgAttendees);
+                totalCost += meeting.cost;
+                totalHours += meeting.duration;
+
+                // Day of week cost
+                const dayIndex = meeting.start.getDay();
+                dayCosts[dayIndex] += meeting.cost;
+
+                // ROI Score (0-100)
+                meeting.roi = calculateROI(meeting);
+                roiScores.push(meeting.roi);
+            });
+
+            // Display summary
+            document.getElementById('total-cost').textContent = formatCurrency(totalCost);
+            document.getElementById('total-hours').textContent = totalHours.toFixed(1) + 'h';
+            document.getElementById('meeting-count').textContent = meetings.length;
+            document.getElementById('avg-roi').textContent = (roiScores.reduce((a, b) => a + b, 0) / roiScores.length).toFixed(0);
+
+            // Draw charts
+            drawDayChart(dayCosts);
+            drawROIChart(roiScores);
+
+            // Generate insights
+            generateInsights(totalCost, totalHours, roiScores);
+
+            // Display meeting list
+            displayMeetingList(meetings);
+
+            // Save usage stats
+            saveUsageStats(meetings.length, totalCost, totalHours);
+        }
+
+        // Calculate ROI score for a meeting
+        function calculateROI(meeting) {
+            let score = 50; // Base score
+
+            // Duration factor (shorter is often better)
+            if (meeting.duration <= 0.25) score += 20; // 15 min or less
+            else if (meeting.duration <= 0.5) score += 10; // 30 min
+            else if (meeting.duration > 1) score -= 10; // Over 1 hour
+            else if (meeting.duration > 2) score -= 20; // Over 2 hours
+
+            // Has description/agenda
+            if (meeting.description && meeting.description.length > 20) score += 15;
+
+            // Attendee count (fewer is often better)
+            if (meeting.attendees <= 3) score += 10;
+            else if (meeting.attendees > 8) score -= 15;
+            else if (meeting.attendees > 12) score -= 25;
+
+            // Recurring meetings often have diminishing value
+            if (meeting.recurring) score -= 10;
+
+            // Clamp score
+            return Math.max(0, Math.min(100, score));
+        }
+
+        // Draw day of week chart
+        function drawDayChart(dayCosts) {
+            const ctx = document.getElementById('day-chart').getContext('2d');
+
+            if (dayChart) dayChart.destroy();
+
+            dayChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    datasets: [{
+                        label: 'Meeting Cost ($)',
+                        data: dayCosts.map(c => Math.round(c)),
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Draw ROI distribution chart
+        function drawROIChart(roiScores) {
+            const ctx = document.getElementById('roi-chart').getContext('2d');
+
+            if (roiChart) roiChart.destroy();
+
+            // Group into buckets
+            const buckets = {
+                'Low (0-40)': 0,
+                'Medium (40-60)': 0,
+                'Good (60-80)': 0,
+                'High (80-100)': 0
+            };
+
+            roiScores.forEach(score => {
+                if (score < 40) buckets['Low (0-40)']++;
+                else if (score < 60) buckets['Medium (40-60)']++;
+                else if (score < 80) buckets['Good (60-80)']++;
+                else buckets['High (80-100)']++;
+            });
+
+            roiChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(buckets),
+                    datasets: [{
+                        data: Object.values(buckets),
+                        backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Generate shocking insights
+        function generateInsights(totalCost, totalHours, roiScores) {
+            const lowROIMeetings = roiScores.filter(s => s < 40).length;
+            const lowROIPercent = ((lowROIMeetings / meetings.length) * 100).toFixed(0);
+            const monthlyProjection = (totalCost * 4).toFixed(0);
+            const yearlyProjection = (totalCost * 52).toFixed(0);
+
+            const insights = [
+                {
+                    icon: '💸',
+                    text: `At this rate, you'll spend <strong>${formatCurrency(yearlyProjection)}</strong> on meetings this year`
+                },
+                {
+                    icon: '📉',
+                    text: `<strong>${lowROIPercent}%</strong> of your meetings have low ROI scores (under 40)`
+                },
+                {
+                    icon: '☕',
+                    text: `That's <strong>${Math.round(totalCost / 5)}</strong> cups of coffee you could buy instead`
+                },
+                {
+                    icon: '💻',
+                    text: `Or <strong>${Math.round(totalCost / 1200)}</strong> new laptops per year`
+                },
+                {
+                    icon: '🏖️',
+                    text: `Or a <strong>really nice vacation</strong> every ${Math.ceil(2000 / totalCost)} weeks`
+                }
+            ];
+
+            const insightsList = document.getElementById('insights-list');
+            insightsList.innerHTML = insights.map(i => `
+                <div class="insight-item">
+                    <span class="insight-icon">${i.icon}</span>
+                    <span class="insight-text">${i.text}</span>
+                </div>
+            `).join('');
+        }
+
+        // Display meeting list
+        function displayMeetingList(meetings) {
+            const list = document.getElementById('meeting-list');
+
+            // Sort by cost descending
+            const sorted = [...meetings].sort((a, b) => b.cost - a.cost);
+
+            list.innerHTML = sorted.map(m => `
+                <div class="meeting-item ${m.roi < 40 ? 'low-roi' : ''}">
+                    <div class="meeting-title">${escapeHtml(m.title)}</div>
+                    <div class="meeting-meta">
+                        <span>${m.start.toLocaleDateString()}</span>
+                        <span>${(m.duration * 60).toFixed(0)} min</span>
+                        <span>${m.attendees} attendees</span>
+                    </div>
+                    <div class="meeting-stats">
+                        <span class="cost">${formatCurrency(m.cost)}</span>
+                        <span class="roi roi-${m.roi < 40 ? 'low' : m.roi < 70 ? 'medium' : 'high'}">
+                            ROI: ${m.roi}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Share functions
+        function shareOnTwitter() {
+            const cost = document.getElementById('total-cost').textContent;
+            const hours = document.getElementById('total-hours').textContent;
+            const count = document.getElementById('meeting-count').textContent;
+
+            const text = `My meeting tax: ${cost} for ${count} meetings (${hours}). Calculate yours: `;
+            const url = encodeURIComponent(window.location.origin);
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`, '_blank');
+        }
+
+        function shareOnLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        }
+
+        function copyResults() {
+            const cost = document.getElementById('total-cost').textContent;
+            const hours = document.getElementById('total-hours').textContent;
+            const count = document.getElementById('meeting-count').textContent;
+            const roi = document.getElementById('avg-roi').textContent;
+
+            const text = `My Meeting Tax Analysis:
+💰 Total Cost: ${cost}
+⏰ Time in Meetings: ${hours}
+📊 Meetings Analyzed: ${count}
+📉 Average ROI Score: ${roi}
+
+Calculate your meeting tax at: ${window.location.origin}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Results copied to clipboard!');
+            });
+        }
+
+        // Reset analyzer
+        function resetAnalyzer() {
+            document.getElementById('upload-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('file-input').value = '';
+            meetings = [];
+        }
+
+        // Usage tracking
+        function trackUsage() {
+            let stats = JSON.parse(localStorage.getItem('nmzf_stats') || '{}');
+            stats.pageViews = (stats.pageViews || 0) + 1;
+            stats.lastVisit = new Date().toISOString();
+            localStorage.setItem('nmzf_stats', JSON.stringify(stats));
+        }
+
+        function saveUsageStats(meetingCount, totalCost, totalHours) {
+            let stats = JSON.parse(localStorage.getItem('nmzf_stats') || '{}');
+            stats.analysesCompleted = (stats.analysesCompleted || 0) + 1;
+            stats.totalMeetingsAnalyzed = (stats.totalMeetingsAnalyzed || 0) + meetingCount;
+            stats.totalCostCalculated = (stats.totalCostCalculated || 0) + totalCost;
+            stats.lastAnalysis = new Date().toISOString();
+            localStorage.setItem('nmzf_stats', JSON.stringify(stats));
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return '$' + Math.round(amount).toLocaleString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
