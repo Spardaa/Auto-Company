@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'projects/nomorezoomfatigue-validation/public/**'
+      - 'projects/**'
   workflow_dispatch:
 
 permissions:
@@ -29,10 +29,25 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Build site structure
+        run: |
+          mkdir -p _site
+          # Copy landing page
+          cp projects/index.html _site/
+          # Copy all calculator tools
+          cp projects/saas-pricing-calculator.html _site/
+          cp projects/churn-calculator.html _site/
+          cp projects/burn-rate-calculator.html _site/
+          # Copy NoMoreZoomFatigue (Meeting Tax Calculator)
+          cp -r projects/nomorezoomfatigue-validation/public/* _site/ 2>/dev/null || true
+          # List what we're deploying
+          echo "Deploying:"
+          ls -la _site/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'projects/nomorezoomfatigue-validation/public'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment
