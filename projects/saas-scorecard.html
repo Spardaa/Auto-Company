@@ -111,6 +111,41 @@
         .grade-D { color: var(--accent); }
         .grade-F { color: var(--danger); }
 
+        /* Share Score */
+        .share-section { margin-top: 20px; }
+        .share-btn-main {
+            padding: 12px 28px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .share-btn-main:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .share-options {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .share-link {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        .share-link:hover { transform: translateY(-2px); }
+        .share-link.twitter { background: #000; color: #fff; }
+        .share-link.linkedin { background: #0077b5; color: #fff; }
+
         /* Input Section */
         .input-section {
             background: var(--card);
@@ -344,6 +379,13 @@
                 </div>
             </div>
             <div class="score-grade" id="scoreGrade">Enter your metrics below</div>
+            <div class="share-section" id="shareSection" style="display: none;">
+                <button onclick="shareScore()" class="share-btn-main">Share Your Score</button>
+                <div class="share-options" id="shareOptions" style="display: none;">
+                    <a href="#" id="twitterLink" target="_blank" rel="noopener" class="share-link twitter">𝕏 Twitter</a>
+                    <a href="#" id="linkedinLink" target="_blank" rel="noopener" class="share-link linkedin">LinkedIn</a>
+                </div>
+            </div>
         </div>
 
         <!-- Input Section -->
@@ -676,21 +718,37 @@
             document.getElementById('scoreRing').style.setProperty('--score', overallScore);
 
             const gradeEl = document.getElementById('scoreGrade');
+            const shareSection = document.getElementById('shareSection');
+            let gradeText = '';
+
             if (overallScore >= 85) {
                 gradeEl.textContent = 'Excellent - A';
                 gradeEl.className = 'score-grade grade-A';
+                gradeText = 'A';
             } else if (overallScore >= 70) {
                 gradeEl.textContent = 'Good - B';
                 gradeEl.className = 'score-grade grade-B';
+                gradeText = 'B';
             } else if (overallScore >= 55) {
                 gradeEl.textContent = 'Fair - C';
                 gradeEl.className = 'score-grade grade-C';
+                gradeText = 'C';
             } else if (overallScore >= 40) {
                 gradeEl.textContent = 'Needs Work - D';
                 gradeEl.className = 'score-grade grade-D';
+                gradeText = 'D';
             } else if (overallScore > 0) {
                 gradeEl.textContent = 'Critical - F';
                 gradeEl.className = 'score-grade grade-F';
+                gradeText = 'F';
+            }
+
+            // Show share button when score is calculated
+            if (overallScore > 0) {
+                shareSection.style.display = 'block';
+                updateShareLinks(overallScore, gradeText);
+            } else {
+                shareSection.style.display = 'none';
             }
 
             // Update individual metrics
@@ -921,6 +979,21 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function shareScore() {
+            const shareOptions = document.getElementById('shareOptions');
+            shareOptions.style.display = shareOptions.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function updateShareLinks(score, grade) {
+            const text = `My SaaS health score is ${score}/100 (${grade})! Check your metrics:`;
+            const url = 'https://spardaa.github.io/Auto-Company/projects/saas-scorecard.html';
+
+            document.getElementById('twitterLink').href =
+                `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            document.getElementById('linkedinLink').href =
+                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
         }
     </script>
 </body>

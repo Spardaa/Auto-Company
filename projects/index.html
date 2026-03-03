@@ -205,6 +205,42 @@
         .footer-links a:hover {
             color: var(--fg);
         }
+
+        /* Social Share */
+        .social-share {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        .social-share h3 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            color: var(--fg);
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .share-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .share-btn.twitter { background: #000; color: #fff; }
+        .share-btn.linkedin { background: #0077b5; color: #fff; }
+        .share-btn.facebook { background: #1877f2; color: #fff; }
+        .share-btn.hn { background: #ff6600; color: #fff; }
     </style>
     <!-- Privacy-friendly analytics using CountAPI -->
     <script defer>
@@ -647,14 +683,24 @@
             </div>
         </div>
 
+        <!-- Social Share -->
+        <div class="social-share">
+            <h3>Share These Tools</h3>
+            <div class="share-buttons">
+                <a href="https://twitter.com/intent/tweet?text=30%20free%20tools%20for%20SaaS%20founders%20-%20no%20signup%20required!%20&url=https://spardaa.github.io/Auto-Company/projects/" target="_blank" rel="noopener" class="share-btn twitter">𝕏 Tweet</a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://spardaa.github.io/Auto-Company/projects/" target="_blank" rel="noopener" class="share-btn linkedin">LinkedIn</a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://spardaa.github.io/Auto-Company/projects/" target="_blank" rel="noopener" class="share-btn facebook">Share</a>
+                <a href="https://news.ycombinator.com/submitlink?u=https://spardaa.github.io/Auto-Company/projects/&t=30%20Free%20Tools%20for%20SaaS%20Founders" target="_blank" rel="noopener" class="share-btn hn">HN</a>
+            </div>
+        </div>
+
         <footer>
             <div class="footer-links">
-                <a href="#">About</a>
-                <a href="#">Blog</a>
-                <a href="#">Twitter</a>
-                <a href="#">GitHub</a>
+                <a href="https://github.com/spardaa/Auto-Company" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://twitter.com/intent/tweet?text=Check%20out%20these%20free%20SaaS%20tools&url=https://spardaa.github.io/Auto-Company/projects/" target="_blank" rel="noopener">Twitter</a>
+                <a href="mailto:auto@autocompany.ai?subject=Question%20about%20Auto%20Company%20Tools">Contact</a>
             </div>
-            <p>Built by <a href="#">Auto Company</a> | Tools for builders, by builders.</p>
+            <p>Built by Auto Company | Tools for builders, by builders.</p>
         </footer>
     </div>
 </body>
