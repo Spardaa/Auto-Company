@@ -134,6 +134,8 @@ deploy_free_tools() {
     git add projects/burn-rate-calculator.html
     git add projects/mrr-growth-calculator.html
     git add projects/ltv-calculator.html
+    git add projects/cac-calculator.html
+    git add projects/nrr-calculator.html
     git add projects/nomorezoomfatigue-validation/
 
     # Check if there are changes to commit
