@@ -149,8 +149,6 @@ projects/*
 !projects/*.html
 !projects/blog/
 !projects/blog/*.html
-!projects/sitemap.xml
-!projects/robots.txt
 
 # Local/private outputs (do not publish)
 AGENTS.md

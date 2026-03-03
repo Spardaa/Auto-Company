@@ -127,6 +127,18 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://spardaa.github.io/Auto-Company/projects/blog/rule-of-40-guide.html</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://spardaa.github.io/Auto-Company/projects/blog/net-revenue-retention-guide.html</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://spardaa.github.io/Auto-Company/projects/blog/</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
