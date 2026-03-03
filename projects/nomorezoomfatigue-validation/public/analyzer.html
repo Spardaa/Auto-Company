@@ -7,6 +7,8 @@
     <meta name="description" content="Calculate the real cost of your meetings. Upload your calendar and discover your meeting tax.">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <!-- Plausible Analytics (privacy-friendly) -->
+    <script defer data-domain="spardaa.github.io" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -184,6 +186,10 @@
                 const content = e.target.result;
                 meetings = parseICS(content);
                 if (meetings.length > 0) {
+                    // Track analysis event
+                    if (typeof plausible !== 'undefined') {
+                        plausible('Calendar Analyzed', { props: { meetingCount: meetings.length } });
+                    }
                     analyzeMeetings();
                     document.getElementById('upload-section').classList.add('hidden');
                     document.getElementById('results-section').classList.remove('hidden');
