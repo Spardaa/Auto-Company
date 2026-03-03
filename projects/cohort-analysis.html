@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohort Analysis Calculator - SaaS Retention | Auto Company</title>
+    <meta name="description" content="Analyze customer cohorts and retention patterns. See how different groups of customers behave over time with visual cohort tables.">
+    <meta property="og:title" content="Cohort Analysis Calculator">
+    <meta property="og:description" content="Free tool to analyze customer cohorts and retention patterns for SaaS.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/cohort-analysis">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cohort Analysis Calculator">
+    <meta name="twitter:description" content="Analyze customer cohorts and retention patterns.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #ec4899;
+            --accent-dark: #db2777;
+            --accent-light: #f472b6;
+            --card: #141414;
+            --border: #262626;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: var(--fg); }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+        .calc-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .calc-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 0.95rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        .cohort-table-container {
+            overflow-x: auto;
+            margin-top: 24px;
+        }
+        .cohort-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .cohort-table th, .cohort-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .cohort-table th {
+            background: var(--bg);
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        .cohort-table th:first-child, .cohort-table td:first-child {
+            text-align: left;
+            background: var(--bg);
+            font-weight: 600;
+        }
+        .cohort-table td {
+            color: var(--fg);
+        }
+        .retention-cell {
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 50px;
+        }
+        .retention-excellent { background: rgba(34, 197, 94, 0.3); color: #4ade80; }
+        .retention-good { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .retention-ok { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+        .retention-warning { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+        .retention-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .retention-empty { background: var(--bg); color: var(--muted); }
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        @media (max-width: 768px) { .insights-grid { grid-template-columns: 1fr 1fr; } }
+        .insight-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .insight-card .value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .insight-card .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .insight-card.highlight .value { color: var(--accent); }
+        .chart-container {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .chart-title {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bar-label {
+            width: 80px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: right;
+        }
+        .bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .bar-value {
+            width: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .action-plan {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        .action-plan h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-list { list-style: none; }
+        .action-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        .action-list li:last-child { border-bottom: none; }
+        footer {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        .share-section { margin-top: 24px; text-align: center; }
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin: 0 8px;
+        }
+        .share-btn:hover { border-color: var(--accent); }
+        .preset-btn {
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--fg);
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .preset-btn:hover { border-color: var(--accent); }
+        .presets { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Tools</a>
+            <h1>📊 Cohort Analysis</h1>
+            <p class="subtitle">Analyze how different groups of customers retain over time. Find patterns in your retention.</p>
+        </header>
+
+        <div class="calc-card">
+            <h2>📅 Enter Your Cohort Data</h2>
+
+            <div class="presets">
+                <button class="preset-btn" onclick="loadPreset('saas')">📈 SaaS Example</button>
+                <button class="preset-btn" onclick="loadPreset('mobile')">📱 Mobile App</button>
+                <button class="preset-btn" onclick="loadPreset('subscription')">💳 Subscription</button>
+                <button class="preset-btn" onclick="clearData()">🗑️ Clear</button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
+                Enter customer counts for each month. Example: Jan cohort had 100 customers at start, 80 in month 1, etc.
+            </p>
+
+            <div id="cohort-inputs">
+                <!-- Generated by JS -->
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="preset-btn" onclick="addCohort()">+ Add Another Cohort</button>
+                <button class="preset-btn" onclick="calculate()">🔄 Analyze</button>
+            </div>
+        </div>
+
+        <div class="calc-card" id="results-card" style="display: none;">
+            <h2>📊 Retention Heatmap</h2>
+
+            <div class="cohort-table-container">
+                <table class="cohort-table" id="cohort-table">
+                    <!-- Generated by JS -->
+                </table>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color retention-excellent"></div>
+                    <span>90%+ Excellent</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color retention-good"></div>
+                    <span>75-89% Good</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color retention-ok"></div>
+                    <span>50-74% OK</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color retention-warning"></div>
+                    <span>25-49% Warning</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color retention-danger"></div>
+                    <span>&lt;25% Danger</span>
+                </div>
+            </div>
+
+            <div class="insights-grid" id="insights-grid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <div class="calc-card" id="chart-card" style="display: none;">
+            <h2>📈 Retention by Cohort</h2>
+
+            <div class="chart-container">
+                <div class="chart-title">Month 3 Retention Comparison</div>
+                <div class="bar-chart" id="retention-chart">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="calc-card" id="analysis-card" style="display: none;">
+            <h2>🔍 Pattern Analysis</h2>
+
+            <div id="pattern-analysis" style="color: var(--muted); line-height: 1.8;">
+                <!-- Generated by JS -->
+            </div>
+
+            <div class="action-plan">
+                <h3>💡 Action Plan</h3>
+                <ul class="action-list" id="action-list">
+                    <!-- Generated by JS -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="share-section">
+            <a href="https://twitter.com/intent/tweet?text=Analyzing%20my%20cohort%20retention%20with%20this%20free%20tool%21&url=https://autocompany.ai/cohort-analysis" class="share-btn" target="_blank">
+                𝕏 Share on Twitter
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://autocompany.ai/cohort-analysis" class="share-btn" target="_blank">
+                💼 Share on LinkedIn
+            </a>
+        </div>
+
+        <footer>
+            <p>Free tool by <a href="index.html">Auto Company</a> · No data collected · Calculations run locally</p>
+        </footer>
+    </div>
+
+    <script>
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let cohorts = [];
+
+        // Initialize with empty cohorts
+        function init() {
+            cohorts = [
+                { name: 'Jan 2024', data: [100, 80, 70, 65, 60, 58] },
+                { name: 'Feb 2024', data: [120, 95, 82, 75, 70] },
+                { name: 'Mar 2024', data: [90, 75, 68, 62] },
+                { name: 'Apr 2024', data: [110, 88, 78] },
+                { name: 'May 2024', data: [85, 70] }
+            ];
+            renderInputs();
+            calculate();
+        }
+
+        function renderInputs() {
+            const container = document.getElementById('cohort-inputs');
+            let html = '';
+
+            cohorts.forEach((cohort, cIdx) => {
+                html += '<div class="form-grid" style="margin-bottom: 16px; padding: 16px; background: var(--bg); border-radius: 8px;">';
+                html += '<div class="form-group"><label>Cohort Name</label><input type="text" value="' + cohort.name + '" onchange="updateCohortName(' + cIdx + ', this.value)"></div>';
+
+                cohort.data.forEach((val, dIdx) => {
+                    const monthLabel = dIdx === 0 ? 'Start Size' : 'Month ' + dIdx;
+                    html += '<div class="form-group"><label>' + monthLabel + '</label><input type="number" value="' + val + '" onchange="updateData(' + cIdx + ', ' + dIdx + ', this.value)"></div>';
+                });
+
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updateCohortName(idx, value) {
+            cohorts[idx].name = value;
+        }
+
+        function updateData(cohortIdx, dataIdx, value) {
+            cohorts[cohortIdx].data[dataIdx] = parseInt(value) || 0;
+        }
+
+        function addCohort() {
+            const nextMonth = cohorts.length;
+            const monthName = months[nextMonth % 12];
+            const year = 2024 + Math.floor(nextMonth / 12);
+            cohorts.push({
+                name: monthName + ' ' + year,
+                data: [100, 80, 70, 60, 50, 40]
+            });
+            renderInputs();
+        }
+
+        function loadPreset(type) {
+            if (type === 'saas') {
+                cohorts = [
+                    { name: 'Jan 2024', data: [100, 85, 78, 73, 70, 68, 66, 65] },
+                    { name: 'Feb 2024', data: [120, 102, 94, 88, 84, 82, 80] },
+                    { name: 'Mar 2024', data: [95, 82, 76, 72, 69, 67] },
+                    { name: 'Apr 2024', data: [130, 112, 105, 100, 97] },
+                    { name: 'May 2024', data: [110, 96, 90, 86] },
+                    { name: 'Jun 2024', data: [140, 125, 118] }
+                ];
+            } else if (type === 'mobile') {
+                cohorts = [
+                    { name: 'Week 1', data: [1000, 400, 250, 180, 140, 120, 110] },
+                    { name: 'Week 2', data: [1200, 500, 310, 220, 170, 145] },
+                    { name: 'Week 3', data: [800, 350, 220, 160, 125] },
+                    { name: 'Week 4', data: [1500, 650, 400, 290] }
+                ];
+            } else if (type === 'subscription') {
+                cohorts = [
+                    { name: 'Q1 2024', data: [200, 180, 170, 165, 162, 160, 158, 157] },
+                    { name: 'Q2 2024', data: [250, 225, 215, 210, 207, 204] },
+                    { name: 'Q3 2024', data: [180, 165, 158, 154, 151] },
+                    { name: 'Q4 2024', data: [220, 200, 192, 188] }
+                ];
+            }
+            renderInputs();
+            calculate();
+        }
+
+        function clearData() {
+            cohorts = [
+                { name: 'Cohort 1', data: [100, 0, 0, 0, 0, 0] }
+            ];
+            renderInputs();
+            document.getElementById('results-card').style.display = 'none';
+            document.getElementById('chart-card').style.display = 'none';
+            document.getElementById('analysis-card').style.display = 'none';
+        }
+
+        function calculate() {
+            if (cohorts.length === 0) return;
+
+            // Show results
+            document.getElementById('results-card').style.display = 'block';
+            document.getElementById('chart-card').style.display = 'block';
+            document.getElementById('analysis-card').style.display = 'block';
+
+            // Build retention table
+            buildRetentionTable();
+
+            // Calculate insights
+            calculateInsights();
+
+            // Build chart
+            buildChart();
+
+            // Generate analysis
+            generateAnalysis();
+        }
+
+        function buildRetentionTable() {
+            const maxMonths = Math.max(...cohorts.map(c => c.data.length));
+
+            let html = '<thead><tr><th>Cohort</th><th>Start</th>';
+            for (let i = 1; i < maxMonths; i++) {
+                html += '<th>Month ' + i + '</th>';
+            }
+            html += '</tr></thead><tbody>';
+
+            cohorts.forEach(cohort => {
+                html += '<tr>';
+                html += '<td>' + cohort.name + '</td>';
+
+                const startSize = cohort.data[0];
+                cohort.data.forEach((val, idx) => {
+                    const retention = idx === 0 ? 100 : (val / startSize * 100);
+                    const cellClass = getRetentionClass(retention);
+                    const displayVal = idx === 0 ? val : val + ' (' + retention.toFixed(0) + '%)';
+                    html += '<td><div class="retention-cell ' + cellClass + '">' + displayVal + '</div></td>';
+                });
+
+                // Fill empty cells
+                for (let i = cohort.data.length; i < maxMonths; i++) {
+                    html += '<td><div class="retention-cell retention-empty">—</div></td>';
+                }
+
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            document.getElementById('cohort-table').innerHTML = html;
+        }
+
+        function getRetentionClass(retention) {
+            if (retention >= 90) return 'retention-excellent';
+            if (retention >= 75) return 'retention-good';
+            if (retention >= 50) return 'retention-ok';
+            if (retention >= 25) return 'retention-warning';
+            return 'retention-danger';
+        }
+
+        function calculateInsights() {
+            // Average month 1 retention
+            let month1Retentions = [];
+            let month3Retentions = [];
+            let totalStart = 0;
+            let totalMonth3 = 0;
+
+            cohorts.forEach(cohort => {
+                if (cohort.data.length > 1) {
+                    month1Retentions.push((cohort.data[1] / cohort.data[0]) * 100);
+                }
+                if (cohort.data.length > 3) {
+                    const m3 = (cohort.data[3] / cohort.data[0]) * 100;
+                    month3Retentions.push(m3);
+                    totalStart += cohort.data[0];
+                    totalMonth3 += cohort.data[3];
+                }
+            });
+
+            const avgM1 = month1Retentions.length > 0 ? month1Retentions.reduce((a, b) => a + b) / month1Retentions.length : 0;
+            const avgM3 = month3Retentions.length > 0 ? month3Retentions.reduce((a, b) => a + b) / month3Retentions.length : 0;
+
+            // Best cohort
+            let bestCohort = { name: '-', retention: 0 };
+            cohorts.forEach(cohort => {
+                if (cohort.data.length > 3) {
+                    const r = (cohort.data[3] / cohort.data[0]) * 100;
+                    if (r > bestCohort.retention) {
+                        bestCohort = { name: cohort.name, retention: r };
+                    }
+                }
+            });
+
+            // Worst cohort
+            let worstCohort = { name: '-', retention: 100 };
+            cohorts.forEach(cohort => {
+                if (cohort.data.length > 3) {
+                    const r = (cohort.data[3] / cohort.data[0]) * 100;
+                    if (r < worstCohort.retention) {
+                        worstCohort = { name: cohort.name, retention: r };
+                    }
+                }
+            });
+
+            document.getElementById('insights-grid').innerHTML = 
+                '<div class="insight-card highlight"><div class="value">' + avgM1.toFixed(0) + '%</div><div class="label">Avg Month 1 Retention</div></div>' +
+                '<div class="insight-card"><div class="value">' + avgM3.toFixed(0) + '%</div><div class="label">Avg Month 3 Retention</div></div>' +
+                '<div class="insight-card"><div class="value" style="color: var(--success)">' + bestCohort.name + '</div><div class="label">Best Cohort</div></div>' +
+                '<div class="insight-card"><div class="value" style="color: var(--danger)">' + worstCohort.name + '</div><div class="label">Needs Improvement</div></div>';
+        }
+
+        function buildChart() {
+            let html = '';
+            const colors = ['#ec4899', '#f472b6', '#fb7185', '#f87171', '#fbbf24', '#a3e635'];
+
+            cohorts.forEach((cohort, idx) => {
+                if (cohort.data.length > 3) {
+                    const retention = (cohort.data[3] / cohort.data[0]) * 100;
+                    const color = colors[idx % colors.length];
+
+                    html += '<div class="bar-row">';
+                    html += '<div class="bar-label">' + cohort.name + '</div>';
+                    html += '<div class="bar-container"><div class="bar-fill" style="width: ' + retention + '%; background: ' + color + ';"></div></div>';
+                    html += '<div class="bar-value">' + retention.toFixed(0) + '%</div>';
+                    html += '</div>';
+                }
+            });
+
+            document.getElementById('retention-chart').innerHTML = html;
+        }
+
+        function generateAnalysis() {
+            // Calculate trends
+            let trend = 'stable';
+            let improving = 0;
+            let declining = 0;
+
+            for (let i = 1; i < cohorts.length; i++) {
+                if (cohorts[i].data.length > 3 && cohorts[i-1].data.length > 3) {
+                    const prev = (cohorts[i-1].data[3] / cohorts[i-1].data[0]) * 100;
+                    const curr = (cohorts[i].data[3] / cohorts[i].data[0]) * 100;
+                    if (curr > prev + 2) improving++;
+                    else if (curr < prev - 2) declining++;
+                }
+            }
+
+            if (improving > declining) trend = 'improving';
+            else if (declining > improving) trend = 'declining';
+
+            // Generate analysis text
+            let analysisHtml = '';
+            if (trend === 'improving') {
+                analysisHtml = '<p>✅ <strong>Positive trend detected!</strong> Your recent cohorts are retaining better than earlier ones. This suggests your product improvements or onboarding changes are working.</p>';
+            } else if (trend === 'declining') {
+                analysisHtml = '<p>⚠️ <strong>Declining trend detected.</strong> Recent cohorts are retaining worse than earlier ones. This could indicate product issues, market changes, or onboarding problems.</p>';
+            } else {
+                analysisHtml = '<p>📊 <strong>Stable retention patterns.</strong> Your cohorts show consistent retention behavior. Focus on improving overall retention rates.</p>';
+            }
+
+            document.getElementById('pattern-analysis').innerHTML = analysisHtml;
+
+            // Generate action list
+            let actions = [];
+            if (trend === 'improving') {
+                actions = [
+                    'Document what changed between early and recent cohorts',
+                    'Double down on the improvements that are working',
+                    'Share these retention wins with your team',
+                    'Consider raising prices - customers are staying longer'
+                ];
+            } else if (trend === 'declining') {
+                actions = [
+                    'Interview churned customers from recent cohorts',
+                    'Review any product or onboarding changes made recently',
+                    'Check if acquisition channels have changed',
+                    'Compare engagement metrics between good and bad cohorts'
+                ];
+            } else {
+                actions = [
+                    'A/B test onboarding improvements',
+                    'Identify your best-performing cohort and replicate conditions',
+                    'Focus on the first 30 days - biggest drop-off period',
+                    'Implement proactive outreach for at-risk customers'
+                ];
+            }
+
+            let actionHtml = actions.map(a => '<li><span>🎯</span> ' + a + '</li>').join('');
+            document.getElementById('action-list').innerHTML = actionHtml;
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
