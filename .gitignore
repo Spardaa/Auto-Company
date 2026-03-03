@@ -147,6 +147,7 @@ projects/*
 !projects/.gitkeep
 !projects/nomorezoomfatigue-validation/
 !projects/*.html
+!projects/blog/
 
 # Local/private outputs (do not publish)
 AGENTS.md
@@ -184,6 +185,8 @@ docs/*
 docs/*/*
 !docs/*/.gitkeep
 !docs/windows-setup.md
+!docs/ceo/
 # Ignore all memories (keep folder marker only)
 memories/*
 !memories/.gitkeep
+!memories/consensus.md
