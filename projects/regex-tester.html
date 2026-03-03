@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester - Test Regular Expressions Live</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            color: #e0e0e0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .regex-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .regex-delimiter {
+            font-size: 1.5rem;
+            color: #00ff88;
+            font-weight: bold;
+            padding: 15px 5px;
+        }
+
+        #regexPattern {
+            flex: 1;
+            height: auto;
+            min-height: 50px;
+            padding: 12px 15px;
+        }
+
+        .flags-section {
+            margin-top: 15px;
+        }
+
+        .flags-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .flags-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .flag-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .flag-checkbox:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .flag-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #00d4ff;
+        }
+
+        .flag-checkbox label {
+            cursor: pointer;
+            font-weight: 600;
+            color: #00ff88;
+        }
+
+        .flag-checkbox span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .results-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+        }
+
+        .match-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .match-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .match-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .match-stat-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .matches-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .match-item {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid #00d4ff;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .match-number {
+            font-weight: bold;
+            color: #00d4ff;
+            margin-right: 10px;
+        }
+
+        .match-value {
+            font-family: 'Fira Code', monospace;
+            color: #00ff88;
+            word-break: break-all;
+        }
+
+        .match-position {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .groups-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .group-item {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .group-name {
+            color: #ff9f43;
+        }
+
+        .group-value {
+            color: #00ff88;
+            font-family: monospace;
+        }
+
+        .highlighted-text {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .highlight {
+            background: rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border-left: 3px solid #ff6b6b;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            color: #ff6b6b;
+        }
+
+        .no-matches {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        .patterns-section {
+            margin-top: 30px;
+        }
+
+        .patterns-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .pattern-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .pattern-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+        }
+
+        .pattern-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .pattern-regex {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #00ff88;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+
+        .pattern-desc {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .copy-btn {
+            background: rgba(0, 212, 255, 0.2);
+            border: none;
+            color: #00d4ff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .error-badge {
+            display: inline-block;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .valid-badge {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Tools</a>
+
+        <header>
+            <h1>🔍 Regex Tester</h1>
+            <p class="subtitle">Test regular expressions with live matching and syntax highlighting</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Regular Expression</span>
+                    <span id="regexStatus"></span>
+                </div>
+                <div class="regex-input-wrapper">
+                    <span class="regex-delimiter">/</span>
+                    <textarea id="regexPattern" placeholder="Enter your regex pattern...">(\d{3})-(\d{3})-(\d{4})</textarea>
+                    <span class="regex-delimiter">/</span>
+                </div>
+
+                <div class="flags-section">
+                    <div class="flags-label">Flags:</div>
+                    <div class="flags-grid">
+                        <label class="flag-checkbox">
+                            <input type="checkbox" id="flagG" checked>
+                            <label for="flagG">g</label>
+                            <span>global</span>
+                        </label>
+                        <label class="flag-checkbox">
+                            <input type="checkbox" id="flagI">
+                            <label for="flagI">i</label>
+                            <span>ignore case</span>
+                        </label>
+                        <label class="flag-checkbox">
+                            <input type="checkbox" id="flagM">
+                            <label for="flagM">m</label>
+                            <span>multiline</span>
+                        </label>
+                        <label class="flag-checkbox">
+                            <input type="checkbox" id="flagS">
+                            <label for="flagS">s</label>
+                            <span>dotAll</span>
+                        </label>
+                        <label class="flag-checkbox">
+                            <input type="checkbox" id="flagU">
+                            <label for="flagU">u</label>
+                            <span>unicode</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Test String</span>
+                    <button class="copy-btn" onclick="copyTestString()">Copy</button>
+                </div>
+                <textarea id="testString" placeholder="Enter text to test against...">Contact us at:
+555-123-4567 (Sales)
+555-987-6543 (Support)
+Or email support@example.com
+
+More numbers:
+123-456-7890
+999-888-7777</textarea>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 30px;">
+            <div class="panel-header">
+                <span class="panel-title">Results</span>
+                <button class="copy-btn" onclick="copyMatches()">Copy Matches</button>
+            </div>
+
+            <div class="match-info">
+                <div class="match-stat">
+                    <div class="match-stat-value" id="matchCount">0</div>
+                    <div class="match-stat-label">Matches</div>
+                </div>
+                <div class="match-stat">
+                    <div class="match-stat-value" id="groupCount">0</div>
+                    <div class="match-stat-label">Groups</div>
+                </div>
+                <div class="match-stat">
+                    <div class="match-stat-value" id="firstMatch">-</div>
+                    <div class="match-stat-label">First Match</div>
+                </div>
+                <div class="match-stat">
+                    <div class="match-stat-value" id="lastMatch">-</div>
+                    <div class="match-stat-label">Last Match</div>
+                </div>
+            </div>
+
+            <div class="results-panel">
+                <div id="matchResults"></div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 30px;">
+            <div class="panel-header">
+                <span class="panel-title">Highlighted Text</span>
+            </div>
+            <div class="highlighted-text" id="highlightedText"></div>
+        </div>
+
+        <div class="patterns-section">
+            <h2 class="patterns-title">📋 Common Patterns</h2>
+            <div class="patterns-grid">
+                <div class="pattern-card" onclick="usePattern('email')">
+                    <div class="pattern-name">Email Address</div>
+                    <div class="pattern-regex">[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</div>
+                    <div class="pattern-desc">Matches standard email addresses</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('phone')">
+                    <div class="pattern-name">Phone Number (US)</div>
+                    <div class="pattern-regex">(\d{3})[-.\s]?\d{3}[-.\s]?\d{4}</div>
+                    <div class="pattern-desc">Matches US phone numbers with various separators</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('url')">
+                    <div class="pattern-name">URL</div>
+                    <div class="pattern-regex">https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)</div>
+                    <div class="pattern-desc">Matches HTTP/HTTPS URLs</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('ip')">
+                    <div class="pattern-name">IPv4 Address</div>
+                    <div class="pattern-regex">\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b</div>
+                    <div class="pattern-desc">Matches valid IPv4 addresses</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('date')">
+                    <div class="pattern-name">Date (YYYY-MM-DD)</div>
+                    <div class="pattern-regex">\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])</div>
+                    <div class="pattern-desc">Matches ISO date format</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('hex')">
+                    <div class="pattern-name">Hex Color</div>
+                    <div class="pattern-regex">#(?:[a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b</div>
+                    <div class="pattern-desc">Matches 3 or 6 digit hex color codes</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('username')">
+                    <div class="pattern-name">Username</div>
+                    <div class="pattern-regex">^[a-zA-Z][a-zA-Z0-9_-]{2,15}$</div>
+                    <div class="pattern-desc">3-16 chars, starts with letter, alphanumeric/underscore/hyphen</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('password')">
+                    <div class="pattern-name">Strong Password</div>
+                    <div class="pattern-regex">^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$</div>
+                    <div class="pattern-desc">Min 8 chars, upper, lower, number, special char</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('creditcard')">
+                    <div class="pattern-name">Credit Card</div>
+                    <div class="pattern-regex">(?:\d{4}[-\s]?){3}\d{4}</div>
+                    <div class="pattern-desc">Matches credit card numbers with optional separators</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('slug')">
+                    <div class="pattern-name">URL Slug</div>
+                    <div class="pattern-regex">^[a-z0-9]+(?:-[a-z0-9]+)*$</div>
+                    <div class="pattern-desc">Matches URL-friendly slugs</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('htmltag')">
+                    <div class="pattern-name">HTML Tag</div>
+                    <div class="pattern-regex">&lt;\/?[a-z][\s\S]*?&gt;</div>
+                    <div class="pattern-desc">Matches HTML tags (use with 'i' flag)</div>
+                </div>
+
+                <div class="pattern-card" onclick="usePattern('whitespace')">
+                    <div class="pattern-name">Whitespace</div>
+                    <div class="pattern-regex">\s+</div>
+                    <div class="pattern-desc">Matches one or more whitespace characters</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const patterns = {
+            email: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
+            phone: '(\\d{3})[-.\\s]?\\d{3}[-.\\s]?\\d{4}',
+            url: 'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)',
+            ip: '\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b',
+            date: '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])',
+            hex: '#(?:[a-fA-F0-9]{3}|[a-fA-F0-9]{6})\\b',
+            username: '^[a-zA-Z][a-zA-Z0-9_-]{2,15}$',
+            password: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$',
+            creditcard: '(?:\\d{4}[-\\s]?){3}\\d{4}',
+            slug: '^[a-z0-9]+(?:-[a-z0-9]+)*$',
+            htmltag: '<\\/?[a-z][\\s\\S]*?>',
+            whitespace: '\\s+'
+        };
+
+        const patternInputs = {
+            email: 'Contact: john@example.com\nInvalid: john@invalid\nAnother: test.user+tag@domain.co.uk',
+            phone: '555-123-4567\n(555) 123-4567\n555.123.4567\n5551234567',
+            url: 'https://www.example.com\nhttp://test.org/path?query=value\nInvalid: ftp://files.com',
+            ip: '192.168.1.1\n10.0.0.1\n256.1.1.1 (invalid)\n172.16.0.1',
+            date: '2024-01-15\n2024-12-31\n2024-13-01 (invalid)\n2024-02-30 (invalid)',
+            hex: '#fff\n#ffffff\n#FF5733\n#invalid\n#123456',
+            username: 'john_doe\nJohnDoe123\n1invalid\nab\nthis_is_way_too_long_username',
+            password: 'Password1!\nweak\nStrongP@ss123\nNoSpecial1\nnospecial1!',
+            creditcard: '1234-5678-9012-3456\n1234 5678 9012 3456\n1234567890123456',
+            slug: 'my-blog-post\nhello-world\nInvalid Slug\n123-abc',
+            htmltag: '<div class="test">Content</div>\n<img src="image.jpg" />\n<BR>',
+            whitespace: 'hello   world\t\ttabs\n\nnewlines'
+        };
+
+        function getFlags() {
+            let flags = '';
+            if (document.getElementById('flagG').checked) flags += 'g';
+            if (document.getElementById('flagI').checked) flags += 'i';
+            if (document.getElementById('flagM').checked) flags += 'm';
+            if (document.getElementById('flagS').checked) flags += 's';
+            if (document.getElementById('flagU').checked) flags += 'u';
+            return flags;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function testRegex() {
+            const pattern = document.getElementById('regexPattern').value;
+            const testString = document.getElementById('testString').value;
+            const flags = getFlags();
+            const statusEl = document.getElementById('regexStatus');
+            const resultsEl = document.getElementById('matchResults');
+            const highlightedEl = document.getElementById('highlightedText');
+
+            if (!pattern) {
+                statusEl.innerHTML = '<span class="error-badge">Empty pattern</span>';
+                resultsEl.innerHTML = '<div class="no-matches">Enter a regex pattern to test</div>';
+                highlightedEl.innerHTML = escapeHtml(testString);
+                updateStats(0, 0, '-', '-');
+                return;
+            }
+
+            try {
+                const regex = new RegExp(pattern, flags);
+                statusEl.innerHTML = '<span class="valid-badge">✓ Valid</span>';
+
+                const matches = [...testString.matchAll(new RegExp(pattern, flags.includes('g') ? flags : flags + 'g'))];
+
+                if (matches.length === 0) {
+                    resultsEl.innerHTML = '<div class="no-matches">No matches found</div>';
+                    highlightedEl.innerHTML = escapeHtml(testString);
+                    updateStats(0, 0, '-', '-');
+                    return;
+                }
+
+                // Calculate stats
+                let totalGroups = 0;
+                matches.forEach(m => {
+                    if (m.length > 1) totalGroups += m.length - 1;
+                });
+
+                updateStats(
+                    matches.length,
+                    totalGroups,
+                    matches[0][0].substring(0, 10) + (matches[0][0].length > 10 ? '...' : ''),
+                    matches[matches.length - 1][0].substring(0, 10) + (matches[matches.length - 1][0].length > 10 ? '...' : '')
+                );
+
+                // Build matches list
+                let html = '<div class="matches-list">';
+                matches.forEach((match, index) => {
+                    html += `
+                        <div class="match-item">
+                            <div>
+                                <span class="match-number">#${index + 1}</span>
+                                <span class="match-value">${escapeHtml(match[0])}</span>
+                            </div>
+                            <div class="match-position">Position: ${match.index}</div>
+                            ${match.length > 1 ? `
+                                <div class="groups-section">
+                                    <strong>Groups:</strong>
+                                    ${match.slice(1).map((g, i) => `
+                                        <div class="group-item">
+                                            <span class="group-name">Group ${i + 1}:</span>
+                                            <span class="group-value">${g ? escapeHtml(g) : '(empty)'}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                resultsEl.innerHTML = html;
+
+                // Highlight text
+                let highlighted = testString;
+                let offset = 0;
+
+                // Sort matches by position to highlight correctly
+                const sortedMatches = [...matches].sort((a, b) => a.index - b.index);
+
+                sortedMatches.forEach(match => {
+                    const start = match.index + offset;
+                    const end = start + match[0].length;
+                    const before = highlighted.slice(0, start);
+                    const matched = highlighted.slice(start, end);
+                    const after = highlighted.slice(end);
+
+                    highlighted = before + '<span class="highlight">' + escapeHtml(matched) + '</span>' + after;
+                    offset += '<span class="highlight">'.length + '</span>'.length;
+                });
+
+                highlightedEl.innerHTML = highlighted;
+
+            } catch (e) {
+                statusEl.innerHTML = '<span class="error-badge">✗ Invalid regex</span>';
+                resultsEl.innerHTML = `<div class="error-message">Error: ${escapeHtml(e.message)}</div>`;
+                highlightedEl.innerHTML = escapeHtml(testString);
+                updateStats(0, 0, '-', '-');
+            }
+        }
+
+        function updateStats(matches, groups, first, last) {
+            document.getElementById('matchCount').textContent = matches;
+            document.getElementById('groupCount').textContent = groups;
+            document.getElementById('firstMatch').textContent = first;
+            document.getElementById('lastMatch').textContent = last;
+        }
+
+        function usePattern(name) {
+            document.getElementById('regexPattern').value = patterns[name];
+            if (patternInputs[name]) {
+                document.getElementById('testString').value = patternInputs[name];
+            }
+            // Reset flags
+            document.getElementById('flagG').checked = true;
+            document.getElementById('flagI').checked = false;
+            document.getElementById('flagM').checked = false;
+            document.getElementById('flagS').checked = false;
+            document.getElementById('flagU').checked = false;
+
+            if (name === 'htmltag' || name === 'email') {
+                document.getElementById('flagI').checked = true;
+            }
+            if (name === 'username' || name === 'password' || name === 'slug') {
+                document.getElementById('flagM').checked = true;
+            }
+
+            testRegex();
+        }
+
+        function copyMatches() {
+            const pattern = document.getElementById('regexPattern').value;
+            const testString = document.getElementById('testString').value;
+            const flags = getFlags();
+
+            try {
+                const matches = [...testString.matchAll(new RegExp(pattern, flags.includes('g') ? flags : flags + 'g'))];
+                const matchValues = matches.map(m => m[0]).join('\n');
+                navigator.clipboard.writeText(matchValues);
+                alert('Matches copied to clipboard!');
+            } catch (e) {
+                alert('No matches to copy');
+            }
+        }
+
+        function copyTestString() {
+            navigator.clipboard.writeText(document.getElementById('testString').value);
+            alert('Test string copied!');
+        }
+
+        // Event listeners
+        document.getElementById('regexPattern').addEventListener('input', testRegex);
+        document.getElementById('testString').addEventListener('input', testRegex);
+        document.querySelectorAll('.flags-grid input').forEach(el => {
+            el.addEventListener('change', testRegex);
+        });
+
+        // Initial test
+        testRegex();
+    </script>
+</body>
+</html>

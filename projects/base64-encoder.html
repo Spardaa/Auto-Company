@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder/Decoder - Encode and Decode Text</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .mode-btn {
+            padding: 12px 30px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .mode-btn:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            border-color: transparent;
+            color: #1a1a2e;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            color: #e0e0e0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.2);
+            border: none;
+            color: #00d4ff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .convert-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .convert-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+
+        .swap-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .stats-bar span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border-left: 3px solid #ff6b6b;
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            color: #ff6b6b;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .encoding-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .encoding-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .encoding-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .encoding-option input {
+            accent-color: #00d4ff;
+        }
+
+        .encoding-option label {
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 255, 136, 0.9);
+            color: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .url-safe-badge {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Tools</a>
+
+        <header>
+            <h1>🔐 Base64 Encoder/Decoder</h1>
+            <p class="subtitle">Encode text to Base64 or decode Base64 back to text</p>
+        </header>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('encode')">Encode → Base64</button>
+            <button class="mode-btn" onclick="setMode('decode')">← Decode</button>
+            <button class="mode-btn" onclick="setMode('both')">Both Ways</button>
+        </div>
+
+        <div id="encodePanel" class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Plain Text Input</span>
+                <div class="panel-actions">
+                    <button class="action-btn" onclick="loadSampleText()">Load Sample</button>
+                    <button class="action-btn" onclick="clearInput('input')">Clear</button>
+                </div>
+            </div>
+            <textarea id="inputText" placeholder="Enter text to encode..." oninput="autoConvert()"></textarea>
+            <div class="encoding-options">
+                <label class="encoding-option">
+                    <input type="checkbox" id="urlSafeEncode">
+                    <label for="urlSafeEncode">URL-safe encoding <span class="url-safe-badge">Replaces +/ with -_</span></label>
+                </label>
+                <label class="encoding-option">
+                    <input type="checkbox" id="stripPadding">
+                    <label for="stripPadding">Strip padding (=)</label>
+                </label>
+            </div>
+            <div class="stats-bar">
+                <span>📝 <span id="inputChars">0</span> characters</span>
+                <span>📦 <span id="inputBytes">0</span> bytes</span>
+                <span>📄 <span id="inputLines">0</span> lines</span>
+            </div>
+        </div>
+
+        <div class="convert-section" id="convertSection">
+            <button class="action-btn primary convert-btn" onclick="encode()">
+                ⬇ Encode to Base64
+            </button>
+            <button class="action-btn swap-btn" onclick="swapContent()">⇅</button>
+            <button class="action-btn primary convert-btn" onclick="decode()">
+                ⬆ Decode from Base64
+            </button>
+        </div>
+
+        <div id="decodePanel" class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Base64 Output</span>
+                <div class="panel-actions">
+                    <button class="action-btn" onclick="copyOutput()">📋 Copy</button>
+                    <button class="action-btn" onclick="clearInput('output')">Clear</button>
+                </div>
+            </div>
+            <textarea id="outputText" placeholder="Base64 encoded text will appear here..." oninput="autoConvert()"></textarea>
+            <div class="error-message" id="errorMsg">
+                ⚠️ Invalid Base64 string. Please check your input.
+            </div>
+            <div class="stats-bar">
+                <span>📝 <span id="outputChars">0</span> characters</span>
+                <span>📦 <span id="outputBytes">0</span> bytes (decoded)</span>
+                <span>📊 <span id="compressionRatio">0%</span> size increase</span>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Instant Conversion</div>
+                <div class="feature-desc">Auto-convert as you type</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <div class="feature-title">URL-Safe Mode</div>
+                <div class="feature-desc">Replace +/ with -_ for URLs</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <div class="feature-title">UTF-8 Support</div>
+                <div class="feature-desc">Full Unicode character support</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">No Server</div>
+                <div class="feature-desc">100% client-side processing</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied!</div>
+
+    <script>
+        let currentMode = 'encode';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const encodePanel = document.getElementById('encodePanel');
+            const decodePanel = document.getElementById('decodePanel');
+            const convertSection = document.getElementById('convertSection');
+
+            if (mode === 'encode') {
+                encodePanel.querySelector('.panel-title').textContent = 'Plain Text Input';
+                decodePanel.querySelector('.panel-title').textContent = 'Base64 Output';
+                document.getElementById('inputText').placeholder = 'Enter text to encode...';
+                document.getElementById('outputText').placeholder = 'Base64 encoded text will appear here...';
+                convertSection.innerHTML = `
+                    <button class="action-btn primary convert-btn" onclick="encode()">
+                        ⬇ Encode to Base64
+                    </button>
+                    <button class="action-btn swap-btn" onclick="swapContent()">⇅</button>
+                    <button class="action-btn primary convert-btn" onclick="decode()">
+                        ⬆ Decode from Base64
+                    </button>
+                `;
+            } else if (mode === 'decode') {
+                encodePanel.querySelector('.panel-title').textContent = 'Base64 Input';
+                decodePanel.querySelector('.panel-title').textContent = 'Decoded Text';
+                document.getElementById('inputText').placeholder = 'Enter Base64 to decode...';
+                document.getElementById('outputText').placeholder = 'Decoded text will appear here...';
+                convertSection.innerHTML = `
+                    <button class="action-btn primary convert-btn" onclick="decode()">
+                        ⬇ Decode Base64
+                    </button>
+                    <button class="action-btn swap-btn" onclick="swapContent()">⇅</button>
+                    <button class="action-btn primary convert-btn" onclick="encode()">
+                        ⬆ Encode to Base64
+                    </button>
+                `;
+            } else {
+                encodePanel.querySelector('.panel-title').textContent = 'Plain Text';
+                decodePanel.querySelector('.panel-title').textContent = 'Base64';
+                document.getElementById('inputText').placeholder = 'Enter plain text or Base64...';
+                document.getElementById('outputText').placeholder = 'Converted result...';
+                convertSection.innerHTML = `
+                    <button class="action-btn primary convert-btn" onclick="encode()">
+                        ⬇ Encode
+                    </button>
+                    <button class="action-btn swap-btn" onclick="swapContent()">⇅</button>
+                    <button class="action-btn primary convert-btn" onclick="decode()">
+                        ⬆ Decode
+                    </button>
+                `;
+            }
+        }
+
+        function encode() {
+            const input = document.getElementById('inputText').value;
+            const urlSafe = document.getElementById('urlSafeEncode').checked;
+            const stripPad = document.getElementById('stripPadding').checked;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                // Convert to UTF-8 bytes, then to Base64
+                const utf8Bytes = new TextEncoder().encode(input);
+                let base64 = btoa(String.fromCharCode(...utf8Bytes));
+
+                if (urlSafe) {
+                    base64 = base64.replace(/\+/g, '-').replace(/\//g, '_');
+                }
+                if (stripPad) {
+                    base64 = base64.replace(/=/g, '');
+                }
+
+                document.getElementById('outputText').value = base64;
+                errorMsg.classList.remove('show');
+                updateStats();
+            } catch (e) {
+                errorMsg.textContent = '⚠️ Encoding error: ' + e.message;
+                errorMsg.classList.add('show');
+            }
+        }
+
+        function decode() {
+            const input = document.getElementById('inputText').value;
+            const urlSafe = document.getElementById('urlSafeEncode').checked;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                let base64 = input.trim();
+
+                // Restore URL-safe characters
+                if (urlSafe || base64.includes('-') || base64.includes('_')) {
+                    base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+                }
+
+                // Add padding if needed
+                while (base64.length % 4 !== 0) {
+                    base64 += '=';
+                }
+
+                // Decode Base64 to bytes, then to UTF-8
+                const binaryString = atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const decoded = new TextDecoder().decode(bytes);
+
+                document.getElementById('outputText').value = decoded;
+                errorMsg.classList.remove('show');
+                updateStats();
+            } catch (e) {
+                errorMsg.textContent = '⚠️ Invalid Base64 string. Please check your input.';
+                errorMsg.classList.add('show');
+            }
+        }
+
+        function autoConvert() {
+            // Auto-convert based on mode
+            if (currentMode === 'encode') {
+                encode();
+            } else if (currentMode === 'decode') {
+                decode();
+            }
+        }
+
+        function swapContent() {
+            const input = document.getElementById('inputText');
+            const output = document.getElementById('outputText');
+            const temp = input.value;
+            input.value = output.value;
+            output.value = temp;
+            updateStats();
+        }
+
+        function updateStats() {
+            const input = document.getElementById('inputText').value;
+            const output = document.getElementById('outputText').value;
+
+            // Input stats
+            document.getElementById('inputChars').textContent = input.length;
+            document.getElementById('inputBytes').textContent = new TextEncoder().encode(input).length;
+            document.getElementById('inputLines').textContent = input.split('\n').length;
+
+            // Output stats
+            document.getElementById('outputChars').textContent = output.length;
+
+            // Calculate decoded bytes (approximate for base64)
+            const decodedBytes = Math.floor(output.length * 3 / 4);
+            document.getElementById('outputBytes').textContent = decodedBytes;
+
+            // Compression ratio
+            if (input.length > 0) {
+                const ratio = ((output.length / input.length - 1) * 100).toFixed(0);
+                document.getElementById('compressionRatio').textContent = (ratio > 0 ? '+' : '') + ratio + '%';
+            } else {
+                document.getElementById('compressionRatio').textContent = '0%';
+            }
+        }
+
+        function loadSampleText() {
+            const samples = [
+                'Hello, World! This is a sample text for Base64 encoding.',
+                '{"name": "John", "email": "john@example.com", "age": 30}',
+                'The quick brown fox jumps over the lazy dog.',
+                '🎉 Unicode emojis work too! 🚀💻',
+                '<!DOCTYPE html>\n<html>\n<head><title>Sample</title></head>\n<body>Hello!</body>\n</html>'
+            ];
+            document.getElementById('inputText').value = samples[Math.floor(Math.random() * samples.length)];
+            encode();
+        }
+
+        function clearInput(type) {
+            if (type === 'input') {
+                document.getElementById('inputText').value = '';
+            } else {
+                document.getElementById('outputText').value = '';
+            }
+            document.getElementById('errorMsg').classList.remove('show');
+            updateStats();
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('outputText').value;
+            navigator.clipboard.writeText(output).then(() => {
+                showToast('Copied to clipboard!');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
