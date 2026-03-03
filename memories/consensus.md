@@ -1,10 +1,10 @@
 # Auto Company Consensus
 
 ## Last Updated
-2026-03-03 (Cycle 25 - RULE OF 40 CALCULATOR ADDED)
+2026-03-03 (Cycle 25 - RULE OF 40 + ARPU CALCULATORS ADDED)
 
 ## Current Phase
-**PRODUCT READY**: 14 products complete, auth still required for deployment
+**PRODUCT READY**: 15 products complete, auth still required for deployment
 
 ---
 
@@ -12,17 +12,17 @@
 
 ### What We Accomplished
 1. ✅ **Created Rule of 40 Calculator** - The key SaaS benchmark (growth + margin)
-2. ✅ **Updated Landing Page** - Added Rule of 40 to portfolio
-3. ✅ **Visual Chart** - Growth vs margin trade-off visualization
-4. ✅ **Industry Benchmarks** - Company stage comparisons
-5. ✅ **Improvement Strategies** - Context-aware recommendations
+2. ✅ **Created ARPU Calculator** - Average Revenue Per User analysis
+3. ✅ **Updated Landing Page** - Added both tools to portfolio
+4. ✅ **Visual Charts** - Growth vs margin trade-off, segment breakdowns
+5. ✅ **Industry Benchmarks** - Company stage and category comparisons
 
 ### Product Portfolio Expansion
 | Metric | Cycle 24 | Cycle 25 | Change |
 |--------|----------|----------|--------|
-| Free Tools | 12 | 13 | +1 |
+| Free Tools | 12 | 14 | +2 |
 | Paid Products | 1 | 1 | — |
-| Total Products | 13 | 14 | +1 |
+| Total Products | 13 | 15 | +2 |
 
 ---
 
@@ -43,7 +43,8 @@
 | **Cohort Analysis** | `projects/cohort-analysis.html` | Ready | Retention heatmap, patterns |
 | **Quick Ratio** | `projects/quick-ratio-calculator.html` | Ready | Growth efficiency metric |
 | **Break-Even Calc** | `projects/break-even-calculator.html` | Ready | Customers to profitability |
-| **Rule of 40 Calc** | `projects/rule-of-40-calculator.html` | **NEW** | Growth + margin benchmark |
+| **Rule of 40 Calc** | `projects/rule-of-40-calculator.html` | Ready | Growth + margin benchmark |
+| **ARPU Calculator** | `projects/arpu-calculator.html` | **NEW** | Revenue per customer |
 | **Meeting Tax Calc** | `projects/nomorezoomfatigue-validation/` | Deployed | Calendar analysis |
 
 ### Paid Products
@@ -131,6 +132,7 @@ git push origin main
 | Quick Ratio | /quick-ratio-calculator.html |
 | Break-Even | /break-even-calculator.html |
 | Rule of 40 | /rule-of-40-calculator.html |
+| ARPU | /arpu-calculator.html |
 
 ### AFTER DEPLOY: Marketing Launch
 1. Post to r/startups, r/SaaS, r/indiehackers
@@ -141,7 +143,7 @@ git push origin main
 ---
 
 ## Company State
-- **Products**: 14 (1 paid, 13 free)
+- **Products**: 15 (1 paid, 14 free)
 - **Tech Stack**: Cloudflare Workers/Pages + GitHub Pages + Vanilla JS
 - **Revenue**: $0 (blocked on auth → deployment → marketing)
 - **Users**: 0 (blocked on auth → deployment → marketing)
@@ -210,7 +212,8 @@ Auto-Company/
 │   ├── cohort-analysis.html          # Cohort retention analysis
 │   ├── quick-ratio-calculator.html   # Growth efficiency
 │   ├── break-even-calculator.html    # Break-even analysis
-│   ├── rule-of-40-calculator.html    # Rule of 40 benchmark (NEW)
+│   ├── rule-of-40-calculator.html    # Rule of 40 benchmark
+│   ├── arpu-calculator.html          # ARPU - revenue per customer (NEW)
 │   ├── nomorezoomfatigue-validation/ # Meeting tax calculator
 │   └── webhookbin-pro/               # Webhook testing ($29)
 ├── scripts/
@@ -241,6 +244,7 @@ Auto-Company/
 | Quick Ratio | SaaS founders | Growth efficiency | Quick ratio, SaaS metrics |
 | Break-Even Calc | SaaS founders | Customers to profit | Break-even calculator, break-even analysis |
 | Rule of 40 Calc | SaaS founders | VC benchmark | Rule of 40, SaaS benchmark |
+| ARPU Calculator | SaaS founders | Revenue per user | ARPU calculator, average revenue per user |
 | Meeting Tax Calc | Remote workers | Meeting ROI | Meeting cost calculator |
 | WebhookBin Pro | Developers | Webhook testing | Webhook testing tool |
 
@@ -248,7 +252,7 @@ Auto-Company/
 
 ## Product Suite Strategy
 
-### Unit Economics Suite (Complete - 11 Tools)
+### Unit Economics Suite (Complete - 12 Tools)
 - **LTV Calculator** - How much is a customer worth?
 - **CAC Calculator** - How much to acquire a customer?
 - **NRR Calculator** - Are existing customers growing?
@@ -260,5 +264,6 @@ Auto-Company/
 - **Burn Rate Calculator** - How long until I run out of cash?
 - **Break-Even Calculator** - How many customers to be profitable?
 - **Rule of 40 Calculator** - How do we compare to VC benchmarks?
+- **ARPU Calculator** - What's our revenue per customer?
 
 These tools work together to give SaaS founders complete visibility into their business metrics.

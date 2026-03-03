@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARPU Calculator - Average Revenue Per User | Auto Company</title>
+    <meta name="description" content="Calculate Average Revenue Per User (ARPU) for your SaaS. Understand revenue per customer and compare to industry benchmarks.">
+    <meta property="og:title" content="ARPU Calculator - Average Revenue Per User">
+    <meta property="og:description" content="Free tool to calculate ARPU for SaaS. Know your revenue per customer.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/arpu-calculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ARPU Calculator - Average Revenue Per User">
+    <meta name="twitter:description" content="Free tool to calculate ARPU for SaaS companies.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --accent-light: #34d399;
+            --card: #141414;
+            --border: #262626;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: var(--accent); }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--fg) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .card-title { font-size: 1.2rem; font-weight: 600; }
+        .card-desc { color: var(--muted); font-size: 0.9rem; }
+
+        /* Form */
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        input[type="number"], select {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            color: var(--fg);
+            width: 100%;
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .input-prefix, .input-suffix {
+            color: var(--muted);
+            font-size: 1rem;
+            min-width: 20px;
+        }
+        .helper-text {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Calculate Button */
+        .btn-calculate {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-calculate:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        /* Results */
+        .results { display: none; }
+        .results.show { display: block; }
+
+        .arpu-display {
+            text-align: center;
+            padding: 32px 20px;
+            margin-bottom: 20px;
+        }
+        .arpu-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .arpu-label {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .arpu-period {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        /* Benchmark */
+        .benchmark-bar {
+            background: var(--bg);
+            border-radius: 10px;
+            height: 32px;
+            position: relative;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        .benchmark-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .benchmark-marker {
+            position: absolute;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--fg);
+        }
+        .benchmark-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        /* Interpretation */
+        .interpretation {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .interpretation h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .interpretation p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Segmentation */
+        .segment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .segment-table th {
+            text-align: left;
+            padding: 12px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .segment-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .segment-table tr:last-child td {
+            border-bottom: none;
+        }
+        .segment-bar {
+            display: inline-block;
+            height: 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        /* Industry Comparison */
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .industry-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .industry-name {
+            font-size: 0.9rem;
+        }
+        .industry-arpu {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Trend */
+        .trend-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 150px;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+        .trend-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            opacity: 0.6;
+            position: relative;
+        }
+        .trend-bar:last-child {
+            opacity: 1;
+        }
+        .trend-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        /* Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .action-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--accent);
+        }
+        .action-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .action-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .arpu-value { font-size: 2.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .industry-grid { grid-template-columns: 1fr; }
+            .actions-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← All Tools</a>
+            <h1>ARPU Calculator</h1>
+            <p class="subtitle">Average Revenue Per User - a fundamental SaaS metric</p>
+        </header>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button class="mode-btn active" onclick="setMode('simple')">Simple</button>
+            <button class="mode-btn" onclick="setMode('advanced')">By Segment</button>
+        </div>
+
+        <!-- Simple Input -->
+        <div id="simpleInput" class="card">
+            <div class="card-header">
+                <div class="card-icon">💵</div>
+                <div>
+                    <div class="card-title">Calculate ARPU</div>
+                    <div class="card-desc">Enter your revenue and customer count</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Period</label>
+                <select id="period">
+                    <option value="month">Monthly (MRR / Customers)</option>
+                    <option value="year">Annual (ARR / Customers)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Total Revenue</label>
+                <div class="input-row">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="totalRevenue" placeholder="e.g., 50000" step="1">
+                </div>
+                <p class="helper-text">Your MRR or ARR depending on period selected</p>
+            </div>
+
+            <div class="input-group">
+                <label>Total Customers</label>
+                <div class="input-row">
+                    <input type="number" id="totalCustomers" placeholder="e.g., 200" step="1">
+                    <span class="input-suffix"></span>
+                </div>
+                <p class="helper-text">Active paying customers in the same period</p>
+            </div>
+
+            <button class="btn-calculate" onclick="calculate()">Calculate ARPU</button>
+        </div>
+
+        <!-- Advanced Input -->
+        <div id="advancedInput" class="card" style="display: none;">
+            <div class="card-header">
+                <div class="card-icon">📊</div>
+                <div>
+                    <div class="card-title">ARPU by Segment</div>
+                    <div class="card-desc">Enter revenue and customers by pricing tier</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Period</label>
+                <select id="periodAdvanced">
+                    <option value="month">Monthly</option>
+                    <option value="year">Annual</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Free Tier</label>
+                <div class="input-row">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="freeRevenue" placeholder="0" value="0" step="1">
+                    <span style="color: var(--muted); margin: 0 8px;">/</span>
+                    <input type="number" id="freeCustomers" placeholder="0" value="0" step="1" style="width: 100px;">
+                    <span class="input-suffix">users</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Basic / Starter Tier</label>
+                <div class="input-row">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="basicRevenue" placeholder="e.g., 10000" step="1">
+                    <span style="color: var(--muted); margin: 0 8px;">/</span>
+                    <input type="number" id="basicCustomers" placeholder="e.g., 100" step="1" style="width: 100px;">
+                    <span class="input-suffix">users</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Pro / Growth Tier</label>
+                <div class="input-row">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="proRevenue" placeholder="e.g., 25000" step="1">
+                    <span style="color: var(--muted); margin: 0 8px;">/</span>
+                    <input type="number" id="proCustomers" placeholder="e.g., 50" step="1" style="width: 100px;">
+                    <span class="input-suffix">users</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Enterprise Tier</label>
+                <div class="input-row">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="enterpriseRevenue" placeholder="e.g., 50000" step="1">
+                    <span style="color: var(--muted); margin: 0 8px;">/</span>
+                    <input type="number" id="enterpriseCustomers" placeholder="e.g., 10" step="1" style="width: 100px;">
+                    <span class="input-suffix">users</span>
+                </div>
+            </div>
+
+            <button class="btn-calculate" onclick="calculateAdvanced()">Calculate ARPU by Segment</button>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+            <!-- ARPU Display -->
+            <div class="card">
+                <div class="arpu-display">
+                    <div class="arpu-value" id="arpuValue">$0</div>
+                    <div class="arpu-label">Average Revenue Per User</div>
+                    <div class="arpu-period" id="arpuPeriod">per month</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalRevDisplay">$0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCustDisplay">0</div>
+                        <div class="stat-label">Customers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="arrDisplay">$0</div>
+                        <div class="stat-label">Annualized</div>
+                    </div>
+                </div>
+
+                <div class="interpretation">
+                    <h4>💡 What This Means</h4>
+                    <p id="interpretationText">—</p>
+                </div>
+
+                <h4 style="font-size: 1rem; margin-bottom: 8px;">How You Compare</h4>
+                <div class="benchmark-bar">
+                    <div class="benchmark-fill" id="benchmarkFill" style="width: 0%; background: var(--accent);"></div>
+                    <div class="benchmark-marker" style="left: 25%;" title="Low: $25"></div>
+                    <div class="benchmark-marker" style="left: 50%;" title="Average: $100"></div>
+                    <div class="benchmark-marker" style="left: 75%;" title="Good: $250"></div>
+                </div>
+                <div class="benchmark-labels">
+                    <span>$10 (Low)</span>
+                    <span>$100 (Avg)</span>
+                    <span>$250 (Good)</span>
+                    <span>$500+ (High)</span>
+                </div>
+            </div>
+
+            <!-- Segment Results (Advanced) -->
+            <div class="card" id="segmentResults" style="display: none;">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <div class="card-title">ARPU by Segment</div>
+                        <div class="card-desc">Breakdown by pricing tier</div>
+                    </div>
+                </div>
+
+                <table class="segment-table" id="segmentTable">
+                    <!-- Filled dynamically -->
+                </table>
+            </div>
+
+            <!-- Industry Benchmarks -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏢</div>
+                    <div>
+                        <div class="card-title">Industry Benchmarks</div>
+                        <div class="card-desc">Monthly ARPU by SaaS category</div>
+                    </div>
+                </div>
+
+                <div class="industry-grid">
+                    <div class="industry-item">
+                        <span class="industry-name">Developer Tools</span>
+                        <span class="industry-arpu">$50-150</span>
+                    </div>
+                    <div class="industry-item">
+                        <span class="industry-name">Marketing SaaS</span>
+                        <span class="industry-arpu">$100-300</span>
+                    </div>
+                    <div class="industry-item">
+                        <span class="industry-name">HR / Recruiting</span>
+                        <span class="industry-arpu">$200-500</span>
+                    </div>
+                    <div class="industry-item">
+                        <span class="industry-name">Enterprise SaaS</span>
+                        <span class="industry-arpu">$500-2000+</span>
+                    </div>
+                    <div class="industry-item">
+                        <span class="industry-name">E-commerce Tools</span>
+                        <span class="industry-arpu">$50-200</span>
+                    </div>
+                    <div class="industry-item">
+                        <span class="industry-name">Finance / Accounting</span>
+                        <span class="industry-arpu">$150-400</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">How to Improve ARPU</div>
+                        <div class="card-desc">Strategies to increase revenue per user</div>
+                    </div>
+                </div>
+
+                <div class="actions-grid" id="actionsGrid">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>ARPU = Total Revenue ÷ Total Customers</p>
+            <p style="margin-top: 8px;">Part of <a href="index.html">Auto Company SaaS Tools</a></p>
+        </footer>
+    </div>
+
+    <script>
+        let currentMode = 'simple';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('simpleInput').style.display = mode === 'simple' ? 'block' : 'none';
+            document.getElementById('advancedInput').style.display = mode === 'advanced' ? 'block' : 'none';
+            document.getElementById('segmentResults').style.display = mode === 'advanced' ? 'block' : 'none';
+        }
+
+        function calculate() {
+            const revenue = parseFloat(document.getElementById('totalRevenue').value) || 0;
+            const customers = parseFloat(document.getElementById('totalCustomers').value) || 0;
+            const period = document.getElementById('period').value;
+
+            if (customers === 0) {
+                alert('Please enter the number of customers');
+                return;
+            }
+
+            const arpu = revenue / customers;
+            const arr = period === 'month' ? revenue * 12 : revenue;
+
+            showResults(arpu, revenue, customers, arr, period);
+        }
+
+        function calculateAdvanced() {
+            const period = document.getElementById('periodAdvanced').value;
+
+            const segments = [
+                { name: 'Free', revenue: parseFloat(document.getElementById('freeRevenue').value) || 0, customers: parseFloat(document.getElementById('freeCustomers').value) || 0, color: '#888' },
+                { name: 'Basic', revenue: parseFloat(document.getElementById('basicRevenue').value) || 0, customers: parseFloat(document.getElementById('basicCustomers').value) || 0, color: '#3b82f6' },
+                { name: 'Pro', revenue: parseFloat(document.getElementById('proRevenue').value) || 0, customers: parseFloat(document.getElementById('proCustomers').value) || 0, color: '#8b5cf6' },
+                { name: 'Enterprise', revenue: parseFloat(document.getElementById('enterpriseRevenue').value) || 0, customers: parseFloat(document.getElementById('enterpriseCustomers').value) || 0, color: '#10b981' }
+            ];
+
+            const totalRevenue = segments.reduce((sum, s) => sum + s.revenue, 0);
+            const totalCustomers = segments.reduce((sum, s) => sum + s.customers, 0);
+
+            if (totalCustomers === 0) {
+                alert('Please enter at least some customers');
+                return;
+            }
+
+            const arpu = totalRevenue / totalCustomers;
+            const arr = period === 'month' ? totalRevenue * 12 : totalRevenue;
+
+            // Show segment breakdown
+            const maxArpu = Math.max(...segments.filter(s => s.customers > 0).map(s => s.revenue / s.customers), 1);
+
+            const segmentTable = document.getElementById('segmentTable');
+            segmentTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Revenue</th>
+                        <th>Customers</th>
+                        <th>ARPU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${segments.map(s => {
+                        const sArpu = s.customers > 0 ? s.revenue / s.customers : 0;
+                        const barWidth = (sArpu / maxArpu * 100) || 0;
+                        return `
+                            <tr>
+                                <td>
+                                    <span class="segment-bar" style="width: 40px; background: ${s.color};"></span>
+                                    ${s.name}
+                                </td>
+                                <td>$${s.revenue.toLocaleString()}</td>
+                                <td>${s.customers.toLocaleString()}</td>
+                                <td style="font-weight: 600; color: ${s.color;">$${sArpu.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+
+            document.getElementById('segmentResults').style.display = 'block';
+            showResults(arpu, totalRevenue, totalCustomers, arr, period);
+        }
+
+        function showResults(arpu, revenue, customers, arr, period) {
+            document.getElementById('results').classList.add('show');
+
+            // Update displays
+            document.getElementById('arpuValue').textContent = '$' + arpu.toFixed(2);
+            document.getElementById('arpuPeriod').textContent = 'per ' + (period === 'month' ? 'month' : 'year');
+            document.getElementById('totalRevDisplay').textContent = '$' + revenue.toLocaleString();
+            document.getElementById('totalCustDisplay').textContent = customers.toLocaleString();
+            document.getElementById('arrDisplay').textContent = '$' + arr.toLocaleString();
+
+            // Update benchmark bar (scale: $0-500)
+            const benchmarkPct = Math.min((arpu / 500) * 100, 100);
+            document.getElementById('benchmarkFill').style.width = benchmarkPct + '%';
+
+            // Interpretation
+            let interpretation;
+            if (arpu < 25) {
+                interpretation = `Your ARPU of <strong>$${arpu.toFixed(2)}</strong> is on the lower end. This is common for freemium or high-volume self-serve products. Consider conversion strategies to move free users to paid, or evaluate if your pricing reflects your value.`;
+            } else if (arpu < 100) {
+                interpretation = `Your ARPU of <strong>$${arpu.toFixed(2)}</strong> is typical for SMB-focused SaaS. You have room to grow through upselling, add-ons, or moving upmarket. Focus on expansion revenue from existing customers.`;
+            } else if (arpu < 250) {
+                interpretation = `Your ARPU of <strong>$${arpu.toFixed(2)}</strong> is solid and indicates a healthy mix of SMB and mid-market customers. You're well-positioned to invest in customer success and account expansion.`;
+            } else if (arpu < 500) {
+                interpretation = `Your ARPU of <strong>$${arpu.toFixed(2)}</strong> is strong and suggests mid-market to enterprise focus. Ensure you have the support and features to justify this price point. Watch churn closely.`;
+            } else {
+                interpretation = `Your ARPU of <strong>$${arpu.toFixed(2)}</strong> is excellent and indicates enterprise focus. Make sure your CAC is proportional—you likely need sales-led growth to maintain this level.`;
+            }
+            document.getElementById('interpretationText').innerHTML = interpretation;
+
+            // Actions
+            const actions = [
+                { title: '📈 Price Increase', desc: 'Test a 10-20% price increase for new customers. Existing customers may stay on legacy pricing.' },
+                { title: '🎁 Add-ons & Upsells', desc: 'Create premium features or add-on packages that power users will pay extra for.' },
+                { title: '🏢 Move Upmarket', desc: 'Target larger companies with enterprise features like SSO, advanced security, or dedicated support.' },
+                { title: '📊 Tier Optimization', desc: 'Analyze which tier has the best ARPU and focus marketing on acquiring those customers.' }
+            ];
+
+            document.getElementById('actionsGrid').innerHTML = actions.map(a => `
+                <div class="action-item">
+                    <div class="action-title">${a.title}</div>
+                    <div class="action-desc">${a.desc}</div>
+                </div>
+            `).join('');
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-calculate on Enter key
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    if (currentMode === 'simple') calculate();
+                    else calculateAdvanced();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
