@@ -44,6 +44,25 @@
     </script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen">
+    <!-- Breadcrumbs -->
+    <nav class="bg-gray-900 py-2 border-b border-gray-800" aria-label="Breadcrumb">
+        <ol class="max-w-6xl mx-auto px-4 flex items-center gap-2 text-sm" itemscope itemtype="https://schema.org/BreadcrumbList">
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="index.html" class="text-gray-400 hover:text-indigo-400"><span itemprop="name">Home</span></a>
+                <meta itemprop="position" content="1" />
+            </li>
+            <li class="text-gray-600">›</li>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="index.html#calculators" class="text-gray-400 hover:text-indigo-400"><span itemprop="name">Calculators</span></a>
+                <meta itemprop="position" content="2" />
+            </li>
+            <li class="text-gray-600">›</li>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name" class="text-gray-300">SaaS Valuation Calculator</span>
+                <meta itemprop="position" content="3" />
+            </li>
+        </ol>
+    </nav>
     <!-- Header -->
     <header class="gradient-bg py-6">
         <div class="max-w-6xl mx-auto px-4">

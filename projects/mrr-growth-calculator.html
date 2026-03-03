@@ -305,6 +305,14 @@
             height: 12px;
             border-radius: 3px;
         }
+        .breadcrumbs { margin-bottom: 20px; font-size: 0.85rem; }
+    .breadcrumbs ol { display: flex; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; }
+    .breadcrumbs li { display: flex; align-items: center; gap: 8px; }
+    .breadcrumbs li:not(:last-child)::after { content: "›"; color: var(--muted); margin-left: 4px; }
+    .breadcrumbs a { color: var(--muted); text-decoration: none; }
+    .breadcrumbs a:hover { color: var(--accent); }
+    .breadcrumbs li:last-child { color: var(--fg); }
+
     </style>
     <!-- Privacy-friendly analytics using CountAPI -->
     <script defer>
@@ -337,6 +345,22 @@
 </head>
 <body>
     <div class="container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="index.html"><span itemprop="name">Home</span></a>
+                <meta itemprop="position" content="1" />
+            </li>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="index.html#calculators"><span itemprop="name">Calculators</span></a>
+                <meta itemprop="position" content="2" />
+            </li>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name">MRR Growth Calculator</span>
+                <meta itemprop="position" content="3" />
+            </li>
+        </ol>
+    </nav>
         <header>
             <a href="index.html" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
