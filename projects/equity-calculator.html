@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Equity Calculator | Free Tool</title>
+    <meta name="description" content="Free startup equity calculator. Calculate founder equity splits, vesting schedules, dilution after funding rounds, and option pools.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #e94560, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active {
+            background: linear-gradient(90deg, #e94560, #f39c12);
+            color: white;
+        }
+        .panel {
+            display: none;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .panel.active {
+            display: block;
+        }
+        .panel h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .panel p {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c0c0c0;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        button.calculate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #e94560, #f39c12);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button.calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            display: none;
+        }
+        .results.show {
+            display: block;
+        }
+        .results h3 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .result-item {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .result-item .label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .result-item .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4ade80;
+        }
+        .result-item .value.warning {
+            color: #f39c12;
+        }
+        .result-item .value.danger {
+            color: #e94560;
+        }
+        .founder-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .founder-row input {
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .founder-row input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        .btn-remove {
+            background: #e94560;
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .btn-add {
+            background: rgba(255,255,255,0.1);
+            border: 1px dashed rgba(255,255,255,0.3);
+            color: #a0a0a0;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .btn-add:hover {
+            background: rgba(255,255,255,0.15);
+            color: #e0e0e0;
+        }
+        .chart-container {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .bar-label {
+            width: 120px;
+            font-size: 0.9rem;
+            color: #c0c0c0;
+            text-align: right;
+        }
+        .bar-track {
+            flex: 1;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+        .equity-bar { background: linear-gradient(90deg, #e94560, #f39c12); }
+        .vested-bar { background: linear-gradient(90deg, #4ade80, #22c55e); }
+        .dilution-bar { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(233, 69, 96, 0.2);
+            color: #f39c12;
+            font-weight: 600;
+        }
+        td {
+            color: #e0e0e0;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .vesting-schedule {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .year-block {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .year-block h4 {
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        .year-block .months {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .month {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        .month.vested {
+            background: #4ade80;
+            color: #000;
+        }
+        .month.unvested {
+            background: rgba(255,255,255,0.1);
+            color: #666;
+        }
+        .month.cliff {
+            border: 2px solid #f39c12;
+        }
+        .info-box {
+            background: rgba(243, 156, 18, 0.1);
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .info-box h4 {
+            color: #f39c12;
+            margin-bottom: 8px;
+        }
+        .info-box p {
+            margin: 0;
+            color: #c0c0c0;
+            font-size: 0.95rem;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .founder-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .vesting-schedule {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Startup Equity Calculator</h1>
+            <p class="subtitle">Calculate equity splits, vesting, dilution, and option pools</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showPanel('split')">Equity Split</button>
+            <button class="tab" onclick="showPanel('vesting')">Vesting Schedule</button>
+            <button class="tab" onclick="showPanel('dilution')">Dilution Calculator</button>
+            <button class="tab" onclick="showPanel('option')">Option Pool</button>
+        </div>
+
+        <!-- Equity Split Panel -->
+        <div id="split" class="panel active">
+            <h2>Founder Equity Split Calculator</h2>
+            <p>Determine how to fairly divide equity among co-founders based on contributions.</p>
+
+            <div class="info-box">
+                <h4>Slicing Pie Framework</h4>
+                <p>Equity is allocated based on relative contributions: Time, Money, Ideas, Relationships, and Equipment.</p>
+            </div>
+
+            <div id="founders-list">
+                <div class="founder-row" style="font-weight: 600; color: #f39c12; margin-bottom: 15px;">
+                    <span>Name</span>
+                    <span>Time (hrs/wk)</span>
+                    <span>Cash ($)</span>
+                    <span>Idea Score (1-10)</span>
+                    <span></span>
+                </div>
+                <div class="founder-row" data-founder="1">
+                    <input type="text" placeholder="Founder 1" value="Alice">
+                    <input type="number" class="time-input" value="40" min="0">
+                    <input type="number" class="cash-input" value="50000" min="0">
+                    <input type="number" class="idea-input" value="8" min="1" max="10">
+                    <button class="btn-remove" onclick="removeFounder(this)">×</button>
+                </div>
+                <div class="founder-row" data-founder="2">
+                    <input type="text" placeholder="Founder 2" value="Bob">
+                    <input type="number" class="time-input" value="20" min="0">
+                    <input type="number" class="cash-input" value="10000" min="0">
+                    <input type="number" class="idea-input" value="5" min="1" max="10">
+                    <button class="btn-remove" onclick="removeFounder(this)">×</button>
+                </div>
+            </div>
+            <button class="btn-add" onclick="addFounder()">+ Add Founder</button>
+
+            <button class="calculate" onclick="calculateEquitySplit()" style="margin-top: 20px;">Calculate Equity Split</button>
+
+            <div id="split-results" class="results">
+                <h3>Recommended Equity Distribution</h3>
+                <div class="result-grid" id="split-grid"></div>
+                <div class="chart-container">
+                    <h4 style="color: #f39c12; margin-bottom: 15px;">Visual Breakdown</h4>
+                    <div class="bar-chart" id="equity-bars"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vesting Schedule Panel -->
+        <div id="vesting" class="panel">
+            <h2>Vesting Schedule Calculator</h2>
+            <p>Understand how your equity vests over time with cliff and monthly vesting.</p>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Total Shares Granted</label>
+                    <input type="number" id="total-shares" value="100000" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Vesting Period (years)</label>
+                    <input type="number" id="vesting-years" value="4" min="1" max="10">
+                </div>
+                <div class="input-group">
+                    <label>Cliff Period (months)</label>
+                    <input type="number" id="cliff-months" value="12" min="0" max="48">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Current FMV per Share ($)</label>
+                    <input type="number" id="fmv-share" value="0.10" step="0.01" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Strike Price ($)</label>
+                    <input type="number" id="strike-price" value="0.05" step="0.01" min="0">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Months Already Vested</label>
+                <input type="number" id="months-vested" value="18" min="0" max="48">
+            </div>
+
+            <button class="calculate" onclick="calculateVesting()">Calculate Vesting</button>
+
+            <div id="vesting-results" class="results">
+                <h3>Vesting Analysis</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="label">Total Value (FMV)</div>
+                        <div class="value" id="total-value">$10,000</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Vested Shares</div>
+                        <div class="value" id="vested-shares">37,500</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Unvested Shares</div>
+                        <div class="value warning" id="unvested-shares">62,500</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Exercise Cost</div>
+                        <div class="value" id="exercise-cost">$1,875</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h4 style="color: #f39c12; margin-bottom: 15px;">Vesting Timeline</h4>
+                    <div class="vesting-schedule" id="vesting-timeline"></div>
+                </div>
+
+                <div class="table-container">
+                    <h4 style="color: #f39c12; margin: 20px 0 10px;">Vesting Schedule Breakdown</h4>
+                    <table id="vesting-table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Shares Vested</th>
+                                <th>Cumulative</th>
+                                <th>Value at FMV</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dilution Calculator Panel -->
+        <div id="dilution" class="panel">
+            <h2>Dilution Calculator</h2>
+            <p>See how your ownership changes through funding rounds.</p>
+
+            <div class="input-group">
+                <label>Your Current Ownership (%)</label>
+                <input type="number" id="current-ownership" value="30" step="0.1" min="0" max="100">
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Pre-Money Valuation ($M)</label>
+                    <input type="number" id="pre-money" value="5" step="0.5" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Investment Amount ($M)</label>
+                    <input type="number" id="investment" value="1" step="0.1" min="0">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Option Pool Size (%)</label>
+                <input type="number" id="option-pool" value="10" step="1" min="0" max="25">
+            </div>
+
+            <button class="calculate" onclick="calculateDilution()">Calculate Dilution</button>
+
+            <div id="dilution-results" class="results">
+                <h3>Dilution Impact</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="label">Your Stake Before</div>
+                        <div class="value" id="stake-before">30.0%</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Your Stake After</div>
+                        <div class="value warning" id="stake-after">24.3%</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Dilution</div>
+                        <div class="value danger" id="dilution-pct">19.0%</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Post-Money ($M)</div>
+                        <div class="value" id="post-money">$6.0M</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h4 style="color: #f39c12; margin-bottom: 15px;">Ownership Comparison</h4>
+                    <div class="bar-chart">
+                        <div class="bar-row">
+                            <span class="bar-label">Before Round</span>
+                            <div class="bar-track">
+                                <div class="bar-fill vested-bar" id="before-bar" style="width: 30%;">30%</div>
+                            </div>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">After Round</span>
+                            <div class="bar-track">
+                                <div class="bar-fill dilution-bar" id="after-bar" style="width: 24.3%;">24.3%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h4 style="color: #f39c12; margin: 20px 0 10px;">Multiple Rounds Projection</h4>
+                    <table id="dilution-table">
+                        <thead>
+                            <tr>
+                                <th>Round</th>
+                                <th>Valuation ($M)</th>
+                                <th>Raised ($M)</th>
+                                <th>Your Stake</th>
+                                <th>Your Value ($M)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option Pool Panel -->
+        <div id="option" class="panel">
+            <h2>Option Pool Calculator</h2>
+            <p>Design your employee option pool and understand its impact.</p>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Total Authorized Shares</label>
+                    <input type="number" id="total-auth" value="10000000" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Option Pool Size (%)</label>
+                    <input type="number" id="pool-size" value="10" step="1" min="0" max="25">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Current Valuation ($M)</label>
+                    <input type="number" id="curr-valuation" value="5" step="0.5" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Target Hires (Next 18 mo)</label>
+                    <input type="number" id="target-hires" value="10" min="1">
+                </div>
+            </div>
+
+            <button class="calculate" onclick="calculateOptionPool()">Calculate Option Pool</button>
+
+            <div id="option-results" class="results">
+                <h3>Option Pool Analysis</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="label">Pool Shares</div>
+                        <div class="value" id="pool-shares">1,000,000</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Pool Value</div>
+                        <div class="value" id="pool-value">$500,000</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Avg Grant/Hire</div>
+                        <div class="value" id="avg-grant">100,000</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Runway (hires)</div>
+                        <div class="value warning" id="hire-runway">10</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Recommended Option Grants by Role</h4>
+                    <p>Senior Engineer: 0.5-2% | Lead Engineer: 0.3-1% | Senior PM: 0.3-0.8% | VP: 1-3% | C-Level: 2-5%</p>
+                </div>
+
+                <div class="table-container">
+                    <h4 style="color: #f39c12; margin: 20px 0 10px;">Sample Grant Allocation</h4>
+                    <table id="option-table">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Typical %</th>
+                                <th>Shares</th>
+                                <th>Value ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Part of the <a href="https://spardaa.github.io/Auto-Company/projects/">Auto Company</a> toolkit | Built for founders</p>
+        </footer>
+    </div>
+
+    <script>
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Equity Split Calculator
+        let founderCount = 2;
+
+        function addFounder() {
+            founderCount++;
+            const list = document.getElementById('founders-list');
+            const row = document.createElement('div');
+            row.className = 'founder-row';
+            row.setAttribute('data-founder', founderCount);
+            row.innerHTML = `
+                <input type="text" placeholder="Founder ${founderCount}" value="">
+                <input type="number" class="time-input" value="0" min="0">
+                <input type="number" class="cash-input" value="0" min="0">
+                <input type="number" class="idea-input" value="5" min="1" max="10">
+                <button class="btn-remove" onclick="removeFounder(this)">×</button>
+            `;
+            list.appendChild(row);
+        }
+
+        function removeFounder(btn) {
+            if (document.querySelectorAll('.founder-row[data-founder]').length > 1) {
+                btn.parentElement.remove();
+            }
+        }
+
+        function calculateEquitySplit() {
+            const rows = document.querySelectorAll('.founder-row[data-founder]');
+            const founders = [];
+
+            rows.forEach(row => {
+                const name = row.querySelector('input[type="text"]').value || 'Founder';
+                const time = parseFloat(row.querySelector('.time-input').value) || 0;
+                const cash = parseFloat(row.querySelector('.cash-input').value) || 0;
+                const idea = parseFloat(row.querySelector('.idea-input').value) || 0;
+
+                // Weight factors (adjustable)
+                const timeWeight = 1000; // $ per hour of work
+                const cashWeight = 1; // Direct cash contribution
+                const ideaWeight = 10000; // Value of idea contribution
+
+                const contribution = (time * timeWeight * 52) + (cash * cashWeight) + (idea * ideaWeight);
+
+                founders.push({ name, time, cash, idea, contribution });
+            });
+
+            const totalContribution = founders.reduce((sum, f) => sum + f.contribution, 0);
+
+            let gridHtml = '';
+            let barsHtml = '';
+            const colors = ['#e94560', '#f39c12', '#4ade80', '#60a5fa', '#a78bfa', '#f472b6'];
+
+            founders.forEach((f, i) => {
+                const equity = ((f.contribution / totalContribution) * 100).toFixed(1);
+                f.equity = equity;
+
+                gridHtml += `
+                    <div class="result-item">
+                        <div class="label">${f.name}</div>
+                        <div class="value" style="color: ${colors[i % colors.length]}">${equity}%</div>
+                    </div>
+                `;
+
+                barsHtml += `
+                    <div class="bar-row">
+                        <span class="bar-label">${f.name}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill equity-bar" style="width: ${equity}%; background: ${colors[i % colors.length]}">${equity}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('split-grid').innerHTML = gridHtml;
+            document.getElementById('equity-bars').innerHTML = barsHtml;
+            document.getElementById('split-results').classList.add('show');
+        }
+
+        // Vesting Calculator
+        function calculateVesting() {
+            const totalShares = parseInt(document.getElementById('total-shares').value) || 0;
+            const years = parseInt(document.getElementById('vesting-years').value) || 4;
+            const cliff = parseInt(document.getElementById('cliff-months').value) || 12;
+            const fmv = parseFloat(document.getElementById('fmv-share').value) || 0;
+            const strike = parseFloat(document.getElementById('strike-price').value) || 0;
+            const monthsVested = parseInt(document.getElementById('months-vested').value) || 0;
+
+            const totalMonths = years * 12;
+            const monthlyRate = totalShares / totalMonths;
+
+            // Calculate vested shares
+            let vestedShares = 0;
+            if (monthsVested >= cliff) {
+                vestedShares = monthlyRate * monthsVested;
+            }
+
+            const unvestedShares = totalShares - vestedShares;
+            const totalValue = totalShares * fmv;
+            const exerciseCost = vestedShares * strike;
+
+            document.getElementById('total-value').textContent = formatCurrency(totalValue);
+            document.getElementById('vested-shares').textContent = formatNumber(Math.round(vestedShares));
+            document.getElementById('unvested-shares').textContent = formatNumber(Math.round(unvestedShares));
+            document.getElementById('exercise-cost').textContent = formatCurrency(exerciseCost);
+
+            // Build vesting timeline
+            let timelineHtml = '';
+            for (let year = 1; year <= years; year++) {
+                let monthsHtml = '';
+                for (let m = 1; m <= 12; m++) {
+                    const monthNum = (year - 1) * 12 + m;
+                    const isVested = monthNum <= monthsVested;
+                    const isCliff = monthNum === cliff;
+
+                    monthsHtml += `<div class="month ${isVested ? 'vested' : 'unvested'} ${isCliff ? 'cliff' : ''}">${monthNum}</div>`;
+                }
+                timelineHtml += `
+                    <div class="year-block">
+                        <h4>Year ${year}</h4>
+                        <div class="months">${monthsHtml}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('vesting-timeline').innerHTML = timelineHtml;
+
+            // Build vesting table
+            let tableHtml = '';
+            for (let year = 1; year <= years; year++) {
+                for (let month = 1; month <= 12; month += 3) {
+                    const monthNum = (year - 1) * 12 + month;
+                    const sharesVested = monthlyRate * 3;
+                    const cumulative = monthlyRate * monthNum;
+                    const value = cumulative * fmv;
+
+                    tableHtml += `
+                        <tr>
+                            <td>Month ${monthNum}</td>
+                            <td>${formatNumber(Math.round(sharesVested))}</td>
+                            <td>${formatNumber(Math.round(cumulative))}</td>
+                            <td>${formatCurrency(value)}</td>
+                        </tr>
+                    `;
+                }
+            }
+            document.querySelector('#vesting-table tbody').innerHTML = tableHtml;
+            document.getElementById('vesting-results').classList.add('show');
+        }
+
+        // Dilution Calculator
+        function calculateDilution() {
+            const ownership = parseFloat(document.getElementById('current-ownership').value) || 0;
+            const preMoney = parseFloat(document.getElementById('pre-money').value) || 0;
+            const investment = parseFloat(document.getElementById('investment').value) || 0;
+            const optionPool = parseFloat(document.getElementById('option-pool').value) || 0;
+
+            const postMoney = preMoney + investment;
+            const investorStake = (investment / postMoney) * 100;
+
+            // Option pool dilution (assuming it's created before the round)
+            const effectiveOwnership = ownership * (1 - optionPool / 100);
+            const stakeAfter = effectiveOwnership * (1 - investorStake / 100);
+            const dilution = ((ownership - stakeAfter) / ownership) * 100;
+
+            document.getElementById('stake-before').textContent = ownership.toFixed(1) + '%';
+            document.getElementById('stake-after').textContent = stakeAfter.toFixed(1) + '%';
+            document.getElementById('dilution-pct').textContent = dilution.toFixed(1) + '%';
+            document.getElementById('post-money').textContent = '$' + postMoney.toFixed(1) + 'M';
+
+            // Update bars
+            document.getElementById('before-bar').style.width = ownership + '%';
+            document.getElementById('before-bar').textContent = ownership.toFixed(1) + '%';
+            document.getElementById('after-bar').style.width = stakeAfter + '%';
+            document.getElementById('after-bar').textContent = stakeAfter.toFixed(1) + '%';
+
+            // Multiple rounds projection
+            const rounds = [
+                { name: 'Seed', val: preMoney, raised: investment, stake: ownership },
+                { name: 'Series A', val: preMoney * 3, raised: preMoney * 0.8, stake: 0 },
+                { name: 'Series B', val: preMoney * 10, raised: preMoney * 3, stake: 0 },
+                { name: 'Series C', val: preMoney * 30, raised: preMoney * 10, stake: 0 }
+            ];
+
+            let currentStake = stakeAfter;
+            let tableHtml = '';
+
+            rounds.forEach((round, i) => {
+                if (i === 0) {
+                    round.stake = stakeAfter;
+                } else {
+                    const dilutionPct = (round.raised / round.val) * 100;
+                    currentStake = currentStake * (1 - dilutionPct / 100 - 0.05); // 5% option pool each round
+                    round.stake = currentStake;
+                }
+                round.value = round.stake / 100 * round.val;
+
+                tableHtml += `
+                    <tr>
+                        <td>${round.name}</td>
+                        <td>$${round.val.toFixed(1)}M</td>
+                        <td>$${round.raised.toFixed(1)}M</td>
+                        <td>${round.stake.toFixed(1)}%</td>
+                        <td>$${round.value.toFixed(2)}M</td>
+                    </tr>
+                `;
+            });
+
+            document.querySelector('#dilution-table tbody').innerHTML = tableHtml;
+            document.getElementById('dilution-results').classList.add('show');
+        }
+
+        // Option Pool Calculator
+        function calculateOptionPool() {
+            const totalAuth = parseInt(document.getElementById('total-auth').value) || 0;
+            const poolSize = parseFloat(document.getElementById('pool-size').value) || 0;
+            const valuation = parseFloat(document.getElementById('curr-valuation').value) || 0;
+            const targetHires = parseInt(document.getElementById('target-hires').value) || 1;
+
+            const poolShares = totalAuth * (poolSize / 100);
+            const sharePrice = (valuation * 1000000) / totalAuth;
+            const poolValue = poolShares * sharePrice;
+            const avgGrant = poolShares / targetHires;
+            const runway = Math.floor(poolShares / avgGrant);
+
+            document.getElementById('pool-shares').textContent = formatNumber(Math.round(poolShares));
+            document.getElementById('pool-value').textContent = formatCurrency(poolValue);
+            document.getElementById('avg-grant').textContent = formatNumber(Math.round(avgGrant));
+            document.getElementById('hire-runway').textContent = targetHires + ' hires';
+
+            // Sample grant allocation table
+            const roles = [
+                { title: 'Senior Engineer', pct: 1.0 },
+                { title: 'Lead Engineer', pct: 0.5 },
+                { title: 'Senior PM', pct: 0.4 },
+                { title: 'VP Engineering', pct: 2.0 },
+                { title: 'CTO', pct: 3.0 },
+                { title: 'Junior Engineer', pct: 0.15 }
+            ];
+
+            let tableHtml = '';
+            roles.forEach(role => {
+                const shares = totalAuth * (role.pct / 100);
+                const value = shares * sharePrice;
+
+                tableHtml += `
+                    <tr>
+                        <td>${role.title}</td>
+                        <td>${role.pct}%</td>
+                        <td>${formatNumber(Math.round(shares))}</td>
+                        <td>${formatCurrency(value)}</td>
+                    </tr>
+                `;
+            });
+
+            document.querySelector('#option-table tbody').innerHTML = tableHtml;
+            document.getElementById('option-results').classList.add('show');
+        }
+
+        // Utility functions
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function formatCurrency(num) {
+            if (num >= 1000000) {
+                return '$' + (num / 1000000).toFixed(2) + 'M';
+            } else if (num >= 1000) {
+                return '$' + (num / 1000).toFixed(1) + 'K';
+            }
+            return '$' + num.toFixed(0);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateEquitySplit();
+            calculateVesting();
+            calculateDilution();
+            calculateOptionPool();
+        });
+    </script>
+</body>
+</html>
