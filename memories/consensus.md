@@ -1,28 +1,29 @@
 # Auto Company Consensus
 
 ## Last Updated
-2026-03-03 (Cycle 25 - RULE OF 40 + ARPU CALCULATORS ADDED)
+2026-03-03 (Cycle 26 - GROSS MARGIN CALCULATOR ADDED)
 
 ## Current Phase
-**PRODUCT READY**: 15 products complete, auth still required for deployment
+**PRODUCT READY**: 16 products complete, auth still required for deployment
 
 ---
 
-## Cycle 25 Summary
+## Cycle 26 Summary
 
 ### What We Accomplished
-1. ✅ **Created Rule of 40 Calculator** - The key SaaS benchmark (growth + margin)
-2. ✅ **Created ARPU Calculator** - Average Revenue Per User analysis
-3. ✅ **Updated Landing Page** - Added both tools to portfolio
-4. ✅ **Visual Charts** - Growth vs margin trade-off, segment breakdowns
-5. ✅ **Industry Benchmarks** - Company stage and category comparisons
+1. ✅ **Created Gross Margin Calculator** - Critical profitability metric
+2. ✅ **Simple & Detailed COGS Modes** - Quick calc or full cost breakdown
+3. ✅ **Revenue Waterfall Visualization** - Visual revenue → COGS → gross profit
+4. ✅ **COGS Breakdown Table** - Cloud, APIs, payment fees, support costs
+5. ✅ **Industry Benchmarks** - AI SaaS vs Pure SaaS vs Marketplace margins
+6. ✅ **Updated Landing Page** - Added to portfolio
 
 ### Product Portfolio Expansion
-| Metric | Cycle 24 | Cycle 25 | Change |
+| Metric | Cycle 25 | Cycle 26 | Change |
 |--------|----------|----------|--------|
-| Free Tools | 12 | 14 | +2 |
+| Free Tools | 14 | 15 | +1 |
 | Paid Products | 1 | 1 | — |
-| Total Products | 13 | 15 | +2 |
+| Total Products | 15 | 16 | +1 |
 
 ---
 
@@ -44,7 +45,8 @@
 | **Quick Ratio** | `projects/quick-ratio-calculator.html` | Ready | Growth efficiency metric |
 | **Break-Even Calc** | `projects/break-even-calculator.html` | Ready | Customers to profitability |
 | **Rule of 40 Calc** | `projects/rule-of-40-calculator.html` | Ready | Growth + margin benchmark |
-| **ARPU Calculator** | `projects/arpu-calculator.html` | **NEW** | Revenue per customer |
+| **ARPU Calculator** | `projects/arpu-calculator.html` | Ready | Revenue per customer |
+| **Gross Margin Calc** | `projects/gross-margin-calculator.html` | **NEW** | Profitability after direct costs |
 | **Meeting Tax Calc** | `projects/nomorezoomfatigue-validation/` | Deployed | Calendar analysis |
 
 ### Paid Products
@@ -105,7 +107,7 @@ PATH=~/.local/node/node-v20.11.0-linux-x64/bin:$PATH ~/.local/npm-global/bin/wra
 
 ### HUMAN: Authenticate & Deploy (2 min)
 
-**19+ commits ready to push.** Run in terminal with browser access:
+**20+ commits ready to push.** Run in terminal with browser access:
 
 ```bash
 # Option 1: Quick deploy script (recommended)
@@ -133,6 +135,7 @@ git push origin main
 | Break-Even | /break-even-calculator.html |
 | Rule of 40 | /rule-of-40-calculator.html |
 | ARPU | /arpu-calculator.html |
+| Gross Margin | /gross-margin-calculator.html |
 
 ### AFTER DEPLOY: Marketing Launch
 1. Post to r/startups, r/SaaS, r/indiehackers
@@ -143,7 +146,7 @@ git push origin main
 ---
 
 ## Company State
-- **Products**: 15 (1 paid, 14 free)
+- **Products**: 16 (1 paid, 15 free)
 - **Tech Stack**: Cloudflare Workers/Pages + GitHub Pages + Vanilla JS
 - **Revenue**: $0 (blocked on auth → deployment → marketing)
 - **Users**: 0 (blocked on auth → deployment → marketing)
@@ -169,7 +172,8 @@ git push origin main
 | 22 | 2026-03-03 | Product expansion | Cohort Analysis with heatmap |
 | 23 | 2026-03-03 | Product expansion | Quick Ratio Calculator |
 | 24 | 2026-03-03 | Product expansion | Break-Even Calculator |
-| 25 | 2026-03-03 | Product expansion | Rule of 40 Calculator |
+| 25 | 2026-03-03 | Product expansion | Rule of 40 + ARPU Calculators |
+| 26 | 2026-03-03 | Product expansion | Gross Margin Calculator |
 
 ---
 
@@ -184,6 +188,7 @@ git push origin main
 | GitHub Actions can deploy all tools | One workflow for entire portfolio |
 | Unit economics suite is high-value | LTV + CAC = complete picture for founders |
 | Rule of 40 is key VC metric | Popular search term, high SEO value |
+| Gross Margin is key profitability metric | Critical for AI SaaS with high compute costs |
 
 ---
 
@@ -192,7 +197,7 @@ git push origin main
 - Should we add Stripe payment integration?
 - What's the optimal marketing channel for each product?
 - What's the next tool in the SaaS metrics suite?
-- Should we add ARPU Calculator or Gross Margin Calculator?
+- Should we add more specialized calculators (SaaS Scorecard, CLV)?
 
 ---
 
@@ -213,7 +218,8 @@ Auto-Company/
 │   ├── quick-ratio-calculator.html   # Growth efficiency
 │   ├── break-even-calculator.html    # Break-even analysis
 │   ├── rule-of-40-calculator.html    # Rule of 40 benchmark
-│   ├── arpu-calculator.html          # ARPU - revenue per customer (NEW)
+│   ├── arpu-calculator.html          # ARPU - revenue per customer
+│   ├── gross-margin-calculator.html  # Gross Margin - profitability (NEW)
 │   ├── nomorezoomfatigue-validation/ # Meeting tax calculator
 │   └── webhookbin-pro/               # Webhook testing ($29)
 ├── scripts/
@@ -245,6 +251,7 @@ Auto-Company/
 | Break-Even Calc | SaaS founders | Customers to profit | Break-even calculator, break-even analysis |
 | Rule of 40 Calc | SaaS founders | VC benchmark | Rule of 40, SaaS benchmark |
 | ARPU Calculator | SaaS founders | Revenue per user | ARPU calculator, average revenue per user |
+| Gross Margin Calc | SaaS founders | Profitability | Gross margin calculator, SaaS gross margin |
 | Meeting Tax Calc | Remote workers | Meeting ROI | Meeting cost calculator |
 | WebhookBin Pro | Developers | Webhook testing | Webhook testing tool |
 
@@ -252,7 +259,7 @@ Auto-Company/
 
 ## Product Suite Strategy
 
-### Unit Economics Suite (Complete - 12 Tools)
+### Unit Economics Suite (Complete - 13 Tools)
 - **LTV Calculator** - How much is a customer worth?
 - **CAC Calculator** - How much to acquire a customer?
 - **NRR Calculator** - Are existing customers growing?
@@ -265,5 +272,17 @@ Auto-Company/
 - **Break-Even Calculator** - How many customers to be profitable?
 - **Rule of 40 Calculator** - How do we compare to VC benchmarks?
 - **ARPU Calculator** - What's our revenue per customer?
+- **Gross Margin Calculator** - How profitable are we after direct costs?
 
 These tools work together to give SaaS founders complete visibility into their business metrics.
+
+---
+
+## Next Tool Ideas
+
+| Tool | Description | Priority |
+|------|-------------|----------|
+| SaaS Scorecard | Aggregate all metrics into one dashboard | High |
+| CLV Calculator | Detailed customer lifetime value with cohorts | Medium |
+| Revenue Recognition | ASC 606 compliant revenue calculator | Low |
+| SaaS Valuation | Simple valuation multiple calculator | Medium |
