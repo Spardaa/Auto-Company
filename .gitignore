@@ -148,7 +148,6 @@ projects/*
 !projects/nomorezoomfatigue-validation/
 !projects/*.html
 !projects/blog/
-!projects/blog/*.html
 
 # Local/private outputs (do not publish)
 AGENTS.md
