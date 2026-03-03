@@ -377,6 +377,47 @@
             color: var(--muted);
         }
 
+        /* Related Tools */
+        .related-tools {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        .related-tools .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .tool-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tool-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+        }
+        .tool-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .tool-name { font-size: 0.85rem; font-weight: 600; color: var(--fg); margin-bottom: 2px; }
+        .tool-desc { font-size: 0.75rem; color: var(--muted); }
+
         /* Footer */
         footer {
             text-align: center;
@@ -650,6 +691,43 @@
                 <div class="actions-grid" id="actionsGrid">
                     <!-- Filled dynamically -->
                 </div>
+            </div>
+        </div>
+
+        <!-- Related Tools -->
+        <div class="related-tools">
+            <div class="section-title"><span>🛠️</span> Related Tools</div>
+            <div class="tools-grid">
+                <a href="ltv-calculator.html" class="tool-card">
+                    <span class="tool-icon">💰</span>
+                    <span class="tool-name">LTV Calculator</span>
+                    <span class="tool-desc">Customer value</span>
+                </a>
+                <a href="cac-calculator.html" class="tool-card">
+                    <span class="tool-icon">🎯</span>
+                    <span class="tool-name">CAC Calculator</span>
+                    <span class="tool-desc">Acquisition cost</span>
+                </a>
+                <a href="arpu-calculator.html" class="tool-card">
+                    <span class="tool-icon">💵</span>
+                    <span class="tool-name">ARPU</span>
+                    <span class="tool-desc">Revenue per user</span>
+                </a>
+                <a href="rule-of-40-calculator.html" class="tool-card">
+                    <span class="tool-icon">📏</span>
+                    <span class="tool-name">Rule of 40</span>
+                    <span class="tool-desc">Health check</span>
+                </a>
+                <a href="saas-scorecard.html" class="tool-card">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-name">SaaS Scorecard</span>
+                    <span class="tool-desc">All metrics</span>
+                </a>
+                <a href="break-even-calculator.html" class="tool-card">
+                    <span class="tool-icon">⚖️</span>
+                    <span class="tool-name">Break-Even</span>
+                    <span class="tool-desc">Profit point</span>
+                </a>
             </div>
         </div>
 

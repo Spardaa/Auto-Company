@@ -339,6 +339,48 @@
             color: #c0c0c0;
             font-size: 0.95rem;
         }
+        /* Related Tools */
+        .related-tools {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .related-tools .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #e94560;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .tool-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tool-card:hover {
+            border-color: #e94560;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.15);
+        }
+        .tool-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .tool-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 2px; }
+        .tool-desc { font-size: 0.75rem; color: #666; }
+
         footer {
             text-align: center;
             padding: 40px 0;
@@ -663,6 +705,43 @@
                         <tbody></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- Related Tools -->
+        <div class="related-tools">
+            <div class="section-title"><span>🛠️</span> Related Tools</div>
+            <div class="tools-grid">
+                <a href="saas-valuation-calculator.html" class="tool-card">
+                    <span class="tool-icon">💵</span>
+                    <span class="tool-name">SaaS Valuation</span>
+                    <span class="tool-desc">Company worth</span>
+                </a>
+                <a href="runway-calculator.html" class="tool-card">
+                    <span class="tool-icon">⏱️</span>
+                    <span class="tool-name">Runway</span>
+                    <span class="tool-desc">Months left</span>
+                </a>
+                <a href="burn-rate-calculator.html" class="tool-card">
+                    <span class="tool-icon">🔥</span>
+                    <span class="tool-name">Burn Rate</span>
+                    <span class="tool-desc">Cash burn</span>
+                </a>
+                <a href="saas-pricing-calculator.html" class="tool-card">
+                    <span class="tool-icon">💲</span>
+                    <span class="tool-name">Pricing</span>
+                    <span class="tool-desc">Price strategy</span>
+                </a>
+                <a href="saas-scorecard.html" class="tool-card">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-name">SaaS Scorecard</span>
+                    <span class="tool-desc">All metrics</span>
+                </a>
+                <a href="rule-of-40-calculator.html" class="tool-card">
+                    <span class="tool-icon">📏</span>
+                    <span class="tool-name">Rule of 40</span>
+                    <span class="tool-desc">Health check</span>
+                </a>
             </div>
         </div>
 

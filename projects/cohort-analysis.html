@@ -230,6 +230,47 @@
             font-size: 0.95rem;
         }
         .action-list li:last-child { border-bottom: none; }
+        /* Related Tools */
+        .related-tools {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        .related-tools .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .tool-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tool-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.15);
+        }
+        .tool-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .tool-name { font-size: 0.85rem; font-weight: 600; color: var(--fg); margin-bottom: 2px; }
+        .tool-desc { font-size: 0.75rem; color: var(--muted); }
+
         footer {
             text-align: center;
             padding-top: 40px;
@@ -378,6 +419,43 @@
             <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://autocompany.ai/cohort-analysis" class="share-btn" target="_blank">
                 💼 Share on LinkedIn
             </a>
+        </div>
+
+        <!-- Related Tools -->
+        <div class="related-tools">
+            <div class="section-title"><span>🛠️</span> Related Tools</div>
+            <div class="tools-grid">
+                <a href="churn-calculator.html" class="tool-card">
+                    <span class="tool-icon">📉</span>
+                    <span class="tool-name">Churn Calculator</span>
+                    <span class="tool-desc">Churn rate</span>
+                </a>
+                <a href="ltv-calculator.html" class="tool-card">
+                    <span class="tool-icon">💰</span>
+                    <span class="tool-name">LTV Calculator</span>
+                    <span class="tool-desc">Customer value</span>
+                </a>
+                <a href="nrr-calculator.html" class="tool-card">
+                    <span class="tool-icon">🔄</span>
+                    <span class="tool-name">NRR Calculator</span>
+                    <span class="tool-desc">Net retention</span>
+                </a>
+                <a href="mrr-growth-calculator.html" class="tool-card">
+                    <span class="tool-icon">📈</span>
+                    <span class="tool-name">MRR Growth</span>
+                    <span class="tool-desc">Revenue growth</span>
+                </a>
+                <a href="saas-scorecard.html" class="tool-card">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-name">SaaS Scorecard</span>
+                    <span class="tool-desc">All metrics</span>
+                </a>
+                <a href="quick-ratio-calculator.html" class="tool-card">
+                    <span class="tool-icon">⚡</span>
+                    <span class="tool-name">Quick Ratio</span>
+                    <span class="tool-desc">Growth efficiency</span>
+                </a>
+            </div>
         </div>
 
         <footer>
