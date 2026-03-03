@@ -387,6 +387,14 @@
                 gap: 15px;
             }
         }
+        .related-tools { margin-top: 40px; padding: 30px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .related-tools h2 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent); }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .tool-link { display: flex; flex-direction: column; align-items: center; padding: 16px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; text-decoration: none; transition: all 0.2s; text-align: center; }
+        .tool-link:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .tool-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .tool-name { font-size: 0.85rem; font-weight: 600; color: var(--fg); margin-bottom: 2px; }
+        .tool-desc { font-size: 0.75rem; color: var(--muted); }
     </style>
     <!-- Privacy-friendly analytics using CountAPI -->
     <script defer>
@@ -476,6 +484,43 @@
         <div class="export-section">
             <h3>CSS Code</h3>
             <div class="export-code" id="exportCode"></div>
+        </div>
+
+        <!-- Related Tools -->
+        <div class="related-tools">
+            <h2>🛠️ Related Tools</h2>
+            <div class="tools-grid">
+                <a href="color-palette-generator.html" class="tool-link">
+                    <span class="tool-icon">🎨</span>
+                    <span class="tool-name">Color Palette</span>
+                    <span class="tool-desc">Generate colors</span>
+                </a>
+                <a href="saas-scorecard.html" class="tool-link">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-name">SaaS Scorecard</span>
+                    <span class="tool-desc">All metrics</span>
+                </a>
+                <a href="saas-pricing-calculator.html" class="tool-link">
+                    <span class="tool-icon">💰</span>
+                    <span class="tool-name">SaaS Pricing</span>
+                    <span class="tool-desc">Pricing tiers</span>
+                </a>
+                <a href="saas-launch-checklist.html" class="tool-link">
+                    <span class="tool-icon">✅</span>
+                    <span class="tool-name">Launch Checklist</span>
+                    <span class="tool-desc">40+ tasks</span>
+                </a>
+                <a href="markdown-editor.html" class="tool-link">
+                    <span class="tool-icon">📝</span>
+                    <span class="tool-name">Markdown Editor</span>
+                    <span class="tool-desc">Write docs</span>
+                </a>
+                <a href="json-formatter.html" class="tool-link">
+                    <span class="tool-icon">📋</span>
+                    <span class="tool-name">JSON Formatter</span>
+                    <span class="tool-desc">Format JSON</span>
+                </a>
+            </div>
         </div>
 
         <footer>

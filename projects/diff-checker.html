@@ -55,6 +55,14 @@
         .info { margin-top: 30px; padding: 20px; background: rgba(96,165,250,0.1); border-radius: 12px; border: 1px solid rgba(96,165,250,0.2); }
         .info h4 { color: #60a5fa; margin-bottom: 10px; }
         .info p { color: #888; font-size: 0.9rem; line-height: 1.6; }
+        .related-tools { margin-top: 30px; padding: 25px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .related-tools h2 { font-size: 1.2rem; margin-bottom: 20px; color: #60a5fa; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .tool-link { display: flex; flex-direction: column; align-items: center; padding: 16px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; text-decoration: none; transition: all 0.2s; text-align: center; }
+        .tool-link:hover { border-color: #60a5fa; transform: translateY(-2px); }
+        .tool-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .tool-name { font-size: 0.85rem; font-weight: 600; color: #e0e0e0; margin-bottom: 2px; }
+        .tool-desc { font-size: 0.75rem; color: #888; }
     </style>
     <!-- Privacy-friendly analytics using CountAPI -->
     <script defer>
@@ -104,6 +112,43 @@
         <div class="info">
             <h4>How it works</h4>
             <p>This tool compares two texts and highlights the differences. Use line mode for code changes, word mode for document edits, or character mode for precise edits. Split view shows original and modified text side by side.</p>
+        </div>
+
+        <!-- Related Tools -->
+        <div class="related-tools">
+            <h2>🛠️ Related Tools</h2>
+            <div class="tools-grid">
+                <a href="json-formatter.html" class="tool-link">
+                    <span class="tool-icon">📋</span>
+                    <span class="tool-name">JSON Formatter</span>
+                    <span class="tool-desc">Format JSON</span>
+                </a>
+                <a href="regex-tester.html" class="tool-link">
+                    <span class="tool-icon">🔍</span>
+                    <span class="tool-name">Regex Tester</span>
+                    <span class="tool-desc">Test patterns</span>
+                </a>
+                <a href="markdown-editor.html" class="tool-link">
+                    <span class="tool-icon">📝</span>
+                    <span class="tool-name">Markdown Editor</span>
+                    <span class="tool-desc">Write docs</span>
+                </a>
+                <a href="uuid-generator.html" class="tool-link">
+                    <span class="tool-icon">🔑</span>
+                    <span class="tool-name">UUID Generator</span>
+                    <span class="tool-desc">Unique IDs</span>
+                </a>
+                <a href="hash-generator.html" class="tool-link">
+                    <span class="tool-icon">🔒</span>
+                    <span class="tool-name">Hash Generator</span>
+                    <span class="tool-desc">MD5, SHA</span>
+                </a>
+                <a href="base64-encoder.html" class="tool-link">
+                    <span class="tool-icon">🔐</span>
+                    <span class="tool-name">Base64 Encoder</span>
+                    <span class="tool-desc">Encode/Decode</span>
+                </a>
+            </div>
         </div>
     </div>
     <script>
