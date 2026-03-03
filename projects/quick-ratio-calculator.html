@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Quick Ratio Calculator | Auto Company</title>
+    <meta name="description" content="Calculate your SaaS Quick Ratio - the efficiency metric that measures growth quality. Compare expansion vs churn to understand sustainable growth.">
+    <meta property="og:title" content="SaaS Quick Ratio Calculator">
+    <meta property="og:description" content="Free tool to calculate Quick Ratio for SaaS. Measure the efficiency of your revenue growth.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/quick-ratio-calculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SaaS Quick Ratio Calculator">
+    <meta name="twitter:description" content="Calculate Quick Ratio - measure SaaS growth efficiency.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #14b8a6;
+            --accent-dark: #0d9488;
+            --accent-light: #2dd4bf;
+            --card: #141414;
+            --border: #262626;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --green: #10b981;
+            --red: #f43f5e;
+            --blue: #3b82f6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: var(--fg); }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+        .calc-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .calc-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-section h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-section h3.green { color: var(--success); }
+        .form-section h3.red { color: var(--danger); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 1rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        .input-prefix { position: relative; }
+        .input-prefix::before {
+            content: '$';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+        .input-prefix input { padding-left: 32px; }
+        .results { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 640px) { .results-grid { grid-template-columns: 1fr; } }
+        .result-item { text-align: center; padding: 24px 20px; background: var(--bg); border-radius: 12px; }
+        .result-item .value { font-size: 2rem; font-weight: 800; margin-bottom: 4px; }
+        .result-item .label { font-size: 0.85rem; color: var(--muted); }
+        .result-item.highlight {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+        }
+        .result-item.highlight .value { color: var(--accent); }
+        .ratio-section {
+            margin-top: 32px;
+            padding: 32px;
+            background: var(--bg);
+            border-radius: 16px;
+            text-align: center;
+        }
+        .ratio-display {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin: 16px 0;
+        }
+        .ratio-display.excellent { color: var(--success); }
+        .ratio-display.good { color: var(--accent); }
+        .ratio-display.warning { color: var(--warning); }
+        .ratio-display.bad { color: var(--danger); }
+        .ratio-label { color: var(--muted); font-size: 1rem; }
+        .ratio-bar-container {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            margin: 24px auto;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ratio-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: all 0.5s ease;
+        }
+        .ratio-markers {
+            display: flex;
+            justify-content: space-between;
+            max-width: 400px;
+            margin: 8px auto 0;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .formula-box {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 24px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: var(--accent);
+            text-align: center;
+            line-height: 2;
+        }
+        .breakdown {
+            margin-top: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 640px) { .breakdown { grid-template-columns: 1fr; } }
+        .breakdown-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .breakdown-card h4 {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-row .label { color: var(--muted); display: flex; align-items: center; gap: 8px; }
+        .breakdown-row .value { font-weight: 600; }
+        .breakdown-row .value.positive { color: var(--success); }
+        .breakdown-row .value.negative { color: var(--danger); }
+        .visual-breakdown {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .visual-breakdown h4 {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .bar-comparison {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .bar-group-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .bar-group-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bar-group-bar {
+            flex: 1;
+            height: 32px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .bar-group-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            transition: width 0.5s ease;
+        }
+        .bar-group-fill.gain { background: linear-gradient(90deg, var(--success), var(--accent)); }
+        .bar-group-fill.loss { background: linear-gradient(90deg, var(--danger), #fb7185); }
+        .bar-group-value {
+            width: 100px;
+            text-align: right;
+            font-weight: 600;
+        }
+        .benchmark {
+            margin-top: 24px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            border-radius: 12px;
+        }
+        .benchmark h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        .benchmark-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        @media (max-width: 640px) { .benchmark-grid { grid-template-columns: 1fr 1fr; } }
+        .benchmark-item {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+        .benchmark-item .value { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+        .benchmark-item .label { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+        .action-plan {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        .action-plan h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-list { list-style: none; }
+        .action-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        .action-list li:last-child { border-bottom: none; }
+        footer {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        .share-section { margin-top: 24px; text-align: center; }
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin: 0 8px;
+        }
+        .share-btn:hover { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Tools</a>
+            <h1>⚡ Quick Ratio Calculator</h1>
+            <p class="subtitle">Measure the efficiency of your SaaS growth. Are you growing sustainably?</p>
+        </header>
+
+        <div class="calc-card">
+            <h2>📊 Calculate Your Quick Ratio</h2>
+
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3 class="green">📈 Revenue Gains</h3>
+                    <div class="form-group">
+                        <label>New Customer MRR</label>
+                        <div class="input-prefix">
+                            <input type="number" id="new-mrr" value="15000" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Expansion MRR (Upsells)</label>
+                        <div class="input-prefix">
+                            <input type="number" id="expansion-mrr" value="8000" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reactivation MRR (Win-backs)</label>
+                        <div class="input-prefix">
+                            <input type="number" id="reactivation-mrr" value="2000" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="red">📉 Revenue Losses</h3>
+                    <div class="form-group">
+                        <label>Churn MRR (Cancellations)</label>
+                        <div class="input-prefix">
+                            <input type="number" id="churn-mrr" value="5000" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraction MRR (Downgrades)</label>
+                        <div class="input-prefix">
+                            <input type="number" id="contraction-mrr" value="3000" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                Quick Ratio = (New + Expansion + Reactivation) / (Churn + Contraction)<br>
+                Quick Ratio = ($<span id="formula-gains">25,000</span>) / ($<span id="formula-losses">8,000</span>) = <span id="formula-result">3.1</span>
+            </div>
+
+            <div class="ratio-section">
+                <div class="ratio-label">Your Quick Ratio</div>
+                <div class="ratio-display" id="ratio-display">3.1</div>
+                <div class="ratio-bar-container">
+                    <div class="ratio-bar" id="ratio-bar" style="width: 62%; background: var(--accent);"></div>
+                </div>
+                <div class="ratio-markers">
+                    <span>&lt;1 (Shrinking)</span>
+                    <span>1 (Break-even)</span>
+                    <span>4 (Excellent)</span>
+                </div>
+                <div id="ratio-status" style="margin-top: 16px; font-size: 1rem;">✅ Good Quick Ratio! For every $1 lost, you're gaining $3.1.</div>
+            </div>
+
+            <div class="results">
+                <div class="results-grid">
+                    <div class="result-item highlight">
+                        <div class="value" id="net-mrr">+$17,000</div>
+                        <div class="label">Net MRR Change</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="value" id="total-gains">$25,000</div>
+                        <div class="label">Total Revenue Gains</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="value" id="total-losses">$8,000</div>
+                        <div class="label">Total Revenue Losses</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calc-card">
+            <h2>📊 Visual Breakdown</h2>
+
+            <div class="visual-breakdown">
+                <h4>Revenue Movement Comparison</h4>
+                <div class="bar-comparison">
+                    <div class="bar-group">
+                        <div class="bar-group-label">📈 Revenue Gains</div>
+                        <div class="bar-group-row">
+                            <div class="bar-group-bar">
+                                <div class="bar-group-fill gain" id="gains-bar" style="width: 75%;">$25,000</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-group-label">📉 Revenue Losses</div>
+                        <div class="bar-group-row">
+                            <div class="bar-group-bar">
+                                <div class="bar-group-fill loss" id="losses-bar" style="width: 24%;">$8,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="breakdown">
+                <div class="breakdown-card">
+                    <h4>📈 Gain Breakdown</h4>
+                    <div class="breakdown-row">
+                        <span class="label">🆕 New Customers</span>
+                        <span class="value positive" id="new-pct">60%</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="label">📈 Expansion</span>
+                        <span class="value positive" id="exp-pct">32%</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="label">🔄 Reactivation</span>
+                        <span class="value positive" id="react-pct">8%</span>
+                    </div>
+                </div>
+                <div class="breakdown-card">
+                    <h4>📉 Loss Breakdown</h4>
+                    <div class="breakdown-row">
+                        <span class="label">🚪 Churn</span>
+                        <span class="value negative" id="churn-pct">62%</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="label">📉 Contraction</span>
+                        <span class="value negative" id="con-pct">38%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calc-card">
+            <h2>🎯 What Does This Mean?</h2>
+
+            <div id="interpretation" style="color: var(--muted); line-height: 1.8; margin-bottom: 24px;">
+                <!-- Generated by JS -->
+            </div>
+
+            <div class="benchmark">
+                <h4>🏆 Quick Ratio Benchmarks</h4>
+                <div class="benchmark-grid">
+                    <div class="benchmark-item">
+                        <div class="value">&lt;1</div>
+                        <div class="label">Shrinking (Danger)</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="value">1-2</div>
+                        <div class="label">Slow Growth</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="value">2-4</div>
+                        <div class="label">Healthy Growth</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="value">4+</div>
+                        <div class="label">Efficient Scale</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calc-card">
+            <h2>💡 Action Plan</h2>
+            <div id="action-content">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <div class="share-section">
+            <a href="https://twitter.com/intent/tweet?text=My%20SaaS%20Quick%20Ratio%20is%20looking%20good%21%20Check%20yours%3A&url=https://autocompany.ai/quick-ratio-calculator" class="share-btn" target="_blank">
+                𝕏 Share on Twitter
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://autocompany.ai/quick-ratio-calculator" class="share-btn" target="_blank">
+                💼 Share on LinkedIn
+            </a>
+        </div>
+
+        <footer>
+            <p>Free tool by <a href="index.html">Auto Company</a> · No data collected · Calculations run locally</p>
+        </footer>
+    </div>
+
+    <script>
+        function calculate() {
+            const newMrr = parseFloat(document.getElementById('new-mrr').value) || 0;
+            const expansionMrr = parseFloat(document.getElementById('expansion-mrr').value) || 0;
+            const reactivationMrr = parseFloat(document.getElementById('reactivation-mrr').value) || 0;
+            const churnMrr = parseFloat(document.getElementById('churn-mrr').value) || 0;
+            const contractionMrr = parseFloat(document.getElementById('contraction-mrr').value) || 0;
+
+            const totalGains = newMrr + expansionMrr + reactivationMrr;
+            const totalLosses = churnMrr + contractionMrr;
+            const netMrr = totalGains - totalLosses;
+            const quickRatio = totalLosses > 0 ? totalGains / totalLosses : (totalGains > 0 ? 999 : 0);
+
+            // Update formula
+            document.getElementById('formula-gains').textContent = totalGains.toLocaleString();
+            document.getElementById('formula-losses').textContent = totalLosses.toLocaleString();
+            document.getElementById('formula-result').textContent = quickRatio >= 100 ? '∞' : quickRatio.toFixed(1);
+
+            // Update ratio display
+            const ratioDisplay = document.getElementById('ratio-display');
+            ratioDisplay.textContent = quickRatio >= 100 ? '∞' : quickRatio.toFixed(1);
+
+            const ratioBar = document.getElementById('ratio-bar');
+            const ratioStatus = document.getElementById('ratio-status');
+
+            const barWidth = Math.min(100, (quickRatio / 5) * 100);
+
+            if (quickRatio >= 4) {
+                ratioDisplay.className = 'ratio-display excellent';
+                ratioBar.style.background = 'var(--success)';
+                ratioBar.style.width = '100%';
+                ratioStatus.innerHTML = '🌟 Excellent Quick Ratio! For every $1 lost, you\'re gaining $' + quickRatio.toFixed(1) + '. This is efficient growth!';
+            } else if (quickRatio >= 2) {
+                ratioDisplay.className = 'ratio-display good';
+                ratioBar.style.background = 'var(--accent)';
+                ratioBar.style.width = barWidth + '%';
+                ratioStatus.innerHTML = '✅ Good Quick Ratio! For every $1 lost, you\'re gaining $' + quickRatio.toFixed(1) + '.';
+            } else if (quickRatio >= 1) {
+                ratioDisplay.className = 'ratio-display warning';
+                ratioBar.style.background = 'var(--warning)';
+                ratioBar.style.width = barWidth + '%';
+                ratioStatus.innerHTML = '⚠️ Quick Ratio below 2. You\'re growing, but not efficiently. Focus on reducing losses.';
+            } else {
+                ratioDisplay.className = 'ratio-display bad';
+                ratioBar.style.background = 'var(--danger)';
+                ratioBar.style.width = Math.max(5, barWidth) + '%';
+                ratioStatus.innerHTML = '🚨 Quick Ratio below 1! You\'re shrinking. Revenue losses exceed gains.';
+            }
+
+            // Update results
+            document.getElementById('net-mrr').textContent = (netMrr >= 0 ? '+' : '') + '$' + netMrr.toLocaleString();
+            document.getElementById('total-gains').textContent = '$' + totalGains.toLocaleString();
+            document.getElementById('total-losses').textContent = '$' + totalLosses.toLocaleString();
+
+            // Update breakdown percentages
+            const newPct = totalGains > 0 ? (newMrr / totalGains * 100) : 0;
+            const expPct = totalGains > 0 ? (expansionMrr / totalGains * 100) : 0;
+            const reactPct = totalGains > 0 ? (reactivationMrr / totalGains * 100) : 0;
+            const churnPct = totalLosses > 0 ? (churnMrr / totalLosses * 100) : 0;
+            const conPct = totalLosses > 0 ? (contractionMrr / totalLosses * 100) : 0;
+
+            document.getElementById('new-pct').textContent = newPct.toFixed(0) + '%';
+            document.getElementById('exp-pct').textContent = expPct.toFixed(0) + '%';
+            document.getElementById('react-pct').textContent = reactPct.toFixed(0) + '%';
+            document.getElementById('churn-pct').textContent = churnPct.toFixed(0) + '%';
+            document.getElementById('con-pct').textContent = conPct.toFixed(0) + '%';
+
+            // Update visual bars
+            const maxVal = Math.max(totalGains, totalLosses);
+            const gainsWidth = maxVal > 0 ? (totalGains / maxVal * 100) : 0;
+            const lossesWidth = maxVal > 0 ? (totalLosses / maxVal * 100) : 0;
+
+            document.getElementById('gains-bar').style.width = gainsWidth + '%';
+            document.getElementById('gains-bar').textContent = '$' + totalGains.toLocaleString();
+            document.getElementById('losses-bar').style.width = lossesWidth + '%';
+            document.getElementById('losses-bar').textContent = '$' + totalLosses.toLocaleString();
+
+            // Update interpretation
+            updateInterpretation(quickRatio, newPct, expPct, churnPct, netMrr);
+
+            // Generate action plan
+            generateActionPlan(quickRatio, newPct, expPct, churnPct);
+        }
+
+        function updateInterpretation(ratio, newPct, expPct, churnPct, netMrr) {
+            const el = document.getElementById('interpretation');
+            let html = '';
+
+            if (ratio >= 4) {
+                html = '<p>Your Quick Ratio of <strong>' + ratio.toFixed(1) + '</strong> is excellent! This means you\'re growing efficiently.</p>';
+                html += '<p style="margin-top: 12px;">You\'re gaining $' + ratio.toFixed(1) + ' for every $1 lost. This is the kind of efficiency that attracts investors and enables sustainable scaling.</p>';
+            } else if (ratio >= 2) {
+                html = '<p>Your Quick Ratio of <strong>' + ratio.toFixed(1) + '</strong> is healthy. You\'re growing sustainably.</p>';
+                html += '<p style="margin-top: 12px;">To reach the 4+ "efficient scale" range, focus on reducing churn and increasing expansion revenue from existing customers.</p>';
+            } else if (ratio >= 1) {
+                html = '<p>Your Quick Ratio of <strong>' + ratio.toFixed(1) + '</strong> shows growth, but with room for improvement.</p>';
+                html += '<p style="margin-top: 12px;">You\'re net positive, but too much revenue is leaving. Focus equally on acquisition AND retention to improve efficiency.</p>';
+            } else {
+                html = '<p>Your Quick Ratio of <strong>' + ratio.toFixed(1) + '</strong> indicates you\'re shrinking.</p>';
+                html += '<p style="margin-top: 12px;">Revenue losses are exceeding gains. This is unsustainable - prioritize retention and churn reduction immediately.</p>';
+            }
+
+            el.innerHTML = html;
+        }
+
+        function generateActionPlan(ratio, newPct, expPct, churnPct) {
+            const container = document.getElementById('action-content');
+            let html = '';
+
+            if (ratio >= 4) {
+                html = '<div class="action-plan"><h3>🚀 Scale Efficiently!</h3><ul class="action-list">' +
+                    '<li><span>💰</span> Your growth engine is working - invest more in acquisition</li>' +
+                    '<li><span>📈</span> Consider raising prices - you have strong retention</li>' +
+                    '<li><span>🎯</span> Document what drives your efficiency for replication</li>' +
+                    '<li><span>🌟</span> Share your success story - this attracts talent and investors</li></ul></div>';
+            } else if (ratio >= 2) {
+                html = '<div class="action-plan"><h3>⚡ Push to 4+</h3><ul class="action-list">' +
+                    '<li><span>📊</span> Focus on expansion revenue - it\'s the most efficient growth</li>' +
+                    '<li><span>🔄</span> Reduce churn with better onboarding and customer success</li>' +
+                    '<li><span>💰</span> Test price increases on new customers</li>' +
+                    '<li><span>🎯</span> Target customers most likely to expand (high usage segments)</li></ul></div>';
+            } else if (ratio >= 1) {
+                html = '<div class="action-plan" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, transparent 100%); border-color: rgba(234, 179, 8, 0.3);"><h3>⚠️ Balance Growth & Retention</h3><ul class="action-list">' +
+                    '<li><span>🔍</span> Interview churned customers - understand why they leave</li>' +
+                    '<li><span>💡</span> Launch expansion plays: upsells, cross-sells, premium tiers</li>' +
+                    '<li><span>📊</span> Focus on high-value acquisition channels only</li>' +
+                    '<li><span>🎯</span> Improve time-to-value for new customers</li>' +
+                    '<li><span>💰</span> Implement annual plans to reduce monthly churn</li></ul></div>';
+            } else {
+                html = '<div class="action-plan" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%); border-color: rgba(239, 68, 68, 0.3);"><h3>🚨 Stop the Bleeding</h3><ul class="action-list">' +
+                    '<li><span>✋</span> Pause new acquisition - fix retention first</li>' +
+                    '<li><span>📞</span> Call every customer at risk of churning</li>' +
+                    '<li><span>🔍</span> Root cause analysis on recent churn</li>' +
+                    '<li><span>💡</span> Offer annual plans with discounts to lock in revenue</li>' +
+                    '<li><span>📊</span> Daily tracking of at-risk customers</li>' +
+                    '<li><span>💰</span> Consider pricing changes if value isn\'t clear</li></ul></div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Calculate on load
+        calculate();
+    </script>
+</body>
+</html>

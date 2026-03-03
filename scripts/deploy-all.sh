@@ -137,6 +137,7 @@ deploy_free_tools() {
     git add projects/cac-calculator.html
     git add projects/nrr-calculator.html
     git add projects/cohort-analysis.html
+    git add projects/quick-ratio-calculator.html
     git add projects/nomorezoomfatigue-validation/
 
     # Check if there are changes to commit
