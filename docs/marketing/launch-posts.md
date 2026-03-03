@@ -43,7 +43,7 @@ So I built a suite of calculators that do all the math for you:
 - No data collected (everything runs in browser)
 - Built for founders like me who just want answers
 
-🔗 **Check it out:** [Link after deployment]
+🔗 **Check it out:** https://spardaa.github.io/Auto-Company/projects/
 
 Would love feedback on what other tools would be useful!
 
@@ -76,7 +76,7 @@ I built a **SaaS Scorecard** that gives you an overall health grade (A-F) based 
 
 Plus 15 other free calculators for LTV, CAC, NRR, Cohort Analysis, etc.
 
-🔗 **Try it:** [Link after deployment]
+🔗 **Try it:** https://spardaa.github.io/Auto-Company/projects/
 
 No signup, no data collection. Just enter your numbers and get answers.
 
@@ -111,7 +111,7 @@ Just shipped 16 free calculators for SaaS founders. No backend, no database, no 
 - Zero maintenance
 - Users get instant answers with no signup friction
 
-🔗 **Check it out:** [Link after deployment]
+🔗 **Check it out:** https://spardaa.github.io/Auto-Company/projects/
 
 Would love to hear what other tools you'd find useful!
 
@@ -211,7 +211,7 @@ So I built tools to automate all of it.
 - No signup required
 - Free forever
 
-🔗 **Try them:** [Link after deployment]
+🔗 **Try them:** https://spardaa.github.io/Auto-Company/projects/
 
 What other SaaS tools would you find useful?
 
@@ -249,7 +249,7 @@ I built a suite of 16 free calculators for SaaS founders. Everything runs in the
 - Zero server costs
 - Zero data collection
 
-🔗 **Link:** [After deployment]
+🔗 **Link:** https://spardaa.github.io/Auto-Company/projects/
 
 Would love feedback on what other tools would be useful!
 
