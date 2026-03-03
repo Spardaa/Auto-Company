@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Scorecard - All Your Metrics in One Dashboard | Auto Company</title>
+    <meta name="description" content="Free SaaS Scorecard calculator. See all your metrics in one place: LTV, CAC, MRR, Churn, NRR, Quick Ratio, Rule of 40. Get your SaaS health grade.">
+    <meta property="og:title" content="SaaS Scorecard - Complete Metrics Dashboard">
+    <meta property="og:description" content="Free tool to calculate your complete SaaS health score. All metrics in one dashboard.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/saas-scorecard">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SaaS Scorecard - Complete Metrics Dashboard">
+    <meta name="twitter:description" content="Free tool to calculate your SaaS health score. All metrics in one place.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --accent-light: #fbbf24;
+            --card: #141414;
+            --border: #262626;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --green: #10b981;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+
+        /* Overall Score */
+        .score-hero {
+            background: linear-gradient(135deg, var(--card) 0%, #1a1a2e 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .score-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--border) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s ease;
+        }
+        .score-inner {
+            width: 160px;
+            height: 160px;
+            background: var(--card);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-value { font-size: 3.5rem; font-weight: 800; color: var(--accent); }
+        .score-label { font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .score-grade {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .grade-A { color: var(--success); }
+        .grade-B { color: var(--green); }
+        .grade-C { color: var(--warning); }
+        .grade-D { color: var(--accent); }
+        .grade-F { color: var(--danger); }
+
+        /* Input Section */
+        .input-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title span { font-size: 1.5rem; }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .input-hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .metric-name {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .metric-grade {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .grade-excellent { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .grade-good { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .grade-fair { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+        .grade-poor { background: rgba(245, 158, 11, 0.2); color: var(--accent); }
+        .grade-bad { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .metric-benchmark {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .metric-benchmark strong { color: var(--fg); }
+        .metric-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Derived Metrics */
+        .derived-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, var(--card) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .derived-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .derived-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .derived-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .derived-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .derived-formula {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 8px;
+            font-family: monospace;
+        }
+
+        /* Rule of 40 Special Card */
+        .rule40-card {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            border: none;
+            color: #000;
+        }
+        .rule40-card .metric-name { color: rgba(0,0,0,0.7); }
+        .rule40-card .metric-value { color: #000; }
+        .rule40-card .metric-benchmark { color: rgba(0,0,0,0.7); }
+        .rule40-card .metric-benchmark strong { color: #000; }
+        .rule40-card .metric-bar { background: rgba(0,0,0,0.2); }
+
+        /* Recommendations */
+        .recommendations {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .rec-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .rec-item:last-child { border-bottom: none; }
+        .rec-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .rec-icon.warning { background: rgba(234, 179, 8, 0.2); }
+        .rec-icon.success { background: rgba(34, 197, 94, 0.2); }
+        .rec-icon.danger { background: rgba(239, 68, 68, 0.2); }
+        .rec-content h4 { font-size: 1rem; margin-bottom: 4px; }
+        .rec-content p { font-size: 0.9rem; color: var(--muted); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .score-circle { width: 160px; height: 160px; }
+            .score-inner { width: 130px; height: 130px; }
+            .score-value { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Tools</a>
+            <h1>SaaS Scorecard</h1>
+            <p class="subtitle">All your metrics in one place. Know your SaaS health score.</p>
+        </header>
+
+        <!-- Overall Score -->
+        <div class="score-hero">
+            <div class="score-circle">
+                <div class="score-ring" id="scoreRing" style="--score: 0">
+                    <div class="score-inner">
+                        <div class="score-value" id="overallScore">-</div>
+                        <div class="score-label">Health Score</div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-grade" id="scoreGrade">Enter your metrics below</div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2 class="section-title"><span>📊</span> Enter Your Metrics</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>MRR (Monthly Recurring Revenue)</label>
+                    <input type="number" id="mrr" placeholder="100000" oninput="calculate()">
+                    <div class="input-hint">Total monthly recurring revenue</div>
+                </div>
+                <div class="input-group">
+                    <label>MRR Growth Rate (%)</label>
+                    <input type="number" id="mrrGrowth" placeholder="15" step="0.1" oninput="calculate()">
+                    <div class="input-hint">Month-over-month growth</div>
+                </div>
+                <div class="input-group">
+                    <label>Churn Rate (%)</label>
+                    <input type="number" id="churnRate" placeholder="3" step="0.1" oninput="calculate()">
+                    <div class="input-hint">Monthly customer churn</div>
+                </div>
+                <div class="input-group">
+                    <label>Customers</label>
+                    <input type="number" id="customers" placeholder="500" oninput="calculate()">
+                    <div class="input-hint">Total active customers</div>
+                </div>
+                <div class="input-group">
+                    <label>Customer Lifetime (months)</label>
+                    <input type="number" id="lifetime" placeholder="30" oninput="calculate()">
+                    <div class="input-hint">1 / churn rate</div>
+                </div>
+                <div class="input-group">
+                    <label>LTV (Lifetime Value)</label>
+                    <input type="number" id="ltv" placeholder="5000" oninput="calculate()">
+                    <div class="input-hint">ARPU × lifetime</div>
+                </div>
+                <div class="input-group">
+                    <label>CAC (Customer Acquisition Cost)</label>
+                    <input type="number" id="cac" placeholder="1000" oninput="calculate()">
+                    <div class="input-hint">Cost to acquire one customer</div>
+                </div>
+                <div class="input-group">
+                    <label>NRR (Net Revenue Retention %)</label>
+                    <input type="number" id="nrr" placeholder="110" step="0.1" oninput="calculate()">
+                    <div class="input-hint">Revenue from existing customers</div>
+                </div>
+                <div class="input-group">
+                    <label>New MRR ($)</label>
+                    <input type="number" id="newMrr" placeholder="20000" oninput="calculate()">
+                    <div class="input-hint">From new customers</div>
+                </div>
+                <div class="input-group">
+                    <label>Expansion MRR ($)</label>
+                    <input type="number" id="expansionMrr" placeholder="8000" oninput="calculate()">
+                    <div class="input-hint">From upgrades</div>
+                </div>
+                <div class="input-group">
+                    <label>Contraction MRR ($)</label>
+                    <input type="number" id="contractionMrr" placeholder="3000" oninput="calculate()">
+                    <div class="input-hint">From downgrades</div>
+                </div>
+                <div class="input-group">
+                    <label>Churned MRR ($)</label>
+                    <input type="number" id="churnedMrr" placeholder="5000" oninput="calculate()">
+                    <div class="input-hint">From cancellations</div>
+                </div>
+                <div class="input-group">
+                    <label>Monthly Expenses ($)</label>
+                    <input type="number" id="expenses" placeholder="80000" oninput="calculate()">
+                    <div class="input-hint">Burn rate</div>
+                </div>
+                <div class="input-group">
+                    <label>Cash on Hand ($)</label>
+                    <input type="number" id="cash" placeholder="500000" oninput="calculate()">
+                    <div class="input-hint">Total cash available</div>
+                </div>
+                <div class="input-group">
+                    <label>Gross Margin (%)</label>
+                    <input type="number" id="grossMargin" placeholder="75" step="0.1" oninput="calculate()">
+                    <div class="input-hint">Revenue after COGS</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Metrics -->
+        <h2 class="section-title" style="margin-bottom: 20px;"><span>📈</span> Your Metrics</h2>
+        <div class="metrics-grid">
+            <!-- LTV:CAC Ratio -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">LTV:CAC Ratio</span>
+                    <span class="metric-grade" id="ltvCacGrade">-</span>
+                </div>
+                <div class="metric-value" id="ltvCacValue">-</div>
+                <div class="metric-benchmark">Benchmark: <strong>3:1 or higher</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="ltvCacBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- Payback Period -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">Payback Period</span>
+                    <span class="metric-grade" id="paybackGrade">-</span>
+                </div>
+                <div class="metric-value" id="paybackValue">-</div>
+                <div class="metric-benchmark">Benchmark: <strong>< 12 months</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="paybackBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- ARPU -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">ARPU</span>
+                    <span class="metric-grade" id="arpuGrade">-</span>
+                </div>
+                <div class="metric-value" id="arpuValue">-</div>
+                <div class="metric-benchmark">Per customer per month</div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="arpuBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- Quick Ratio -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">Quick Ratio</span>
+                    <span class="metric-grade" id="quickGrade">-</span>
+                </div>
+                <div class="metric-value" id="quickValue">-</div>
+                <div class="metric-benchmark">Benchmark: <strong>4+ is excellent</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="quickBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- Rule of 40 -->
+            <div class="metric-card rule40-card">
+                <div class="metric-header">
+                    <span class="metric-name">Rule of 40</span>
+                    <span class="metric-grade" id="rule40Grade">-</span>
+                </div>
+                <div class="metric-value" id="rule40Value">-</div>
+                <div class="metric-benchmark">Growth + Margin should be <strong>40+</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="rule40Bar" style="width: 0%; background: rgba(0,0,0,0.3)"></div></div>
+            </div>
+
+            <!-- Runway -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">Runway</span>
+                    <span class="metric-grade" id="runwayGrade">-</span>
+                </div>
+                <div class="metric-value" id="runwayValue">-</div>
+                <div class="metric-benchmark">Benchmark: <strong>18+ months ideal</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="runwayBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- Burn Multiple -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">Burn Multiple</span>
+                    <span class="metric-grade" id="burnGrade">-</span>
+                </div>
+                <div class="metric-value" id="burnValue">-</div>
+                <div class="metric-benchmark">Benchmark: <strong>< 1.5 is efficient</strong></div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="burnBar" style="width: 0%"></div></div>
+            </div>
+
+            <!-- Retention Health -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-name">Retention Health</span>
+                    <span class="metric-grade" id="retentionGrade">-</span>
+                </div>
+                <div class="metric-value" id="retentionValue">-</div>
+                <div class="metric-benchmark">Based on NRR + Churn</div>
+                <div class="metric-bar"><div class="metric-bar-fill" id="retentionBar" style="width: 0%"></div></div>
+            </div>
+        </div>
+
+        <!-- Derived Metrics Summary -->
+        <div class="derived-section">
+            <h2 class="section-title"><span>🧮</span> Calculated Metrics</h2>
+            <div class="derived-grid">
+                <div class="derived-item">
+                    <div class="derived-label">Annual Run Rate (ARR)</div>
+                    <div class="derived-value" id="arrValue">-</div>
+                    <div class="derived-formula">MRR × 12</div>
+                </div>
+                <div class="derived-item">
+                    <div class="derived-label">Gross Profit/Month</div>
+                    <div class="derived-value" id="grossProfitValue">-</div>
+                    <div class="derived-formula">MRR × Gross Margin</div>
+                </div>
+                <div class="derived-item">
+                    <div class="derived-label">Net Burn/Month</div>
+                    <div class="derived-value" id="netBurnValue">-</div>
+                    <div class="derived-formula">Revenue - Expenses</div>
+                </div>
+                <div class="derived-item">
+                    <div class="derived-label">Annual Growth Rate</div>
+                    <div class="derived-value" id="annualGrowthValue">-</div>
+                    <div class="derived-formula">(1 + MoM)^12 - 1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations">
+            <h2 class="section-title"><span>💡</span> Recommendations</h2>
+            <div id="recommendationsList">
+                <div class="rec-item">
+                    <div class="rec-icon warning">📊</div>
+                    <div class="rec-content">
+                        <h4>Enter your metrics above</h4>
+                        <p>We'll analyze your SaaS health and provide personalized recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Part of the <a href="index.html">SaaS Metrics Suite</a> by Auto Company</p>
+        </footer>
+    </div>
+
+    <script>
+        function calculate() {
+            // Get inputs
+            const mrr = parseFloat(document.getElementById('mrr').value) || 0;
+            const mrrGrowth = parseFloat(document.getElementById('mrrGrowth').value) || 0;
+            const churnRate = parseFloat(document.getElementById('churnRate').value) || 0;
+            const customers = parseFloat(document.getElementById('customers').value) || 0;
+            const lifetime = parseFloat(document.getElementById('lifetime').value) || 0;
+            const ltv = parseFloat(document.getElementById('ltv').value) || 0;
+            const cac = parseFloat(document.getElementById('cac').value) || 0;
+            const nrr = parseFloat(document.getElementById('nrr').value) || 0;
+            const newMrr = parseFloat(document.getElementById('newMrr').value) || 0;
+            const expansionMrr = parseFloat(document.getElementById('expansionMrr').value) || 0;
+            const contractionMrr = parseFloat(document.getElementById('contractionMrr').value) || 0;
+            const churnedMrr = parseFloat(document.getElementById('churnedMrr').value) || 0;
+            const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+            const cash = parseFloat(document.getElementById('cash').value) || 0;
+            const grossMargin = parseFloat(document.getElementById('grossMargin').value) || 0;
+
+            // Calculate derived metrics
+            const arpu = customers > 0 ? mrr / customers : 0;
+            const ltvCac = cac > 0 ? ltv / cac : 0;
+            const payback = arpu > 0 ? cac / arpu : 0;
+            const quickRatio = (contractionMrr + churnedMrr) > 0 ?
+                (newMrr + expansionMrr) / (contractionMrr + churnedMrr) : 0;
+            const rule40 = mrrGrowth + grossMargin;
+            const netBurn = mrr - expenses;
+            const burnRate = Math.abs(netBurn);
+            const runway = netBurn < 0 && burnRate > 0 ? cash / burnRate : 999;
+            const netMrr = newMrr + expansionMrr - contractionMrr - churnedMrr;
+            const burnMultiple = netMrr > 0 ? burnRate / netMrr : 0;
+            const arr = mrr * 12;
+            const grossProfit = mrr * (grossMargin / 100);
+            const annualGrowth = (Math.pow(1 + mrrGrowth/100, 12) - 1) * 100;
+
+            // Calculate overall score
+            let score = 0;
+            let maxScore = 0;
+
+            // LTV:CAC (weight: 20)
+            if (ltvCac > 0) {
+                maxScore += 20;
+                if (ltvCac >= 5) score += 20;
+                else if (ltvCac >= 3) score += 16;
+                else if (ltvCac >= 2) score += 12;
+                else if (ltvCac >= 1) score += 8;
+                else score += 4;
+            }
+
+            // Payback (weight: 15)
+            if (payback > 0) {
+                maxScore += 15;
+                if (payback <= 6) score += 15;
+                else if (payback <= 12) score += 12;
+                else if (payback <= 18) score += 8;
+                else score += 4;
+            }
+
+            // NRR (weight: 20)
+            if (nrr > 0) {
+                maxScore += 20;
+                if (nrr >= 120) score += 20;
+                else if (nrr >= 100) score += 16;
+                else if (nrr >= 90) score += 10;
+                else score += 4;
+            }
+
+            // Churn (weight: 15)
+            if (churnRate > 0) {
+                maxScore += 15;
+                if (churnRate <= 1) score += 15;
+                else if (churnRate <= 3) score += 12;
+                else if (churnRate <= 5) score += 8;
+                else score += 4;
+            }
+
+            // Quick Ratio (weight: 10)
+            if (quickRatio > 0) {
+                maxScore += 10;
+                if (quickRatio >= 4) score += 10;
+                else if (quickRatio >= 3) score += 8;
+                else if (quickRatio >= 2) score += 5;
+                else score += 2;
+            }
+
+            // Rule of 40 (weight: 10)
+            if (rule40 > 0) {
+                maxScore += 10;
+                if (rule40 >= 50) score += 10;
+                else if (rule40 >= 40) score += 8;
+                else if (rule40 >= 30) score += 5;
+                else score += 2;
+            }
+
+            // Runway (weight: 10)
+            if (runway > 0 && runway < 999) {
+                maxScore += 10;
+                if (runway >= 24) score += 10;
+                else if (runway >= 18) score += 8;
+                else if (runway >= 12) score += 5;
+                else score += 2;
+            }
+
+            const overallScore = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+
+            // Update overall score display
+            document.getElementById('overallScore').textContent = overallScore;
+            document.getElementById('scoreRing').style.setProperty('--score', overallScore);
+
+            const gradeEl = document.getElementById('scoreGrade');
+            if (overallScore >= 85) {
+                gradeEl.textContent = 'Excellent - A';
+                gradeEl.className = 'score-grade grade-A';
+            } else if (overallScore >= 70) {
+                gradeEl.textContent = 'Good - B';
+                gradeEl.className = 'score-grade grade-B';
+            } else if (overallScore >= 55) {
+                gradeEl.textContent = 'Fair - C';
+                gradeEl.className = 'score-grade grade-C';
+            } else if (overallScore >= 40) {
+                gradeEl.textContent = 'Needs Work - D';
+                gradeEl.className = 'score-grade grade-D';
+            } else if (overallScore > 0) {
+                gradeEl.textContent = 'Critical - F';
+                gradeEl.className = 'score-grade grade-F';
+            }
+
+            // Update individual metrics
+            updateMetric('ltvCac', ltvCac.toFixed(1) + 'x', getGradeLtvCac(ltvCac), getBarWidth(ltvCac, 5));
+            updateMetric('payback', payback.toFixed(1) + ' mo', getGradePayback(payback), getBarWidth(24 - payback, 24));
+            updateMetric('arpu', '$' + formatNumber(arpu), getGradeArpu(arpu), getBarWidth(arpu, 500));
+            updateMetric('quick', quickRatio.toFixed(1) + 'x', getGradeQuick(quickRatio), getBarWidth(quickRatio, 5));
+            updateMetric('rule40', rule40.toFixed(0) + '%', getGradeRule40(rule40), getBarWidth(rule40, 60));
+            updateMetric('runway', runway >= 999 ? '∞' : runway.toFixed(0) + ' mo', getGradeRunway(runway), getBarWidth(Math.min(runway, 36), 36));
+            updateMetric('burn', burnMultiple.toFixed(1) + 'x', getGradeBurn(burnMultiple), getBarWidth(3 - burnMultiple, 3));
+            updateMetric('retention', getRetentionHealth(nrr, churnRate), getGradeRetention(nrr, churnRate), getBarWidth(nrr - churnRate, 50));
+
+            // Update derived metrics
+            document.getElementById('arrValue').textContent = '$' + formatNumber(arr);
+            document.getElementById('grossProfitValue').textContent = '$' + formatNumber(grossProfit);
+            document.getElementById('netBurnValue').textContent = (netBurn >= 0 ? '+$' : '-$') + formatNumber(Math.abs(netBurn));
+            document.getElementById('annualGrowthValue').textContent = annualGrowth.toFixed(0) + '%';
+
+            // Generate recommendations
+            generateRecommendations(ltvCac, payback, nrr, churnRate, quickRatio, rule40, runway, burnMultiple);
+        }
+
+        function updateMetric(id, value, grade, barWidth) {
+            document.getElementById(id + 'Value').textContent = value;
+            document.getElementById(id + 'Grade').textContent = grade.text;
+            document.getElementById(id + 'Grade').className = 'metric-grade ' + grade.class;
+            const bar = document.getElementById(id + 'Bar');
+            bar.style.width = Math.max(0, Math.min(100, barWidth)) + '%';
+            bar.style.background = grade.color;
+        }
+
+        function getGradeLtvCac(val) {
+            if (val >= 5) return {text: 'Excellent', class: 'grade-excellent', color: '#22c55e'};
+            if (val >= 3) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val >= 2) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            if (val >= 1) return {text: 'Poor', class: 'grade-poor', color: '#f59e0b'};
+            return {text: '-', class: '', color: '#888'};
+        }
+
+        function getGradePayback(val) {
+            if (val <= 6) return {text: 'Excellent', class: 'grade-excellent', color: '#22c55e'};
+            if (val <= 12) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val <= 18) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Poor', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getGradeArpu(val) {
+            if (val >= 500) return {text: 'High', class: 'grade-excellent', color: '#22c55e'};
+            if (val >= 200) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val >= 100) return {text: 'Medium', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Low', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getGradeQuick(val) {
+            if (val >= 4) return {text: 'Excellent', class: 'grade-excellent', color: '#22c55e'};
+            if (val >= 3) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val >= 2) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Poor', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getGradeRule40(val) {
+            if (val >= 50) return {text: 'Excellent', class: 'grade-excellent', color: '#22c55e'};
+            if (val >= 40) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val >= 30) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Poor', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getGradeRunway(val) {
+            if (val >= 24) return {text: 'Strong', class: 'grade-excellent', color: '#22c55e'};
+            if (val >= 18) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val >= 12) return {text: 'OK', class: 'grade-fair', color: '#eab308'};
+            if (val > 0) return {text: 'Critical', class: 'grade-bad', color: '#ef4444'};
+            return {text: '-', class: '', color: '#888'};
+        }
+
+        function getGradeBurn(val) {
+            if (val <= 1) return {text: 'Efficient', class: 'grade-excellent', color: '#22c55e'};
+            if (val <= 1.5) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (val <= 2) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Inefficient', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getGradeRetention(nrr, churn) {
+            if (nrr >= 110 && churn <= 2) return {text: 'Excellent', class: 'grade-excellent', color: '#22c55e'};
+            if (nrr >= 100 && churn <= 4) return {text: 'Good', class: 'grade-good', color: '#10b981'};
+            if (nrr >= 90) return {text: 'Fair', class: 'grade-fair', color: '#eab308'};
+            return {text: 'Poor', class: 'grade-poor', color: '#f59e0b'};
+        }
+
+        function getRetentionHealth(nrr, churn) {
+            if (nrr >= 110 && churn <= 2) return 'Excellent';
+            if (nrr >= 100 && churn <= 4) return 'Good';
+            if (nrr >= 90) return 'Fair';
+            return 'At Risk';
+        }
+
+        function getBarWidth(val, max) {
+            return (val / max) * 100;
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+            return num.toFixed(0);
+        }
+
+        function generateRecommendations(ltvCac, payback, nrr, churn, quickRatio, rule40, runway, burnMultiple) {
+            const recs = [];
+
+            if (ltvCac > 0 && ltvCac < 3) {
+                recs.push({
+                    icon: 'danger',
+                    emoji: '⚠️',
+                    title: 'Improve LTV:CAC Ratio',
+                    desc: `Your ${ltvCac.toFixed(1)}x ratio is below the 3x benchmark. Focus on increasing LTV through upsells or reducing CAC with more efficient channels.`
+                });
+            }
+
+            if (payback > 12) {
+                recs.push({
+                    icon: 'warning',
+                    emoji: '⏱️',
+                    title: 'Reduce Payback Period',
+                    desc: `At ${payback.toFixed(0)} months, CAC recovery is too slow. Consider annual prepay discounts or higher starting prices.`
+                });
+            }
+
+            if (nrr > 0 && nrr < 100) {
+                recs.push({
+                    icon: 'danger',
+                    emoji: '📉',
+                    title: 'Critical: NRR Below 100%',
+                    desc: `Your ${nrr.toFixed(0)}% NRR means you're losing revenue from existing customers. Prioritize expansion revenue and churn prevention.`
+                });
+            }
+
+            if (churn > 5) {
+                recs.push({
+                    icon: 'danger',
+                    emoji: '🚨',
+                    title: 'High Churn Alert',
+                    desc: `${churn.toFixed(1)}% monthly churn is unsustainable. Investigate root causes and implement retention strategies immediately.`
+                });
+            }
+
+            if (quickRatio > 0 && quickRatio < 3) {
+                recs.push({
+                    icon: 'warning',
+                    emoji: '📊',
+                    title: 'Improve Growth Efficiency',
+                    desc: `Quick Ratio of ${quickRatio.toFixed(1)}x suggests growth is being dragged down by losses. Focus on reducing contraction and churn.`
+                });
+            }
+
+            if (rule40 > 0 && rule40 < 40) {
+                recs.push({
+                    icon: 'warning',
+                    emoji: '📈',
+                    title: 'Below Rule of 40',
+                    desc: `Your ${rule40.toFixed(0)} score is below the 40 benchmark. You need to either grow faster or improve margins.`
+                });
+            }
+
+            if (runway > 0 && runway < 12) {
+                recs.push({
+                    icon: 'danger',
+                    emoji: '💰',
+                    title: 'Runway Warning',
+                    desc: `Only ${runway.toFixed(0)} months of runway left. Start fundraising now or cut costs to extend runway.`
+                });
+            }
+
+            if (burnMultiple > 2) {
+                recs.push({
+                    icon: 'warning',
+                    emoji: '🔥',
+                    title: 'High Burn Multiple',
+                    desc: `Burning ${burnMultiple.toFixed(1)}x for each dollar of net new ARR is inefficient. Optimize go-to-market spend.`
+                });
+            }
+
+            // Positive recommendations
+            if (ltvCac >= 5) {
+                recs.push({
+                    icon: 'success',
+                    emoji: '✅',
+                    title: 'Excellent LTV:CAC',
+                    desc: `Your ${ltvCac.toFixed(1)}x ratio is outstanding. You have room to invest more aggressively in growth.`
+                });
+            }
+
+            if (nrr >= 110) {
+                recs.push({
+                    icon: 'success',
+                    emoji: '✅',
+                    title: 'Strong Net Revenue Retention',
+                    desc: `${nrr.toFixed(0)}% NRR shows your customers are expanding. This is a key driver of efficient growth.`
+                });
+            }
+
+            if (rule40 >= 50) {
+                recs.push({
+                    icon: 'success',
+                    emoji: '✅',
+                    title: 'Rule of 40 Champion',
+                    desc: `${rule40.toFixed(0)} score exceeds the benchmark. VCs will see this as a sign of a healthy, well-run business.`
+                });
+            }
+
+            // Default if no metrics
+            if (recs.length === 0) {
+                recs.push({
+                    icon: 'warning',
+                    emoji: '📊',
+                    title: 'Enter your metrics above',
+                    desc: 'We\'ll analyze your SaaS health and provide personalized recommendations.'
+                });
+            }
+
+            // Render recommendations
+            const container = document.getElementById('recommendationsList');
+            container.innerHTML = recs.map(rec => `
+                <div class="rec-item">
+                    <div class="rec-icon ${rec.icon}">${rec.emoji}</div>
+                    <div class="rec-content">
+                        <h4>${rec.title}</h4>
+                        <p>${rec.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
