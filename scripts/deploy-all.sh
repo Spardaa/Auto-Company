@@ -132,6 +132,8 @@ deploy_free_tools() {
     git add projects/saas-pricing-calculator.html
     git add projects/churn-calculator.html
     git add projects/burn-rate-calculator.html
+    git add projects/mrr-growth-calculator.html
+    git add projects/ltv-calculator.html
     git add projects/nomorezoomfatigue-validation/
 
     # Check if there are changes to commit
