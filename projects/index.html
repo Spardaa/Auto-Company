@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Company - Free Tools for SaaS Founders & Indie Hackers</title>
+    <meta name="description" content="Free calculators for SaaS founders: pricing calculator, churn analyzer, burn rate tracker, and meeting tax calculator. No signup required.">
+    <meta property="og:title" content="Auto Company - Free Tools for SaaS Founders">
+    <meta property="og:description" content="Free calculators for pricing, churn, burn rate, and meeting costs. Built for indie hackers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Auto Company - Free Tools for Builders">
+    <meta name="twitter:description" content="Free calculators for SaaS founders. Pricing, churn, burn rate, and more.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --card: #141414;
+            --border: #262626;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; margin-bottom: 60px; }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        h1 { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+        .tagline { font-size: 1.25rem; color: var(--muted); max-width: 500px; margin: 0 auto; }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .tool-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+        .tool-icon { font-size: 2.5rem; margin-bottom: 16px; }
+        .tool-card h2 { font-size: 1.5rem; margin-bottom: 8px; }
+        .tool-card p { color: var(--muted); margin-bottom: 16px; }
+        .tool-card .features {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+        .tool-card .features li {
+            padding: 4px 0;
+            color: var(--muted);
+        }
+        .tool-card .features li::before {
+            content: '✓ ';
+            color: var(--accent);
+        }
+        .tool-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .tool-badge.free { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+        .tool-badge.paid { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
+
+        /* Newsletter */
+        .newsletter {
+            background: linear-gradient(135deg, var(--card) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .newsletter h2 { font-size: 1.75rem; margin-bottom: 12px; }
+        .newsletter p { color: var(--muted); margin-bottom: 24px; }
+        .newsletter form {
+            display: flex;
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .newsletter input {
+            flex: 1;
+            padding: 14px 18px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 1rem;
+        }
+        .newsletter input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .newsletter button {
+            padding: 14px 24px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .newsletter button:hover {
+            background: var(--accent-light);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        @media (max-width: 640px) {
+            .stats { grid-template-columns: 1fr; }
+            .newsletter form { flex-direction: column; }
+        }
+        .stat-item .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .stat-item .label {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            color: var(--fg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Auto Company</div>
+            <h1>Tools for Builders</h1>
+            <p class="tagline">Free calculators and tools for SaaS founders, indie hackers, and product builders.</p>
+        </header>
+
+        <div class="tools-grid">
+            <!-- SaaS Pricing Calculator -->
+            <a href="saas-pricing-calculator.html" class="tool-card">
+                <span class="tool-badge free">FREE</span>
+                <div class="tool-icon">💰</div>
+                <h2>SaaS Pricing Calculator</h2>
+                <p>Find your optimal price point based on unit economics.</p>
+                <ul class="features">
+                    <li>LTV:CAC ratio analysis</li>
+                    <li>CAC payback period</li>
+                    <li>Revenue projections</li>
+                    <li>Suggested pricing tiers</li>
+                </ul>
+            </a>
+
+            <!-- Churn Analyzer -->
+            <a href="churn-calculator.html" class="tool-card">
+                <span class="tool-badge free">FREE</span>
+                <div class="tool-icon">📊</div>
+                <h2>Churn Analyzer</h2>
+                <p>Understand customer loss and predict future revenue.</p>
+                <ul class="features">
+                    <li>Monthly/annual churn rates</li>
+                    <li>Revenue impact analysis</li>
+                    <li>12-month projections</li>
+                    <li>Action plan generator</li>
+                </ul>
+            </a>
+
+            <!-- Burn Rate Calculator -->
+            <a href="burn-rate-calculator.html" class="tool-card">
+                <span class="tool-badge free">FREE</span>
+                <div class="tool-icon">🔥</div>
+                <h2>Burn Rate Calculator</h2>
+                <p>Know your runway and when you'll run out of cash.</p>
+                <ul class="features">
+                    <li>Monthly burn rate</li>
+                    <li>Runway calculation</li>
+                    <li>Cash projection timeline</li>
+                    <li>Fundraising action plan</li>
+                </ul>
+            </a>
+
+            <!-- Meeting Tax Calculator -->
+            <a href="https://maxmiksa.github.io/Auto-Company/" class="tool-card">
+                <span class="tool-badge free">FREE</span>
+                <div class="tool-icon">📅</div>
+                <h2>Meeting Tax Calculator</h2>
+                <p>Calculate how much your meetings are really costing you.</p>
+                <ul class="features">
+                    <li>Calendar (.ics) analysis</li>
+                    <li>Meeting cost breakdown</li>
+                    <li>ROI scoring per meeting</li>
+                    <li>Shocking comparisons</li>
+                </ul>
+            </a>
+
+            <!-- WebhookBin Pro -->
+            <a href="#" class="tool-card" onclick="alert('Coming soon! Deploy to Cloudflare Workers for privacy-first webhook testing.')">
+                <span class="tool-badge paid">$29</span>
+                <div class="tool-icon">🔗</div>
+                <h2>WebhookBin Pro</h2>
+                <p>Privacy-first webhook testing. Self-hosted, compliant, yours.</p>
+                <ul class="features">
+                    <li>One-click deploy to Cloudflare</li>
+                    <li>No data leaves your infrastructure</li>
+                    <li>SOC2/GDPR compliant by design</li>
+                    <li>Unlimited endpoints</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="newsletter">
+            <h2>Get New Tools First</h2>
+            <p>Join 500+ builders getting free tools and SaaS insights weekly.</p>
+            <form action="https://formsubmit.co/auto@autocompany.ai" method="POST">
+                <input type="email" name="email" placeholder="your@email.com" required>
+                <input type="hidden" name="_subject" value="New Auto Company subscriber">
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="value">100%</div>
+                <div class="label">Free to Use</div>
+            </div>
+            <div class="stat-item">
+                <div class="value">0</div>
+                <div class="label">Data Collected</div>
+            </div>
+            <div class="stat-item">
+                <div class="value">∞</div>
+                <div class="label">Calculations</div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+            </div>
+            <p>Built by <a href="#">Auto Company</a> | Tools for builders, by builders.</p>
+        </footer>
+    </div>
+</body>
+</html>

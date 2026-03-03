@@ -146,6 +146,11 @@ memories/consensus.md.bak
 projects/*
 !projects/.gitkeep
 !projects/nomorezoomfatigue-validation/
+!projects/index.html
+!projects/saas-pricing-calculator.html
+!projects/churn-calculator.html
+!projects/burn-rate-calculator.html
+!projects/webhookbin-pro/
 
 # Local/private outputs (do not publish)
 AGENTS.md
@@ -186,3 +191,4 @@ docs/*/*
 # Ignore all memories (keep folder marker only)
 memories/*
 !memories/.gitkeep
+!memories/consensus.md

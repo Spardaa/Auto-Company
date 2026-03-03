@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn Analyzer - Understand Your Customer Loss | Auto Company</title>
+    <meta name="description" content="Free tool to analyze customer churn. Calculate retention rates, predict revenue loss, and get actionable insights.">
+    <meta property="og:title" content="Churn Analyzer - Understand Customer Loss">
+    <meta property="og:description" content="Free tool to analyze churn rates and predict revenue impact.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/churn-calculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Churn Analyzer">
+    <meta name="twitter:description" content="Free tool to analyze churn and retention rates.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #f97316;
+            --card: #141414;
+            --border: #262626;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { color: var(--muted); }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h2 { font-size: 1.25rem; margin-bottom: 16px; }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 1rem;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .result-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .result-item .value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .result-item .label {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        .result-item.good .value { color: var(--success); }
+        .result-item.warning .value { color: var(--warning); }
+        .result-item.bad .value { color: var(--error); }
+
+        .insight {
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        .insight.good { background: rgba(34, 197, 94, 0.1); border-left: 4px solid var(--success); }
+        .insight.warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); }
+        .insight.bad { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error); }
+        .insight h3 { margin-bottom: 8px; }
+        .insight p { font-size: 0.95rem; color: var(--muted); }
+
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .projection-table th, .projection-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .projection-table th {
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .projection-table td { font-size: 0.95rem; }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Churn Analyzer</h1>
+            <p class="subtitle">Understand your customer loss and predict future revenue</p>
+        </header>
+
+        <div class="card">
+            <h2>Your Numbers</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Starting Customers</label>
+                    <input type="number" id="startCustomers" value="1000">
+                </div>
+                <div class="input-group">
+                    <label>Churned This Month</label>
+                    <input type="number" id="churned" value="50">
+                </div>
+                <div class="input-group">
+                    <label>New Customers</label>
+                    <input type="number" id="newCustomers" value="70">
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Avg Revenue/Customer ($)</label>
+                    <input type="number" id="arpu" value="49">
+                </div>
+                <div class="input-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="cac" value="150">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Key Metrics</h2>
+            <div class="results-grid">
+                <div class="result-item" id="churn-rate-box">
+                    <div class="value" id="churn-rate">5.0%</div>
+                    <div class="label">Monthly Churn Rate</div>
+                </div>
+                <div class="result-item" id="retention-box">
+                    <div class="value" id="retention">95.0%</div>
+                    <div class="label">Retention Rate</div>
+                </div>
+                <div class="result-item" id="net-growth-box">
+                    <div class="value" id="net-growth">+2.0%</div>
+                    <div class="label">Net Growth Rate</div>
+                </div>
+                <div class="result-item" id="revenue-loss-box">
+                    <div class="value" id="revenue-loss">$2,450</div>
+                    <div class="label">Revenue Lost to Churn</div>
+                </div>
+            </div>
+            <div id="insight" class="insight good">
+                <h3>✅ Healthy Churn</h3>
+                <p>Your 5% monthly churn is within acceptable range for SaaS. Focus on maintaining this while growing.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Revenue Impact</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="value" id="annual-churn">46%</div>
+                    <div class="label">Annual Churn Rate</div>
+                </div>
+                <div class="result-item">
+                    <div class="value" id="churn-cost">$29,400</div>
+                    <div class="label">Annual Churn Cost</div>
+                </div>
+                <div class="result-item">
+                    <div class="value" id="replacement-cost">$7,500</div>
+                    <div class="label">CAC to Replace</div>
+                </div>
+                <div class="result-item">
+                    <div class="value" id="breakeven">3.1mo</div>
+                    <div class="label">CAC Payback</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>12-Month Projection</h2>
+            <p style="color: var(--muted); margin-bottom: 16px;">Based on current churn and acquisition rates:</p>
+            <table class="projection-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Customers</th>
+                        <th>MRR</th>
+                        <th>Churned (Cumulative)</th>
+                    </tr>
+                </thead>
+                <tbody id="projection-body">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Action Plan</h2>
+            <div id="action-items"></div>
+        </div>
+
+        <footer>
+            Built by Auto Company | Free to use | No data collected
+        </footer>
+    </div>
+
+    <script>
+        function calculate() {
+            const startCustomers = parseFloat(document.getElementById('startCustomers').value) || 1000;
+            const churned = parseFloat(document.getElementById('churned').value) || 50;
+            const newCustomers = parseFloat(document.getElementById('newCustomers').value) || 70;
+            const arpu = parseFloat(document.getElementById('arpu').value) || 49;
+            const cac = parseFloat(document.getElementById('cac').value) || 150;
+
+            // Calculate metrics
+            const churnRate = (churned / startCustomers) * 100;
+            const retentionRate = 100 - churnRate;
+            const netGrowth = ((newCustomers - churned) / startCustomers) * 100;
+            const revenueLoss = churned * arpu;
+            const annualChurn = 100 - Math.pow(1 - churnRate/100, 12) * 100;
+            const annualChurnCost = startCustomers * (annualChurn / 100) * arpu;
+            const replacementCAC = churned * cac;
+            const cacPayback = cac / arpu;
+
+            // Update display
+            document.getElementById('churn-rate').textContent = churnRate.toFixed(1) + '%';
+            document.getElementById('retention').textContent = retentionRate.toFixed(1) + '%';
+            document.getElementById('net-growth').textContent = (netGrowth >= 0 ? '+' : '') + netGrowth.toFixed(1) + '%';
+            document.getElementById('revenue-loss').textContent = '$' + revenueLoss.toLocaleString();
+
+            document.getElementById('annual-churn').textContent = annualChurn.toFixed(0) + '%';
+            document.getElementById('churn-cost').textContent = '$' + Math.round(annualChurnCost).toLocaleString();
+            document.getElementById('replacement-cost').textContent = '$' + replacementCAC.toLocaleString();
+            document.getElementById('breakeven').textContent = cacPayback.toFixed(1) + 'mo';
+
+            // Update classes
+            const churnBox = document.getElementById('churn-rate-box');
+            churnBox.className = 'result-item';
+            if (churnRate <= 3) churnBox.classList.add('good');
+            else if (churnRate <= 7) churnBox.classList.add('warning');
+            else churnBox.classList.add('bad');
+
+            const growthBox = document.getElementById('net-growth-box');
+            growthBox.className = 'result-item';
+            if (netGrowth >= 5) growthBox.classList.add('good');
+            else if (netGrowth >= 0) growthBox.classList.add('warning');
+            else growthBox.classList.add('bad');
+
+            // Update insight
+            updateInsight(churnRate, netGrowth);
+
+            // Update projection
+            updateProjection(startCustomers, churnRate/100, newCustomers, arpu);
+
+            // Update action items
+            updateActionItems(churnRate, netGrowth, cacPayback);
+        }
+
+        function updateInsight(churnRate, netGrowth) {
+            const insight = document.getElementById('insight');
+
+            if (churnRate <= 3) {
+                insight.className = 'insight good';
+                insight.innerHTML = `
+                    <h3>✅ Excellent Churn Rate</h3>
+                    <p>Your ${churnRate.toFixed(1)}% monthly churn is best-in-class. Focus on scaling acquisition while maintaining this retention.</p>
+                `;
+            } else if (churnRate <= 7) {
+                insight.className = 'insight warning';
+                insight.innerHTML = `
+                    <h3>⚠️ Average Churn Rate</h3>
+                    <p>Your ${churnRate.toFixed(1)}% monthly churn is typical for SaaS. Consider implementing retention strategies like onboarding improvements and proactive support.</p>
+                `;
+            } else {
+                insight.className = 'insight bad';
+                insight.innerHTML = `
+                    <h3>🚨 High Churn Alert</h3>
+                    <p>Your ${churnRate.toFixed(1)}% monthly churn is unsustainable. You're losing ${Math.round(100 - Math.pow(1 - churnRate/100, 12) * 100)}% of customers annually. Prioritize retention over acquisition.</p>
+                `;
+            }
+        }
+
+        function updateProjection(start, churnRate, newPerMonth, arpu) {
+            const tbody = document.getElementById('projection-body');
+            let customers = start;
+            let totalChurned = 0;
+            let html = '';
+
+            const months = [1, 3, 6, 9, 12];
+
+            for (let m of months) {
+                let c = start;
+                let churned = 0;
+                for (let i = 0; i < m; i++) {
+                    churned += c * churnRate;
+                    c = c * (1 - churnRate) + newPerMonth;
+                }
+                html += `
+                    <tr>
+                        <td>Month ${m}</td>
+                        <td>${Math.round(c).toLocaleString()}</td>
+                        <td>$${Math.round(c * arpu).toLocaleString()}</td>
+                        <td>${Math.round(churned).toLocaleString()}</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = html;
+        }
+
+        function updateActionItems(churnRate, netGrowth, cacPayback) {
+            const container = document.getElementById('action-items');
+            let items = [];
+
+            if (churnRate > 5) {
+                items.push({
+                    priority: 'HIGH',
+                    title: 'Reduce Churn',
+                    desc: 'Implement exit surveys, improve onboarding, add proactive support'
+                });
+            }
+
+            if (netGrowth < 3) {
+                items.push({
+                    priority: 'HIGH',
+                    title: 'Accelerate Growth',
+                    desc: 'Increase acquisition or reduce churn to reach sustainable growth'
+                });
+            }
+
+            if (cacPayback > 12) {
+                items.push({
+                    priority: 'MEDIUM',
+                    title: 'Improve Unit Economics',
+                    desc: 'Raise prices or reduce CAC to achieve faster payback'
+                });
+            }
+
+            if (churnRate <= 3 && netGrowth >= 5) {
+                items.push({
+                    priority: 'LOW',
+                    title: 'Scale Acquisition',
+                    desc: 'Healthy metrics - invest more in marketing and sales'
+                });
+            }
+
+            items.push({
+                priority: 'ONGOING',
+                title: 'Monitor Cohorts',
+                desc: 'Track churn by customer segment to identify at-risk groups'
+            });
+
+            container.innerHTML = items.map(item => `
+                <div style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="min-width: 80px;">
+                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+                            background: ${item.priority === 'HIGH' ? 'rgba(239,68,68,0.2); color: #ef4444' :
+                                        item.priority === 'MEDIUM' ? 'rgba(245,158,11,0.2); color: #f59e0b' :
+                                        item.priority === 'LOW' ? 'rgba(34,197,94,0.2); color: #22c55e' :
+                                        'rgba(148,163,184,0.2); color: #94a3b8'}">
+                            ${item.priority}
+                        </span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">${item.title}</div>
+                        <div style="font-size: 0.9rem; color: var(--muted);">${item.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Listen for changes
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
