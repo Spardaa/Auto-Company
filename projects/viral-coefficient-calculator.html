@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viral Coefficient Calculator - Is Your Product Viral?</title>
+    <meta name="description" content="Free viral coefficient calculator. Calculate your K-factor and predict organic growth. See if your product can grow through word-of-mouth.">
+    <meta property="og:title" content="Viral Coefficient Calculator - Measure Your Product's Virality">
+    <meta property="og:description" content="Calculate your viral coefficient (K-factor) and see if your product can achieve viral growth. Free tool with growth projections.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spardaa.github.io/Auto-Company/viral-coefficient-calculator.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --card: #141414;
+            --border: #262626;
+            --viral: #10b981;
+            --not-viral: #ef4444;
+            --maybe: #f59e0b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .card h2 { font-size: 1.25rem; margin-bottom: 24px; }
+
+        /* Form */
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .input-row { display: flex; gap: 12px; }
+        .input-row input { flex: 1; }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--fg);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--accent); }
+        input::placeholder { color: var(--muted); }
+        .hint { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .result-label { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; }
+        .result-value { font-size: 4rem; font-weight: 800; }
+        .result-formula {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-top: 8px;
+            font-family: monospace;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+        .status-viral { background: rgba(16, 185, 129, 0.2); color: var(--viral); }
+        .status-not-viral { background: rgba(239, 68, 68, 0.2); color: var(--not-viral); }
+        .status-maybe { background: rgba(245, 158, 11, 0.2); color: var(--maybe); }
+
+        /* Breakdown */
+        .breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .breakdown-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .breakdown-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+        .breakdown-value { font-size: 1.5rem; font-weight: 700; }
+
+        /* Growth Projection */
+        .projection {
+            margin-top: 24px;
+            padding: 24px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .projection h3 { font-size: 1rem; margin-bottom: 16px; }
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .projection-table th, .projection-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .projection-table th {
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .projection-table td { font-size: 0.95rem; }
+        .projection-table tr:last-child td { border-bottom: none; }
+
+        /* Visual Growth */
+        .growth-visual {
+            margin-top: 24px;
+            padding: 24px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .growth-visual h3 { font-size: 1rem; margin-bottom: 16px; }
+        .growth-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .growth-bar {
+            width: 50px;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+        .growth-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+        .growth-labels {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 8px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Tips */
+        .tips { margin-top: 24px; }
+        .tip-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .tip-icon { font-size: 1.5rem; }
+        .tip-content h3 { font-size: 1rem; margin-bottom: 4px; }
+        .tip-content p { font-size: 0.9rem; color: var(--muted); }
+
+        /* Famous Examples */
+        .examples {
+            margin-top: 24px;
+            padding: 24px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .examples h3 { font-size: 1rem; margin-bottom: 16px; }
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .example-item {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--card);
+        }
+        .example-name { font-weight: 600; margin-bottom: 4px; }
+        .example-k {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        .example-k span {
+            font-weight: 700;
+            color: var(--viral);
+        }
+
+        /* Footer */
+        footer { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.9rem; }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .breakdown { grid-template-columns: 1fr; }
+            .input-row { flex-direction: column; }
+            .example-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="projects/" class="back-link">← All Tools</a>
+            <h1>Viral Coefficient Calculator</h1>
+            <p class="subtitle">Is your product growing virally? Calculate your K-factor.</p>
+        </header>
+
+        <div class="card">
+            <h2>Enter Your Metrics</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Invitations Sent Per User (i)</label>
+                    <input type="number" id="invites" placeholder="e.g., 5" value="5" step="0.1">
+                    <div class="hint">How many people does each user invite?</div>
+                </div>
+                <div class="input-group">
+                    <label>Invitation Conversion Rate (%)</label>
+                    <input type="number" id="conversion" placeholder="e.g., 25" value="25" step="0.1">
+                    <div class="hint">What % of invitations become users?</div>
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Initial Users (Cycle 0)</label>
+                    <input type="number" id="initialUsers" placeholder="e.g., 1000" value="1000">
+                    <div class="hint">Starting number of users</div>
+                </div>
+                <div class="input-group">
+                    <label>Viral Cycle Time (days)</label>
+                    <input type="number" id="cycleTime" placeholder="e.g., 7" value="7">
+                    <div class="hint">How long until new users invite others?</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Your Viral Coefficient</h2>
+            <div class="result-box">
+                <div class="result-label">K-Factor (K = i × c)</div>
+                <div class="result-value" id="kFactor">1.25</div>
+                <div class="result-formula" id="formula">K = 5 × 25% = 1.25</div>
+                <span class="status-badge status-viral" id="statusBadge">🎉 VIRAL - Exponential Growth!</span>
+            </div>
+
+            <div class="breakdown">
+                <div class="breakdown-item">
+                    <div class="breakdown-label">Invites/User</div>
+                    <div class="breakdown-value" id="invitesValue">5</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-label">Conversion</div>
+                    <div class="breakdown-value" id="conversionValue">25%</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-label">Cycle Time</div>
+                    <div class="breakdown-value" id="cycleValue">7 days</div>
+                </div>
+            </div>
+
+            <div class="growth-visual">
+                <h3>User Growth Over 5 Cycles</h3>
+                <div class="growth-bars" id="growthBars"></div>
+                <div class="growth-labels" id="growthLabels"></div>
+            </div>
+
+            <div class="projection">
+                <h3>Growth Projection</h3>
+                <table class="projection-table">
+                    <thead>
+                        <tr>
+                            <th>Cycle</th>
+                            <th>Days</th>
+                            <th>New Users</th>
+                            <th>Total Users</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectionBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>How to Improve Your K-Factor</h2>
+            <div class="tips" id="tips"></div>
+        </div>
+
+        <div class="card">
+            <h2>Famous Viral Products</h2>
+            <div class="examples">
+                <h3>Real-World K-Factors</h3>
+                <div class="example-grid">
+                    <div class="example-item">
+                        <div class="example-name">Dropbox</div>
+                        <div class="example-k">K ≈ <span>2.0+</span> (referral program)</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-name">Hotmail</div>
+                        <div class="example-k">K ≈ <span>2.5+</span> (email signature)</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-name">Slack</div>
+                        <div class="example-k">K ≈ <span>1.5+</span> (team invites)</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-name">Typical SaaS</div>
+                        <div class="example-k">K ≈ <span style="color: var(--maybe);">0.5-0.8</span> (word of mouth)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Free tool by <a href="projects/">Auto Company</a> • No data stored</p>
+        </footer>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toFixed(0);
+        }
+
+        function calculateGrowth(initialUsers, kFactor, cycles) {
+            const results = [];
+            let total = initialUsers;
+            let newUsers = initialUsers;
+
+            for (let i = 0; i <= cycles; i++) {
+                results.push({
+                    cycle: i,
+                    newUsers: Math.round(newUsers),
+                    total: Math.round(total)
+                });
+                newUsers = newUsers * kFactor;
+                total += newUsers;
+            }
+            return results;
+        }
+
+        function getTips(invites, conversion, kFactor) {
+            const tips = [];
+
+            if (kFactor < 1) {
+                tips.push({
+                    icon: '📈',
+                    title: 'Your K-Factor is Below 1',
+                    text: 'Your product is not growing virally. Focus on either increasing invitations or improving conversion rate to reach K > 1.'
+                });
+            }
+
+            if (invites < 3) {
+                tips.push({
+                    icon: '✉️',
+                    title: 'Increase Invitation Rate',
+                    text: 'Add built-in sharing, referral incentives, or "invite friends" prompts at key moments (after value delivery).'
+                });
+            }
+
+            if (conversion < 20) {
+                tips.push({
+                    icon: '🎯',
+                    title: 'Improve Conversion Rate',
+                    text: 'Optimize landing pages, reduce friction in signup, and ensure invited users see value immediately.'
+                });
+            }
+
+            if (kFactor >= 1 && kFactor < 1.5) {
+                tips.push({
+                    icon: '⚡',
+                    title: 'You\'re Almost There!',
+                    text: 'Small improvements in either metric will create exponential growth. A/B test your invitation flows.'
+                });
+            }
+
+            if (kFactor >= 1.5) {
+                tips.push({
+                    icon: '🚀',
+                    title: 'Strong Viral Growth!',
+                    text: 'Focus on maintaining this K-factor while scaling. Monitor for degradation as you grow.'
+                });
+            }
+
+            tips.push({
+                icon: '⏱️',
+                title: 'Reduce Cycle Time',
+                text: 'Faster viral cycles mean faster growth. Get users to invite others sooner after signup.'
+            });
+
+            return tips;
+        }
+
+        function updateCalculation() {
+            const invites = parseFloat(document.getElementById('invites').value) || 0;
+            const conversion = parseFloat(document.getElementById('conversion').value) || 0;
+            const initialUsers = parseFloat(document.getElementById('initialUsers').value) || 1000;
+            const cycleTime = parseFloat(document.getElementById('cycleTime').value) || 7;
+
+            const kFactor = invites * (conversion / 100);
+
+            // Update main result
+            document.getElementById('kFactor').textContent = kFactor.toFixed(2);
+            document.getElementById('formula').textContent = `K = ${invites} × ${conversion}% = ${kFactor.toFixed(2)}`;
+
+            // Update status
+            const badge = document.getElementById('statusBadge');
+            if (kFactor >= 1.5) {
+                badge.textContent = '🎉 VIRAL - Exponential Growth!';
+                badge.className = 'status-badge status-viral';
+                document.getElementById('kFactor').style.color = 'var(--viral)';
+            } else if (kFactor >= 1) {
+                badge.textContent = '✨ VIRAL - Sustainable Growth!';
+                badge.className = 'status-badge status-viral';
+                document.getElementById('kFactor').style.color = 'var(--viral)';
+            } else if (kFactor >= 0.7) {
+                badge.textContent = '⚠️ Almost Viral - Needs Boost';
+                badge.className = 'status-badge status-maybe';
+                document.getElementById('kFactor').style.color = 'var(--maybe)';
+            } else {
+                badge.textContent = '❌ Not Viral - Linear Growth';
+                badge.className = 'status-badge status-not-viral';
+                document.getElementById('kFactor').style.color = 'var(--not-viral)';
+            }
+
+            // Update breakdown
+            document.getElementById('invitesValue').textContent = invites;
+            document.getElementById('conversionValue').textContent = conversion + '%';
+            document.getElementById('cycleValue').textContent = cycleTime + ' days';
+
+            // Calculate growth
+            const growth = calculateGrowth(initialUsers, kFactor, 5);
+            const maxUsers = growth[growth.length - 1].total;
+
+            // Update growth bars
+            const growthBars = document.getElementById('growthBars');
+            const growthLabels = document.getElementById('growthLabels');
+
+            growthBars.innerHTML = growth.map((g, i) => {
+                const height = Math.max(10, (g.total / maxUsers) * 130);
+                const color = i === 0 ? 'var(--muted)' : 'var(--accent)';
+                return `<div class="growth-bar" style="height: ${height}px; background: ${color}" data-value="${formatNumber(g.total)}"></div>`;
+            }).join('');
+
+            growthLabels.innerHTML = growth.map(g => `<span>Day ${g.cycle * cycleTime}</span>`).join('');
+
+            // Update projection table
+            const projectionBody = document.getElementById('projectionBody');
+            projectionBody.innerHTML = growth.map(g => `
+                <tr>
+                    <td>Cycle ${g.cycle}</td>
+                    <td>${g.cycle * cycleTime}</td>
+                    <td>+${formatNumber(g.newUsers)}</td>
+                    <td><strong>${formatNumber(g.total)}</strong></td>
+                </tr>
+            `).join('');
+
+            // Update tips
+            const tips = getTips(invites, conversion, kFactor);
+            document.getElementById('tips').innerHTML = tips.map(tip => `
+                <div class="tip-item">
+                    <div class="tip-icon">${tip.icon}</div>
+                    <div class="tip-content">
+                        <h3>${tip.title}</h3>
+                        <p>${tip.text}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        ['invites', 'conversion', 'initialUsers', 'cycleTime'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateCalculation);
+        });
+
+        // Initial calculation
+        updateCalculation();
+    </script>
+</body>
+</html>
