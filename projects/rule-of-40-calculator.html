@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule of 40 Calculator - SaaS Benchmark | Auto Company</title>
+    <meta name="description" content="Calculate your Rule of 40 score - the key SaaS benchmark. Growth rate + profit margin should equal 40% or higher for healthy SaaS companies.">
+    <meta property="og:title" content="Rule of 40 Calculator - SaaS Benchmark">
+    <meta property="og:description" content="Free tool to calculate your Rule of 40 score. Know if your SaaS is healthy.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autocompany.ai/rule-of-40-calculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rule of 40 Calculator - SaaS Benchmark">
+    <meta name="twitter:description" content="Free tool to calculate Rule of 40 for SaaS companies.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --muted: #888;
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --accent-light: #34d399;
+            --card: #141414;
+            --border: #262626;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --purple: #8b5cf6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; margin-bottom: 40px; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: var(--accent); }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--fg) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: var(--muted); font-size: 1.1rem; }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .card-title { font-size: 1.2rem; font-weight: 600; }
+        .card-desc { color: var(--muted); font-size: 0.9rem; }
+
+        /* Form */
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        input[type="number"] {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            color: var(--fg);
+            width: 100%;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .input-suffix {
+            color: var(--muted);
+            font-size: 1rem;
+            min-width: 20px;
+        }
+        .helper-text {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        /* Calculate Button */
+        .btn-calculate {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-calculate:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        /* Results */
+        .results { display: none; }
+        .results.show { display: block; }
+
+        .score-display {
+            text-align: center;
+            padding: 32px 20px;
+            margin-bottom: 20px;
+        }
+        .score-value {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .score-label {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .score-status {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        .score-status.excellent { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .score-status.healthy { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+        .score-status.warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+        .score-status.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        /* Score Breakdown */
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .breakdown-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .breakdown-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .breakdown-label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        /* Interpretation */
+        .interpretation {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .interpretation h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .interpretation p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Benchmark */
+        .benchmark-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .benchmark-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .benchmark-item.active {
+            border: 2px solid var(--accent);
+        }
+        .benchmark-range {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .benchmark-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Chart */
+        .chart-container {
+            margin: 24px 0;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .chart-title {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .rule-chart {
+            position: relative;
+            height: 300px;
+            border-left: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+        }
+        .chart-axis-label {
+            position: absolute;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .chart-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        .chart-point.current {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+            width: 20px;
+            height: 20px;
+        }
+        .rule-line {
+            position: absolute;
+            background: var(--accent);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        /* Scenarios */
+        .scenarios {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .scenario-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--border);
+        }
+        .scenario-item.positive { border-left-color: var(--success); }
+        .scenario-item.negative { border-left-color: var(--danger); }
+        .scenario-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .scenario-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .score-value { font-size: 3rem; }
+            .score-breakdown { grid-template-columns: 1fr; }
+            .benchmark-grid { grid-template-columns: 1fr; }
+            .scenarios { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← All Tools</a>
+            <h1>Rule of 40 Calculator</h1>
+            <p class="subtitle">The key benchmark for SaaS company health</p>
+        </header>
+
+        <!-- Input Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📊</div>
+                <div>
+                    <div class="card-title">Your SaaS Metrics</div>
+                    <div class="card-desc">Enter your growth rate and profit margin</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Revenue Growth Rate (YoY)</label>
+                <div class="input-row">
+                    <input type="number" id="growthRate" placeholder="e.g., 30" step="0.1">
+                    <span class="input-suffix">%</span>
+                </div>
+                <p class="helper-text">Year-over-year ARR or MRR growth percentage</p>
+            </div>
+
+            <div class="input-group">
+                <label>Profit Margin (EBIDTA or FCF)</label>
+                <div class="input-row">
+                    <input type="number" id="profitMargin" placeholder="e.g., 10" step="0.1">
+                    <span class="input-suffix">%</span>
+                </div>
+                <p class="helper-text">Can be negative for growth-stage companies</p>
+            </div>
+
+            <button class="btn-calculate" onclick="calculate()">Calculate Rule of 40 Score</button>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+            <!-- Score Display -->
+            <div class="card">
+                <div class="score-display">
+                    <div class="score-value" id="scoreValue">0</div>
+                    <div class="score-label">Rule of 40 Score</div>
+                    <span class="score-status" id="scoreStatus">—</span>
+                </div>
+
+                <div class="score-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="growthDisplay">0%</div>
+                        <div class="breakdown-label">Growth Rate</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="marginDisplay">0%</div>
+                        <div class="breakdown-label">Profit Margin</div>
+                    </div>
+                </div>
+
+                <div class="interpretation">
+                    <h4>💡 What This Means</h4>
+                    <p id="interpretationText">—</p>
+                </div>
+
+                <h4 style="font-size: 1rem; margin-bottom: 8px;">How You Compare</h4>
+                <div class="benchmark-grid" id="benchmarkGrid">
+                    <div class="benchmark-item" data-min="0" data-max="20">
+                        <div class="benchmark-range">&lt; 20</div>
+                        <div class="benchmark-label">At Risk</div>
+                    </div>
+                    <div class="benchmark-item" data-min="20" data-max="40">
+                        <div class="benchmark-range">20 - 39</div>
+                        <div class="benchmark-label">Below Target</div>
+                    </div>
+                    <div class="benchmark-item" data-min="40" data-max="60">
+                        <div class="benchmark-range">40 - 59</div>
+                        <div class="benchmark-label">Healthy</div>
+                    </div>
+                    <div class="benchmark-item" data-min="60" data-max="80">
+                        <div class="benchmark-range">60 - 79</div>
+                        <div class="benchmark-label">Strong</div>
+                    </div>
+                    <div class="benchmark-item" data-min="80" data-max="100">
+                        <div class="benchmark-range">80 - 100</div>
+                        <div class="benchmark-label">Exceptional</div>
+                    </div>
+                    <div class="benchmark-item" data-min="100" data-max="999">
+                        <div class="benchmark-range">100+</div>
+                        <div class="benchmark-label">Elite</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <div class="card-title">Growth vs. Margin Trade-off</div>
+                        <div class="card-desc">Where you land on the Rule of 40 curve</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Growth Rate ↑</div>
+                    <div class="rule-chart" id="ruleChart">
+                        <span class="chart-axis-label" style="left: -40px; top: 50%; transform: rotate(-90deg);">Margin →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategies -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">Improvement Strategies</div>
+                        <div class="card-desc">Ways to boost your Rule of 40 score</div>
+                    </div>
+                </div>
+
+                <div class="scenarios" id="strategies">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+
+            <!-- Industry Context -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏢</div>
+                    <div>
+                        <div class="card-title">Industry Benchmarks</div>
+                        <div class="card-desc">How top SaaS companies score</div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <th style="text-align: left; padding: 12px; color: var(--muted);">Company Stage</th>
+                                <th style="text-align: center; padding: 12px; color: var(--muted);">Typical Growth</th>
+                                <th style="text-align: center; padding: 12px; color: var(--muted);">Typical Margin</th>
+                                <th style="text-align: center; padding: 12px; color: var(--muted);">Rule of 40</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px;">Early Stage (&lt;$1M ARR)</td>
+                                <td style="text-align: center; padding: 12px;">100%+</td>
+                                <td style="text-align: center; padding: 12px;">-50%</td>
+                                <td style="text-align: center; padding: 12px; color: var(--accent);">50+</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px;">Growth Stage ($1-10M ARR)</td>
+                                <td style="text-align: center; padding: 12px;">50-100%</td>
+                                <td style="text-align: center; padding: 12px;">-20%</td>
+                                <td style="text-align: center; padding: 12px; color: var(--accent);">40+</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px;">Scale-up ($10-50M ARR)</td>
+                                <td style="text-align: center; padding: 12px;">30-50%</td>
+                                <td style="text-align: center; padding: 12px;">10%</td>
+                                <td style="text-align: center; padding: 12px; color: var(--accent);">40+</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px;">Mature ($50M+ ARR)</td>
+                                <td style="text-align: center; padding: 12px;">15-30%</td>
+                                <td style="text-align: center; padding: 12px;">20%+</td>
+                                <td style="text-align: center; padding: 12px; color: var(--accent);">40+</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px;">Public SaaS (median)</td>
+                                <td style="text-align: center; padding: 12px;">20%</td>
+                                <td style="text-align: center; padding: 12px;">15%</td>
+                                <td style="text-align: center; padding: 12px; color: var(--warning);">35</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Rule of 40 = Growth Rate % + Profit Margin %</p>
+            <p style="margin-top: 8px;">Part of <a href="index.html">Auto Company SaaS Tools</a></p>
+        </footer>
+    </div>
+
+    <script>
+        function calculate() {
+            const growthRate = parseFloat(document.getElementById('growthRate').value) || 0;
+            const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
+
+            const score = growthRate + profitMargin;
+
+            // Show results
+            document.getElementById('results').classList.add('show');
+
+            // Animate score
+            animateValue('scoreValue', 0, score, 500);
+
+            // Update displays
+            document.getElementById('growthDisplay').textContent = growthRate.toFixed(1) + '%';
+            document.getElementById('marginDisplay').textContent = (profitMargin >= 0 ? '+' : '') + profitMargin.toFixed(1) + '%';
+
+            // Determine status
+            let status, statusClass, interpretation;
+            if (score >= 80) {
+                status = '🔥 Exceptional';
+                statusClass = 'excellent';
+                interpretation = `Your Rule of 40 score of <strong>${score.toFixed(0)}</strong> is exceptional! You're in elite company. Companies at this level typically command premium valuations and have strong investor interest. Focus on maintaining this balance while scaling.`;
+            } else if (score >= 60) {
+                status = '💪 Strong';
+                statusClass = 'healthy';
+                interpretation = `Your Rule of 40 score of <strong>${score.toFixed(0)}</strong> is strong. You're well above the benchmark and likely outperforming most peers. Keep optimizing the growth-profitability balance and consider accelerating either dimension.`;
+            } else if (score >= 40) {
+                status = '✅ Healthy';
+                statusClass = 'healthy';
+                interpretation = `Your Rule of 40 score of <strong>${score.toFixed(0)}</strong> meets the benchmark. You're running a healthy SaaS business that balances growth and profitability well. This is the minimum threshold many investors look for.`;
+            } else if (score >= 20) {
+                status = '⚠️ Below Target';
+                statusClass = 'warning';
+                interpretation = `Your Rule of 40 score of <strong>${score.toFixed(0)}</strong> is below the 40 threshold. This isn't necessarily bad for early-stage companies investing in growth, but you should have a clear path to 40+. Focus on improving either growth rate or margins.`;
+            } else {
+                status = '🚨 At Risk';
+                statusClass = 'danger';
+                interpretation = `Your Rule of 40 score of <strong>${score.toFixed(0)}</strong> is concerning. Either growth has stalled, losses are too deep, or both. You may need to make strategic decisions: cut costs to improve margins or invest to reignite growth.`;
+            }
+
+            document.getElementById('scoreStatus').textContent = status;
+            document.getElementById('scoreStatus').className = 'score-status ' + statusClass;
+            document.getElementById('interpretationText').innerHTML = interpretation;
+
+            // Update benchmarks
+            const benchmarks = document.querySelectorAll('.benchmark-item');
+            benchmarks.forEach(item => {
+                item.classList.remove('active');
+                const min = parseFloat(item.dataset.min);
+                const max = parseFloat(item.dataset.max);
+                if (score >= min && score < max) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Draw chart
+            drawChart(growthRate, profitMargin);
+
+            // Generate strategies
+            generateStrategies(growthRate, profitMargin, score);
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const value = start + (end - start) * easeOutCubic(progress);
+                element.textContent = value.toFixed(0);
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        function easeOutCubic(x) {
+            return 1 - Math.pow(1 - x, 3);
+        }
+
+        function drawChart(growth, margin) {
+            const chart = document.getElementById('ruleChart');
+            chart.innerHTML = '<span class="chart-axis-label" style="left: -40px; top: 50%; transform: rotate(-90deg);">Margin →</span>';
+
+            // Draw Rule of 40 line (where growth + margin = 40)
+            const line = document.createElement('div');
+            line.className = 'rule-line';
+            // Line from (40, 0) to (0, 40) - simplified visualization
+            line.style.cssText = `
+                position: absolute;
+                left: 10%;
+                bottom: 10%;
+                width: 80%;
+                height: 2px;
+                background: linear-gradient(90deg, var(--accent), transparent);
+                transform: rotate(-45deg);
+                transform-origin: left bottom;
+                opacity: 0.3;
+            `;
+            chart.appendChild(line);
+
+            // Normalize position (assuming range -50 to 150 for both axes)
+            const normalizeX = (val) => ((val + 50) / 200) * 100;
+            const normalizeY = (val) => 100 - ((val + 50) / 200) * 100;
+
+            // Plot current position
+            const point = document.createElement('div');
+            point.className = 'chart-point current';
+            const x = Math.max(0, Math.min(100, normalizeX(margin)));
+            const y = Math.max(0, Math.min(100, normalizeY(growth)));
+            point.style.left = x + '%';
+            point.style.top = y + '%';
+            point.title = `Growth: ${growth}%, Margin: ${margin}%`;
+            chart.appendChild(point);
+
+            // Add axis labels
+            const growthLabel = document.createElement('span');
+            growthLabel.className = 'chart-axis-label';
+            growthLabel.style.cssText = 'right: 10px; top: 10px;';
+            growthLabel.textContent = 'High Growth';
+            chart.appendChild(growthLabel);
+
+            const marginLabel = document.createElement('span');
+            marginLabel.className = 'chart-axis-label';
+            marginLabel.style.cssText = 'right: 10px; bottom: 10px;';
+            marginLabel.textContent = 'High Margin';
+            chart.appendChild(marginLabel);
+        }
+
+        function generateStrategies(growth, margin, score) {
+            const container = document.getElementById('strategies');
+            let strategies = [];
+
+            if (score < 40) {
+                if (growth < 30) {
+                    strategies.push({
+                        type: 'positive',
+                        title: '🚀 Boost Growth',
+                        desc: 'Invest in sales, marketing, or product expansion. Consider entering new markets or launching new features.'
+                    });
+                }
+                if (margin < 10) {
+                    strategies.push({
+                        type: 'positive',
+                        title: '✂️ Improve Margins',
+                        desc: 'Reduce CAC, increase prices, automate support, or optimize infrastructure costs.'
+                    });
+                }
+                strategies.push({
+                    type: 'positive',
+                    title: '📈 Focus on NRR',
+                    desc: 'Improving Net Revenue Retention by 5% can add 5+ points to your Rule of 40 without new customers.'
+                });
+                strategies.push({
+                    type: 'positive',
+                    title: '💰 Price Increase',
+                    desc: 'A 10% price increase, if you lose less than 10% of customers, improves both growth and margins.'
+                });
+            } else {
+                strategies.push({
+                    type: 'positive',
+                    title: '🎯 Maintain Balance',
+                    desc: 'You\'re hitting the benchmark. Focus on sustainable growth while protecting margins.'
+                });
+                strategies.push({
+                    type: 'positive',
+                    title: '📊 Track Trends',
+                    desc: 'Monitor your Rule of 40 monthly. A declining trend is an early warning signal.'
+                });
+                if (growth > margin * 2) {
+                    strategies.push({
+                        type: 'positive',
+                        title: '🏦 Bank Some Profit',
+                        desc: 'High growth is great, but improving margins builds resilience for downturns.'
+                    });
+                } else {
+                    strategies.push({
+                        type: 'positive',
+                        title: '⚡ Reinvest Wisely',
+                        desc: 'Strong margins give you room to invest in growth initiatives that compound.'
+                    });
+                }
+                strategies.push({
+                    type: 'positive',
+                    title: '🏆 Benchmark vs Peers',
+                    desc: 'Compare your score to similar companies. Being above median helps with fundraising and exits.'
+                });
+            }
+
+            container.innerHTML = strategies.map(s => `
+                <div class="scenario-item ${s.type}">
+                    <div class="scenario-title">${s.title}</div>
+                    <div class="scenario-desc">${s.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        // Auto-calculate on Enter key
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') calculate();
+            });
+        });
+    </script>
+</body>
+</html>
