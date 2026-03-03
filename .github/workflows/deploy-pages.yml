@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'projects/**'
+      - 'index.html'
+      - 'sitemap.xml'
+      - 'robots.txt'
   workflow_dispatch:
 
 permissions:
@@ -32,12 +35,13 @@ jobs:
       - name: Build site structure
         run: |
           mkdir -p _site
-          # Copy landing page
-          cp projects/index.html _site/
+          # Copy root redirect
+          cp index.html _site/
+          # Copy SEO files
+          cp sitemap.xml _site/
+          cp robots.txt _site/
           # Copy all calculator tools
-          cp projects/saas-pricing-calculator.html _site/
-          cp projects/churn-calculator.html _site/
-          cp projects/burn-rate-calculator.html _site/
+          cp projects/*.html _site/
           # Copy NoMoreZoomFatigue (Meeting Tax Calculator)
           cp -r projects/nomorezoomfatigue-validation/public/* _site/ 2>/dev/null || true
           # List what we're deploying
