@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maxmiksa.github.io/Auto-Company/sitemap.xml
