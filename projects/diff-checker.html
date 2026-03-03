@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diff Checker - Compare Two Texts</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-link {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .options-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            align-items: center;
+        }
+
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .option-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            border-color: #00d4ff;
+        }
+
+        .option-btn.active {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.2);
+            border: none;
+            color: #00d4ff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #1a1a2e;
+            font-weight: 600;
+            padding: 10px 25px;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .editor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            padding: 15px;
+            color: #e0e0e0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        .compare-btn-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .diff-output {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .diff-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .diff-title {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .diff-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stat-added {
+            color: #00ff88;
+        }
+
+        .stat-removed {
+            color: #ff6b6b;
+        }
+
+        .stat-unchanged {
+            color: #888;
+        }
+
+        .diff-content {
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .diff-line {
+            padding: 2px 5px;
+            margin: 1px 0;
+            border-radius: 3px;
+        }
+
+        .diff-line.added {
+            background: rgba(0, 255, 136, 0.15);
+            border-left: 3px solid #00ff88;
+        }
+
+        .diff-line.removed {
+            background: rgba(255, 107, 107, 0.15);
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .diff-line.unchanged {
+            color: #888;
+        }
+
+        .diff-line-num {
+            display: inline-block;
+            width: 40px;
+            color: #666;
+            text-align: right;
+            margin-right: 15px;
+            user-select: none;
+        }
+
+        .diff-indicator {
+            display: inline-block;
+            width: 15px;
+            font-weight: bold;
+        }
+
+        .diff-indicator.add {
+            color: #00ff88;
+        }
+
+        .diff-indicator.remove {
+            color: #ff6b6b;
+        }
+
+        .no-diff {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .no-diff .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .inline-diff {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 3px 6px;
+        }
+
+        .inline-diff.added {
+            background: rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        .inline-diff.removed {
+            background: rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            text-decoration: line-through;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-color.added {
+            background: rgba(0, 255, 136, 0.3);
+            border-left: 3px solid #00ff88;
+        }
+
+        .legend-color.removed {
+            background: rgba(255, 107, 107, 0.3);
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .legend-color.unchanged {
+            background: rgba(136, 136, 136, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Tools</a>
+            <h1>⚖️ Diff Checker</h1>
+            <div style="width: 100px;"></div>
+        </header>
+
+        <div class="options-bar">
+            <div class="option-group">
+                <span class="option-label">Compare:</span>
+                <button class="option-btn active" onclick="setMode('lines')" id="modeLines">Lines</button>
+                <button class="option-btn" onclick="setMode('words')" id="modeWords">Words</button>
+                <button class="option-btn" onclick="setMode('chars')" id="modeChars">Characters</button>
+            </div>
+            <div class="option-group">
+                <span class="option-label">View:</span>
+                <button class="option-btn active" onclick="setView('unified')" id="viewUnified">Unified</button>
+                <button class="option-btn" onclick="setView('split')" id="viewSplit">Side by Side</button>
+            </div>
+            <div style="flex: 1;"></div>
+            <button class="action-btn" onclick="loadSamples()">Load Samples</button>
+            <button class="action-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div class="editor-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">📝 Original Text</span>
+                    <div class="panel-actions">
+                        <button class="action-btn" onclick="copyText('original')">Copy</button>
+                        <button class="action-btn" onclick="pasteText('original')">Paste</button>
+                    </div>
+                </div>
+                <textarea id="originalText" placeholder="Paste original text here..."></textarea>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">📝 Modified Text</span>
+                    <div class="panel-actions">
+                        <button class="action-btn" onclick="copyText('modified')">Copy</button>
+                        <button class="action-btn" onclick="pasteText('modified')">Paste</button>
+                    </div>
+                </div>
+                <textarea id="modifiedText" placeholder="Paste modified text here..."></textarea>
+            </div>
+        </div>
+
+        <div class="compare-btn-container">
+            <button class="action-btn primary" onclick="compare()">
+                🔍 Compare Texts
+            </button>
+        </div>
+
+        <div class="diff-output">
+            <div class="diff-header">
+                <span class="diff-title">📊 Differences</span>
+                <div class="diff-stats">
+                    <span class="stat-added" id="addedCount">+0 added</span>
+                    <span class="stat-removed" id="removedCount">-0 removed</span>
+                    <span class="stat-unchanged" id="unchangedCount">~0 unchanged</span>
+                </div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color added"></div>
+                    <span>Added</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color removed"></div>
+                    <span>Removed</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color unchanged"></div>
+                    <span>Unchanged</span>
+                </div>
+            </div>
+            <div class="diff-content" id="diffOutput">
+                <div class="no-diff">
+                    <div class="icon">⚖️</div>
+                    <p>Enter text in both panels and click Compare to see differences</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let compareMode = 'lines';
+        let viewMode = 'unified';
+
+        const sampleOriginal = `The quick brown fox jumps over the lazy dog.
+This is the original text.
+It has multiple lines.
+Some lines will be changed.
+Some lines will be deleted.
+Some lines will be added.
+This line stays the same.`;
+
+        const sampleModified = `The quick brown fox jumps over the lazy cat.
+This is the modified text.
+It has multiple lines.
+Some lines have been changed!
+Some lines will be added.
+This line stays the same.
+A new line was added here.`;
+
+        function setMode(mode) {
+            compareMode = mode;
+            document.querySelectorAll('.option-group:first-child .option-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+        }
+
+        function setView(view) {
+            viewMode = view;
+            document.querySelectorAll('.option-group:nth-child(2) .option-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Simple diff algorithm using Longest Common Subsequence
+        function diff(oldArr, newArr) {
+            const m = oldArr.length;
+            const n = newArr.length;
+
+            // Build LCS matrix
+            const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (oldArr[i - 1] === newArr[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            // Backtrack to find diff
+            const result = [];
+            let i = m, j = n;
+
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && oldArr[i - 1] === newArr[j - 1]) {
+                    result.unshift({ type: 'unchanged', value: oldArr[i - 1], oldIndex: i - 1, newIndex: j - 1 });
+                    i--;
+                    j--;
+                } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+                    result.unshift({ type: 'added', value: newArr[j - 1], newIndex: j - 1 });
+                    j--;
+                } else if (i > 0) {
+                    result.unshift({ type: 'removed', value: oldArr[i - 1], oldIndex: i - 1 });
+                    i--;
+                }
+            }
+
+            return result;
+        }
+
+        function compare() {
+            const original = document.getElementById('originalText').value;
+            const modified = document.getElementById('modifiedText').value;
+
+            let oldArr, newArr;
+
+            switch (compareMode) {
+                case 'lines':
+                    oldArr = original.split('\n');
+                    newArr = modified.split('\n');
+                    break;
+                case 'words':
+                    oldArr = original.split(/(\s+)/);
+                    newArr = modified.split(/(\s+)/);
+                    break;
+                case 'chars':
+                    oldArr = original.split('');
+                    newArr = modified.split('');
+                    break;
+            }
+
+            const diffResult = diff(oldArr, newArr);
+            let addedCount = 0, removedCount = 0, unchangedCount = 0;
+
+            diffResult.forEach(item => {
+                if (item.type === 'added') addedCount++;
+                else if (item.type === 'removed') removedCount++;
+                else unchangedCount++;
+            });
+
+            document.getElementById('addedCount').textContent = `+${addedCount} added`;
+            document.getElementById('removedCount').textContent = `-${removedCount} removed`;
+            document.getElementById('unchangedCount').textContent = `~${unchangedCount} unchanged`;
+
+            // Render diff
+            const output = document.getElementById('diffOutput');
+
+            if (addedCount === 0 && removedCount === 0) {
+                output.innerHTML = `
+                    <div class="no-diff">
+                        <div class="icon">✅</div>
+                        <p>Texts are identical - no differences found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            let lineNum = 1;
+
+            if (viewMode === 'unified') {
+                diffResult.forEach(item => {
+                    const value = escapeHtml(item.value);
+                    if (compareMode === 'lines') {
+                        if (item.type === 'added') {
+                            html += `<div class="diff-line added"><span class="diff-line-num">${lineNum++}</span><span class="diff-indicator add">+</span>${value}</div>`;
+                        } else if (item.type === 'removed') {
+                            html += `<div class="diff-line removed"><span class="diff-line-num">${lineNum++}</span><span class="diff-indicator remove">-</span>${value}</div>`;
+                        } else {
+                            html += `<div class="diff-line unchanged"><span class="diff-line-num">${lineNum++}</span><span class="diff-indicator"> </span>${value}</div>`;
+                        }
+                    } else {
+                        // Words or chars mode
+                        if (item.type === 'added') {
+                            html += `<span class="inline-diff added">${value}</span>`;
+                        } else if (item.type === 'removed') {
+                            html += `<span class="inline-diff removed">${value}</span>`;
+                        } else {
+                            html += `<span>${value}</span>`;
+                        }
+                    }
+                });
+            } else {
+                // Split view
+                html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
+
+                // Left side (original with removals)
+                html += '<div style="border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px;">';
+                html += '<div style="color: #00d4ff; font-weight: 600; margin-bottom: 10px;">Original</div>';
+
+                let leftLine = 1;
+                diffResult.forEach(item => {
+                    const value = escapeHtml(item.value);
+                    if (item.type === 'removed') {
+                        html += `<div class="diff-line removed"><span class="diff-line-num">${leftLine++}</span>${value}</div>`;
+                    } else if (item.type === 'unchanged') {
+                        html += `<div class="diff-line unchanged"><span class="diff-line-num">${leftLine++}</span>${value}</div>`;
+                    }
+                });
+                html += '</div>';
+
+                // Right side (modified with additions)
+                html += '<div style="padding-left: 20px;">';
+                html += '<div style="color: #00d4ff; font-weight: 600; margin-bottom: 10px;">Modified</div>';
+
+                let rightLine = 1;
+                diffResult.forEach(item => {
+                    const value = escapeHtml(item.value);
+                    if (item.type === 'added') {
+                        html += `<div class="diff-line added"><span class="diff-line-num">${rightLine++}</span>${value}</div>`;
+                    } else if (item.type === 'unchanged') {
+                        html += `<div class="diff-line unchanged"><span class="diff-line-num">${rightLine++}</span>${value}</div>`;
+                    }
+                });
+                html += '</div>';
+
+                html += '</div>';
+            }
+
+            output.innerHTML = html;
+        }
+
+        function loadSamples() {
+            document.getElementById('originalText').value = sampleOriginal;
+            document.getElementById('modifiedText').value = sampleModified;
+            compare();
+        }
+
+        function clearAll() {
+            document.getElementById('originalText').value = '';
+            document.getElementById('modifiedText').value = '';
+            document.getElementById('diffOutput').innerHTML = `
+                <div class="no-diff">
+                    <div class="icon">⚖️</div>
+                    <p>Enter text in both panels and click Compare to see differences</p>
+                </div>
+            `;
+            document.getElementById('addedCount').textContent = '+0 added';
+            document.getElementById('removedCount').textContent = '-0 removed';
+            document.getElementById('unchangedCount').textContent = '~0 unchanged';
+        }
+
+        function copyText(type) {
+            const text = document.getElementById(type + 'Text').value;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!');
+            });
+        }
+
+        async function pasteText(type) {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById(type + 'Text').value = text;
+                showToast('Pasted from clipboard!');
+            } catch (e) {
+                showToast('Unable to paste. Please use Ctrl+V');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(0, 255, 136, 0.9);
+                color: #1a1a2e;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                z-index: 1000;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+    </script>
+</body>
+</html>
