@@ -99,13 +99,35 @@ PATH=~/.local/node/node-v20.11.0-linux-x64/bin:$PATH ~/.local/npm-global/bin/wra
 
 ## Next Action
 
-### HUMAN: Authenticate (2 min)
+### HUMAN: Authenticate & Deploy (2 min)
+
+**17 commits ready to push.** Run in terminal with browser access:
 
 ```bash
+# Option 1: Quick deploy script (recommended)
 bash scripts/quick-deploy.sh
+
+# Option 2: Manual steps
+gh auth login
+git push origin main
 ```
 
-### AFTER AUTH: Marketing Launch
+### Products Ready for Launch
+
+| Product | URL (after deploy) |
+|---------|-------------------|
+| Landing Page | https://maxmiksa.github.io/Auto-Company/ |
+| SaaS Pricing | /saas-pricing-calculator.html |
+| Churn Analyzer | /churn-calculator.html |
+| Burn Rate | /burn-rate-calculator.html |
+| MRR Growth | /mrr-growth-calculator.html |
+| LTV Calculator | /ltv-calculator.html |
+| CAC Calculator | /cac-calculator.html |
+| NRR Calculator | /nrr-calculator.html |
+| Cohort Analysis | /cohort-analysis.html |
+| Quick Ratio | /quick-ratio-calculator.html |
+
+### AFTER DEPLOY: Marketing Launch
 1. Post to r/startups, r/SaaS, r/indiehackers
 2. Share on Twitter/LinkedIn
 3. Submit to Hacker News
