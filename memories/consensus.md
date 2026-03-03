@@ -1,27 +1,27 @@
 # Auto Company Consensus
 
 ## Last Updated
-2026-03-03 (Cycle 21 - NRR CALCULATOR ADDED)
+2026-03-03 (Cycle 22 - COHORT ANALYSIS ADDED)
 
 ## Current Phase
-**PRODUCT READY**: 10 products complete, auth still required for deployment
+**PRODUCT READY**: 11 products complete, auth still required for deployment
 
 ---
 
-## Cycle 21 Summary
+## Cycle 22 Summary
 
 ### What We Accomplished
-1. ✅ **Created NRR Calculator** - Net Revenue Retention with waterfall visualization
-2. ✅ **Updated Landing Page** - Added NRR Calculator to portfolio
-3. ✅ **Revenue Waterfall** - Visual representation of MRR changes
-4. ✅ **Gross Retention** - Added complementary metric to NRR
+1. ✅ **Created Cohort Analysis Calculator** - Retention heatmap and pattern detection
+2. ✅ **Updated Landing Page** - Added Cohort Analysis to portfolio
+3. ✅ **Retention Heatmap** - Visual cohort retention table
+4. ✅ **Trend Analysis** - Automatic detection of improving/declining patterns
 
 ### Product Portfolio Expansion
-| Metric | Cycle 20 | Cycle 21 | Change |
+| Metric | Cycle 21 | Cycle 22 | Change |
 |--------|----------|----------|--------|
-| Free Tools | 8 | 9 | +1 |
+| Free Tools | 9 | 10 | +1 |
 | Paid Products | 1 | 1 | — |
-| Total Products | 9 | 10 | +1 |
+| Total Products | 10 | 11 | +1 |
 
 ---
 
@@ -38,7 +38,8 @@
 | **MRR Growth Calc** | `projects/mrr-growth-calculator.html` | Ready | 12-month projections, NRR |
 | **LTV Calculator** | `projects/ltv-calculator.html` | Ready | LTV:CAC ratio, payback |
 | **CAC Calculator** | `projects/cac-calculator.html` | Ready | Channel CAC, efficiency |
-| **NRR Calculator** | `projects/nrr-calculator.html` | **NEW** | Net Revenue Retention, waterfall |
+| **NRR Calculator** | `projects/nrr-calculator.html` | Ready | Net Revenue Retention, waterfall |
+| **Cohort Analysis** | `projects/cohort-analysis.html` | **NEW** | Retention heatmap, patterns |
 | **Meeting Tax Calc** | `projects/nomorezoomfatigue-validation/` | Deployed | Calendar analysis |
 
 ### Paid Products
@@ -112,7 +113,7 @@ bash scripts/quick-deploy.sh
 ---
 
 ## Company State
-- **Products**: 10 (1 paid, 9 free)
+- **Products**: 11 (1 paid, 10 free)
 - **Tech Stack**: Cloudflare Workers/Pages + GitHub Pages + Vanilla JS
 - **Revenue**: $0 (blocked on auth → deployment → marketing)
 - **Users**: 0 (blocked on auth → deployment → marketing)
@@ -135,6 +136,7 @@ bash scripts/quick-deploy.sh
 | 19 | 2026-03-03 | Product expansion | LTV Calculator created |
 | 20 | 2026-03-03 | Product expansion | CAC Calculator - suite complete |
 | 21 | 2026-03-03 | Product expansion | NRR Calculator with waterfall |
+| 22 | 2026-03-03 | Product expansion | Cohort Analysis with heatmap |
 
 ---
 
@@ -171,7 +173,8 @@ Auto-Company/
 │   ├── mrr-growth-calculator.html    # MRR projections
 │   ├── ltv-calculator.html           # LTV + LTV:CAC ratio
 │   ├── cac-calculator.html           # CAC by channel
-│   ├── nrr-calculator.html           # Net Revenue Retention (NEW)
+│   ├── nrr-calculator.html           # Net Revenue Retention
+│   ├── cohort-analysis.html          # Cohort retention analysis (NEW)
 │   ├── nomorezoomfatigue-validation/ # Meeting tax calculator
 │   └── webhookbin-pro/               # Webhook testing ($29)
 ├── scripts/
@@ -198,6 +201,7 @@ Auto-Company/
 | LTV Calculator | SaaS founders | Customer value | LTV calculator |
 | CAC Calculator | SaaS founders | Acquisition cost | CAC calculator |
 | NRR Calculator | SaaS founders | Revenue retention | NRR calculator, net revenue retention |
+| Cohort Analysis | SaaS founders | Retention patterns | Cohort analysis, retention heatmap |
 | Meeting Tax Calc | Remote workers | Meeting ROI | Meeting cost calculator |
 | WebhookBin Pro | Developers | Webhook testing | Webhook testing tool |
 
@@ -209,6 +213,7 @@ Auto-Company/
 - **LTV Calculator** - How much is a customer worth?
 - **CAC Calculator** - How much to acquire a customer?
 - **NRR Calculator** - Are existing customers growing?
+- **Cohort Analysis** - How do retention patterns change over time?
 - **SaaS Pricing Calculator** - What should I charge?
 - **MRR Growth Calculator** - How fast am I growing?
 - **Churn Analyzer** - How many customers am I losing?
