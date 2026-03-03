@@ -206,6 +206,14 @@
             color: var(--fg);
         }
     </style>
+    <!-- Privacy-friendly analytics using CountAPI -->
+    <script defer>
+    // Track page views with CountAPI (free, no signup)
+    (function() {
+        var page = window.location.pathname.replace(/[^a-z0-9]/gi, '-').replace(/^-|-$/g, '') || 'home';
+        fetch('https://api.countapi.xyz/hit/spardaa-tools/' + page).catch(function(){});
+    })();
+    </script>
 </head>
 <body>
     <div class="container">

@@ -14,6 +14,13 @@
         .input-field:focus { border-color: #818cf8; outline: none; box-shadow: 0 0 0 2px rgba(129,140,248,0.2); }
         .glow { box-shadow: 0 0 30px rgba(129,140,248,0.3); }
     </style>
+    <!-- Privacy-friendly analytics using CountAPI -->
+    <script defer>
+    (function() {
+        var page = window.location.pathname.replace(/[^a-z0-9]/gi, "-").replace(/^-|-$/g, "") || "home";
+        fetch("https://api.countapi.xyz/hit/spardaa-tools/" + page).catch(function(){});
+    })();
+    </script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen">
     <!-- Header -->

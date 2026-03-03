@@ -306,6 +306,13 @@
             margin-left: 8px;
         }
     </style>
+    <!-- Privacy-friendly analytics using CountAPI -->
+    <script defer>
+    (function() {
+        var page = window.location.pathname.replace(/[^a-z0-9]/gi, "-").replace(/^-|-$/g, "") || "home";
+        fetch("https://api.countapi.xyz/hit/spardaa-tools/" + page).catch(function(){});
+    })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -571,7 +578,14 @@
                 '{"name": "John", "email": "john@example.com", "age": 30}',
                 'The quick brown fox jumps over the lazy dog.',
                 '🎉 Unicode emojis work too! 🚀💻',
-                '<!DOCTYPE html>\n<html>\n<head><title>Sample</title></head>\n<body>Hello!</body>\n</html>'
+                '<!DOCTYPE html>\n<html>\n<head><title>Sample</title>    <!-- Privacy-friendly analytics using CountAPI -->
+    <script defer>
+    (function() {
+        var page = window.location.pathname.replace(/[^a-z0-9]/gi, "-").replace(/^-|-$/g, "") || "home";
+        fetch("https://api.countapi.xyz/hit/spardaa-tools/" + page).catch(function(){});
+    })();
+    </script>
+</head>\n<body>Hello!</body>\n</html>'
             ];
             document.getElementById('inputText').value = samples[Math.floor(Math.random() * samples.length)];
             encode();

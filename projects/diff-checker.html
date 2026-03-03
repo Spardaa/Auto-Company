@@ -56,6 +56,13 @@
         .info h4 { color: #60a5fa; margin-bottom: 10px; }
         .info p { color: #888; font-size: 0.9rem; line-height: 1.6; }
     </style>
+    <!-- Privacy-friendly analytics using CountAPI -->
+    <script defer>
+    (function() {
+        var page = window.location.pathname.replace(/[^a-z0-9]/gi, "-").replace(/^-|-$/g, "") || "home";
+        fetch("https://api.countapi.xyz/hit/spardaa-tools/" + page).catch(function(){});
+    })();
+    </script>
 </head>
 <body>
     <div class="container">
