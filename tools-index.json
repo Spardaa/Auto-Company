@@ -904,6 +904,81 @@
         "无障碍评分"
       ],
       "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "html-entity-encoder",
+      "name": {
+        "zh": "HTML 实体编码器",
+        "en": "HTML Entity Encoder/Decoder"
+      },
+      "category": "dev-tools",
+      "subcategory": "编码工具",
+      "tags": ["HTML Entity", "编码", "解码", "特殊字符", "开发"],
+      "description": {
+        "zh": "编码和解码 HTML 实体，支持命名、十进制和十六进制格式",
+        "en": "Encode and decode HTML entities with named, decimal, and hexadecimal support"
+      },
+      "url": "/tools/html-entity-encoder.html",
+      "icon": "🔐",
+      "popular": true,
+      "features": [
+        "命名/十进制/十六进制实体",
+        "实时转换",
+        "常用字符参考",
+        "快速插入",
+        "历史记录"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "mime-type-lookup",
+      "name": {
+        "zh": "MIME 类型查询",
+        "en": "MIME Type Lookup"
+      },
+      "category": "dev-tools",
+      "subcategory": "参考工具",
+      "tags": ["MIME", "Content-Type", "文件类型", "参考", "开发"],
+      "description": {
+        "zh": "通过文件扩展名查询 MIME 类型，或通过 MIME 类型查找扩展名",
+        "en": "Look up MIME types by extension or find extensions by MIME type"
+      },
+      "url": "/tools/mime-type-lookup.html",
+      "icon": "📁",
+      "popular": true,
+      "features": [
+        "100+ MIME 类型",
+        "按分类筛选",
+        "快速查询",
+        "复制 Content-Type",
+        "详情面板"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "code-minifier",
+      "name": {
+        "zh": "代码压缩器",
+        "en": "Code Minifier"
+      },
+      "category": "dev-tools",
+      "subcategory": "压缩工具",
+      "tags": ["Minifier", "压缩", "JavaScript", "CSS", "HTML", "开发"],
+      "description": {
+        "zh": "压缩 JavaScript、CSS 和 HTML 代码，移除空白和注释",
+        "en": "Minify JavaScript, CSS, and HTML code by removing whitespace and comments"
+      },
+      "url": "/tools/code-minifier.html",
+      "icon": "📦",
+      "popular": true,
+      "features": [
+        "JS/CSS/HTML 压缩",
+        "移除注释",
+        "压缩统计",
+        "文件拖放",
+        "下载输出"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
     }
   ]
 }
