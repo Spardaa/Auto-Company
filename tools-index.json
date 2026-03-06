@@ -105,39 +105,153 @@
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
-      "id": "json-formatter",
+      "id": "jwt-debugger",
       "name": {
-        "zh": "JSON 格式化",
-        "en": "JSON Formatter"
+        "zh": "JWT 调试器",
+        "en": "JWT Debugger"
       },
-      "category": "data",
-      "subcategory": "格式化",
-      "tags": ["JSON", "格式化", "压缩", "验证"],
+      "category": "dev-tools",
+      "subcategory": "认证工具",
+      "tags": ["JWT", "Token", "认证", "Base64", "开发"],
       "description": {
-        "zh": "在线 JSON 格式化、压缩、验证工具",
-        "en": "Online JSON formatting, minification, and validation tool"
+        "zh": "解码和检查 JWT 令牌，显示头部、载荷和签名，检查过期状态",
+        "en": "Decode and inspect JWT tokens, showing header, payload, and signature with expiration status"
       },
-      "url": "/tools/json-formatter.html",
-      "icon": "📋",
+      "url": "/tools/jwt-debugger.html",
+      "icon": "🔐",
       "popular": true,
+      "features": [
+        "实时解码 JWT",
+        "显示头部、载荷、签名",
+        "过期时间检查",
+        "注册声明说明",
+        "示例令牌"
+      ],
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
-      "id": "profit-calculator",
+      "id": "base64-encoder",
       "name": {
-        "zh": "利润计算器",
-        "en": "Profit Calculator"
+        "zh": "Base64 编码/解码",
+        "en": "Base64 Encoder/Decoder"
       },
-      "category": "calculator",
-      "subcategory": "财务计算",
-      "tags": ["利润", "利润率", "加价率", "ROI", "财务"],
+      "category": "dev-tools",
+      "subcategory": "编码工具",
+      "tags": ["Base64", "编码", "解码", "URL-safe", "开发"],
       "description": {
-        "zh": "快速计算利润、利润率、加价率、投资回报率等关键财务指标",
-        "en": "Calculate profit, profit margin, markup, ROI and other key financial metrics"
+        "zh": "Base64 编码和解码工具，支持 URL-safe 变体、文件上传和实时转换",
+        "en": "Encode and decode Base64 strings with URL-safe variant support, file upload, and live conversion"
       },
-      "url": "/tools/profit-calculator.html",
-      "icon": "💰",
+      "url": "/tools/base64-encoder.html",
+      "icon": "🔤",
       "popular": true,
+      "features": [
+        "实时编码/解码",
+        "URL-safe 变体支持",
+        "文件上传编码",
+        "UTF-8 支持",
+        "复制和下载"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "url-parser",
+      "name": {
+        "zh": "URL 解析器",
+        "en": "URL Parser"
+      },
+      "category": "dev-tools",
+      "subcategory": "URL工具",
+      "tags": ["URL", "解析", "查询参数", "编码", "开发"],
+      "description": {
+        "zh": "解析 URL，显示所有组件和查询参数，支持编码/解码和 JSON 导出",
+        "en": "Parse URLs, show all components and query parameters with encoding/decoding and JSON export"
+      },
+      "url": "/tools/url-parser.html",
+      "icon": "🔗",
+      "popular": true,
+      "features": [
+        "URL 组件解析",
+        "查询参数表格",
+        "编码/解码显示",
+        "JSON 导出",
+        "示例 URL"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "hash-generator",
+      "name": {
+        "zh": "哈希生成器",
+        "en": "Hash Generator"
+      },
+      "category": "dev-tools",
+      "subcategory": "加密工具",
+      "tags": ["Hash", "MD5", "SHA", "加密", "开发"],
+      "description": {
+        "zh": "生成 MD5、SHA-1、SHA-256、SHA-512 哈希值，支持文本和文件",
+        "en": "Generate MD5, SHA-1, SHA-256, SHA-512 hashes from text or files"
+      },
+      "url": "/tools/hash-generator.html",
+      "icon": "#️⃣",
+      "popular": true,
+      "features": [
+        "多种哈希算法",
+        "文件哈希计算",
+        "哈希比较",
+        "大小写切换",
+        "实时计算"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "uuid-generator",
+      "name": {
+        "zh": "UUID 生成器",
+        "en": "UUID Generator"
+      },
+      "category": "dev-tools",
+      "subcategory": "ID生成",
+      "tags": ["UUID", "GUID", "ID", "唯一标识", "开发"],
+      "description": {
+        "zh": "生成 UUID v1/v4/v5，支持批量生成和多种格式输出",
+        "en": "Generate UUID v1/v4/v5 with batch generation and multiple output formats"
+      },
+      "url": "/tools/uuid-generator.html",
+      "icon": "🔑",
+      "popular": true,
+      "features": [
+        "UUID v1/v4/v5 支持",
+        "批量生成",
+        "多种格式输出",
+        "命名空间配置",
+        "复制和下载"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "timestamp-converter",
+      "name": {
+        "zh": "时间戳转换器",
+        "en": "Timestamp Converter"
+      },
+      "category": "dev-tools",
+      "subcategory": "时间工具",
+      "tags": ["Timestamp", "Unix", "时间", "日期", "开发"],
+      "description": {
+        "zh": "Unix 时间戳与日期时间转换，支持多种格式和实时时钟",
+        "en": "Convert between Unix timestamps and dates with multiple formats and real-time clock"
+      },
+      "url": "/tools/timestamp-converter.html",
+      "icon": "🕐",
+      "popular": true,
+      "features": [
+        "实时时钟显示",
+        "Unix 转 ISO/UTC/本地",
+        "日期转 Unix",
+        "相对时间计算",
+        "快捷预设"
+      ],
       "createdAt": "2026-03-06T00:00:00Z"
     }
   ]
