@@ -1,15 +1,10 @@
 {
   "categories": [
     {"id": "api-mock", "name": {"zh": "API 模拟", "en": "API Mock"}, "icon": "🔌"},
-    {"id": "image", "name": {"zh": "图片处理", "en": "Image Processing"}, "icon": "🖼️"},
-    {"id": "audio", "name": {"zh": "音频处理", "en": "Audio Processing"}, "icon": "🎵"},
-    {"id": "video", "name": {"zh": "视频处理", "en": "Video Processing"}, "icon": "🎬"},
-    {"id": "document", "name": {"zh": "文档处理", "en": "Document Processing"}, "icon": "📄"},
+    {"id": "dev-tools", "name": {"zh": "开发工具", "en": "Dev Tools"}, "icon": "🛠️"},
     {"id": "data", "name": {"zh": "数据转换", "en": "Data Conversion"}, "icon": "📊"},
-    {"id": "calculator", "name": {"zh": "计算工具", "en": "Calculator Tools"}, "icon": "💰"},
-    {"id": "generator", "name": {"zh": "生成工具", "en": "Generator Tools"}, "icon": "✨"},
-    {"id": "analyzer", "name": {"zh": "分析工具", "en": "Analyzer Tools"}, "icon": "🔍"},
-    {"id": "utility", "name": {"zh": "实用工具", "en": "Utility Tools"}, "icon": "🛠️"}
+    {"id": "image", "name": {"zh": "图片处理", "en": "Image Processing"}, "icon": "🖼️"},
+    {"id": "calculator", "name": {"zh": "计算工具", "en": "Calculator Tools"}, "icon": "💰"}
   ],
   "tools": [
     {
@@ -28,13 +23,6 @@
       "url": "/tools/rest-api-mock.html",
       "icon": "🔌",
       "popular": true,
-      "features": [
-        "支持 GET/POST/PUT/PATCH/DELETE 方法",
-        "自定义响应状态码和延迟",
-        "localStorage 本地持久化",
-        "配置导入导出和 URL 分享",
-        "实时测试模拟响应"
-      ],
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
@@ -53,13 +41,24 @@
       "url": "/tools/webhook-tester.html",
       "icon": "🪝",
       "popular": true,
-      "features": [
-        "预设主流平台 Webhook 模板",
-        "自定义请求头和请求体",
-        "请求历史记录和回放",
-        "导出历史记录",
-        "请求详情查看"
-      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "json-path-tester",
+      "name": {
+        "zh": "JSONPath 测试器",
+        "en": "JSONPath Tester"
+      },
+      "category": "dev-tools",
+      "subcategory": "JSON工具",
+      "tags": ["JSONPath", "JSON", "查询", "测试", "开发"],
+      "description": {
+        "zh": "测试和评估 JSONPath 表达式，支持递归查询、切片、过滤等语法",
+        "en": "Test and evaluate JSONPath expressions with support for recursive descent, slices, filters, and more"
+      },
+      "url": "/tools/json-path-tester.html",
+      "icon": "🔍",
+      "popular": true,
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
@@ -81,24 +80,6 @@
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
-      "id": "image-compressor",
-      "name": {
-        "zh": "图片压缩",
-        "en": "Image Compressor"
-      },
-      "category": "image",
-      "subcategory": "压缩优化",
-      "tags": ["图片", "压缩", "优化", "JPG", "PNG", "WebP"],
-      "description": {
-        "zh": "在线压缩图片，支持 JPG/PNG/WebP 格式，可调节压缩质量",
-        "en": "Compress images online, supports JPG/PNG/WebP with adjustable quality"
-      },
-      "url": "/tools/image-compressor.html",
-      "icon": "🖼️",
-      "popular": true,
-      "createdAt": "2026-03-06T00:00:00Z"
-    },
-    {
       "id": "profit-calculator",
       "name": {
         "zh": "利润计算器",
@@ -112,7 +93,6 @@
         "en": "Calculate profit, profit margin, markup, ROI and other key financial metrics"
       },
       "url": "/tools/profit-calculator.html",
-      "api": "/tools/profit-calculator.html?revenue=100&cost=50",
       "icon": "💰",
       "popular": true,
       "createdAt": "2026-03-06T00:00:00Z"
