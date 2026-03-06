@@ -3,6 +3,7 @@
     {"id": "api-mock", "name": {"zh": "API 模拟", "en": "API Mock"}, "icon": "🔌"},
     {"id": "dev-tools", "name": {"zh": "开发工具", "en": "Dev Tools"}, "icon": "🛠️"},
     {"id": "data", "name": {"zh": "数据转换", "en": "Data Conversion"}, "icon": "📊"},
+    {"id": "visualizer", "name": {"zh": "可视化", "en": "Visualizer"}, "icon": "📈"},
     {"id": "image", "name": {"zh": "图片处理", "en": "Image Processing"}, "icon": "🖼️"},
     {"id": "calculator", "name": {"zh": "计算工具", "en": "Calculator Tools"}, "icon": "💰"}
   ],
@@ -403,6 +404,156 @@
         "cURL/Headers 导出"
       ],
       "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "diff-checker",
+      "name": {
+        "zh": "文本对比工具",
+        "en": "Diff Checker"
+      },
+      "category": "dev-tools",
+      "subcategory": "对比工具",
+      "tags": ["Diff", "对比", "比较", "代码", "开发"],
+      "description": {
+        "zh": "对比两段文本或代码，高亮显示差异，支持行级和字符级对比",
+        "en": "Compare two pieces of text or code with highlighted differences, line and character level comparison"
+      },
+      "url": "/tools/diff-checker.html",
+      "icon": "🔍",
+      "popular": true,
+      "features": [
+        "并排对比视图",
+        "行级差异高亮",
+        "字符级差异标记",
+        "统一差异视图",
+        "语法高亮支持"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "markdown-editor",
+      "name": {
+        "zh": "Markdown 编辑器",
+        "en": "Markdown Editor"
+      },
+      "category": "dev-tools",
+      "subcategory": "编辑器",
+      "tags": ["Markdown", "编辑器", "预览", "文档", "开发"],
+      "description": {
+        "zh": "实时 Markdown 编辑器，支持实时预览、语法高亮和导出",
+        "en": "Real-time Markdown editor with live preview, syntax highlighting, and export"
+      },
+      "url": "/tools/markdown-editor.html",
+      "icon": "📝",
+      "popular": true,
+      "features": [
+        "实时预览",
+        "语法高亮",
+        "GitHub 风格 Markdown",
+        "导出 HTML/Markdown",
+        "快捷键支持"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "code-beautifier",
+      "name": {
+        "zh": "代码美化器",
+        "en": "Code Beautifier"
+      },
+      "category": "dev-tools",
+      "subcategory": "格式化",
+      "tags": ["代码", "美化", "格式化", "压缩", "开发"],
+      "description": {
+        "zh": "美化和压缩 JavaScript、CSS、HTML 代码，支持多种格式化选项",
+        "en": "Beautify and minify JavaScript, CSS, HTML code with various formatting options"
+      },
+      "url": "/tools/code-beautifier.html",
+      "icon": "✨",
+      "popular": true,
+      "features": [
+        "JS/CSS/HTML 美化",
+        "代码压缩",
+        "自定义缩进",
+        "语法验证",
+        "复制和下载"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "json-visualizer",
+      "name": {
+        "zh": "JSON 可视化",
+        "en": "JSON Visualizer"
+      },
+      "category": "visualizer",
+      "subcategory": "可视化",
+      "tags": ["JSON", "可视化", "树形", "分析", "开发"],
+      "description": {
+        "zh": "交互式 JSON 树形可视化，支持搜索、路径追踪和统计分析",
+        "en": "Interactive JSON tree visualization with search, path tracking, and statistics"
+      },
+      "url": "/tools/json-visualizer.html",
+      "icon": "🌳",
+      "popular": true,
+      "features": [
+        "交互式树形视图",
+        "搜索和过滤",
+        "路径追踪",
+        "统计分析",
+        "折叠/展开控制"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "api-flow-designer",
+      "name": {
+        "zh": "API 流程设计器",
+        "en": "API Flow Designer"
+      },
+      "category": "visualizer",
+      "subcategory": "设计工具",
+      "tags": ["API", "流程", "设计", "可视化", "开发"],
+      "description": {
+        "zh": "可视化 API 流程设计器，拖拽组件构建 API 流程，导出代码",
+        "en": "Visual API flow designer with drag-drop components, export to code"
+      },
+      "url": "/tools/api-flow-designer.html",
+      "icon": "🔀",
+      "popular": true,
+      "features": [
+        "拖拽式设计",
+        "多种组件类型",
+        "流程模板",
+        "代码生成",
+        "JSON 导入/导出"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "database-schema-designer",
+      "name": {
+        "zh": "数据库设计器",
+        "en": "Database Schema Designer"
+      },
+      "category": "visualizer",
+      "subcategory": "设计工具",
+      "tags": ["数据库", "ERD", "Schema", "SQL", "开发"],
+      "description": {
+        "zh": "可视化数据库设计器，设计表结构和关系，生成 SQL",
+        "en": "Visual database schema designer for tables, relations, and SQL generation"
+      },
+      "url": "/tools/database-schema-designer.html",
+      "icon": "🗄️",
+      "popular": true,
+      "features": [
+        "可视化表设计",
+        "关系定义",
+        "SQL 生成",
+        "模板预设",
+        "JSON 导入/导出"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
     }
   ]
 }
