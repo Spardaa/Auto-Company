@@ -1,0 +1,96 @@
+{
+  "categories": [
+    {"id": "api-mock", "name": {"zh": "API 模拟", "en": "API Mock"}, "icon": "🔌"},
+    {"id": "image", "name": {"zh": "图片处理", "en": "Image Processing"}, "icon": "🖼️"},
+    {"id": "audio", "name": {"zh": "音频处理", "en": "Audio Processing"}, "icon": "🎵"},
+    {"id": "video", "name": {"zh": "视频处理", "en": "Video Processing"}, "icon": "🎬"},
+    {"id": "document", "name": {"zh": "文档处理", "en": "Document Processing"}, "icon": "📄"},
+    {"id": "data", "name": {"zh": "数据转换", "en": "Data Conversion"}, "icon": "📊"},
+    {"id": "calculator", "name": {"zh": "计算工具", "en": "Calculator Tools"}, "icon": "💰"},
+    {"id": "generator", "name": {"zh": "生成工具", "en": "Generator Tools"}, "icon": "✨"},
+    {"id": "analyzer", "name": {"zh": "分析工具", "en": "Analyzer Tools"}, "icon": "🔍"},
+    {"id": "utility", "name": {"zh": "实用工具", "en": "Utility Tools"}, "icon": "🛠️"}
+  ],
+  "tools": [
+    {
+      "id": "rest-api-mock",
+      "name": {
+        "zh": "REST API 模拟器",
+        "en": "REST API Mock"
+      },
+      "category": "api-mock",
+      "subcategory": "模拟测试",
+      "tags": ["API", "REST", "Mock", "测试", "开发"],
+      "description": {
+        "zh": "创建模拟 REST API 端点，支持自定义响应、延迟和请求头，用于前端开发和测试",
+        "en": "Create mock REST API endpoints with custom responses, delays, and headers for frontend development and testing"
+      },
+      "url": "/tools/rest-api-mock.html",
+      "icon": "🔌",
+      "popular": true,
+      "features": [
+        "支持 GET/POST/PUT/PATCH/DELETE 方法",
+        "自定义响应状态码和延迟",
+        "localStorage 本地持久化",
+        "配置导入导出和 URL 分享",
+        "实时测试模拟响应"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "json-formatter",
+      "name": {
+        "zh": "JSON 格式化",
+        "en": "JSON Formatter"
+      },
+      "category": "data",
+      "subcategory": "格式化",
+      "tags": ["JSON", "格式化", "压缩", "验证"],
+      "description": {
+        "zh": "在线 JSON 格式化、压缩、验证工具",
+        "en": "Online JSON formatting, minification, and validation tool"
+      },
+      "url": "/tools/json-formatter.html",
+      "icon": "📋",
+      "popular": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "image-compressor",
+      "name": {
+        "zh": "图片压缩",
+        "en": "Image Compressor"
+      },
+      "category": "image",
+      "subcategory": "压缩优化",
+      "tags": ["图片", "压缩", "优化", "JPG", "PNG", "WebP"],
+      "description": {
+        "zh": "在线压缩图片，支持 JPG/PNG/WebP 格式，可调节压缩质量",
+        "en": "Compress images online, supports JPG/PNG/WebP with adjustable quality"
+      },
+      "url": "/tools/image-compressor.html",
+      "icon": "🖼️",
+      "popular": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "profit-calculator",
+      "name": {
+        "zh": "利润计算器",
+        "en": "Profit Calculator"
+      },
+      "category": "calculator",
+      "subcategory": "财务计算",
+      "tags": ["利润", "利润率", "加价率", "ROI", "财务"],
+      "description": {
+        "zh": "快速计算利润、利润率、加价率、投资回报率等关键财务指标",
+        "en": "Calculate profit, profit margin, markup, ROI and other key financial metrics"
+      },
+      "url": "/tools/profit-calculator.html",
+      "api": "/tools/profit-calculator.html?revenue=100&cost=50",
+      "icon": "💰",
+      "popular": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    }
+  ]
+}
