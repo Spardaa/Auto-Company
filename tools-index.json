@@ -253,6 +253,56 @@
         "快捷预设"
       ],
       "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "color-picker",
+      "name": {
+        "zh": "颜色选择器",
+        "en": "Color Picker"
+      },
+      "category": "dev-tools",
+      "subcategory": "设计工具",
+      "tags": ["Color", "HEX", "RGB", "HSL", "开发"],
+      "description": {
+        "zh": "颜色选择和格式转换工具，支持 HEX/RGB/HSL 格式，对比度检查和调色板生成",
+        "en": "Pick colors and convert between HEX, RGB, HSL formats with contrast checker and palette generation"
+      },
+      "url": "/tools/color-picker.html",
+      "icon": "🎨",
+      "popular": true,
+      "features": [
+        "HEX/RGB/HSL/HSLA 转换",
+        "RGB/HSL 滑块控制",
+        "WCAG 对比度检查",
+        "调色板生成",
+        "CSS/SCSS/JSON/Tailwind 导出"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "json-formatter",
+      "name": {
+        "zh": "JSON 格式化",
+        "en": "JSON Formatter"
+      },
+      "category": "dev-tools",
+      "subcategory": "JSON工具",
+      "tags": ["JSON", "格式化", "验证", "压缩", "开发"],
+      "description": {
+        "zh": "格式化、验证、压缩 JSON，支持语法高亮、树形视图和路径查询",
+        "en": "Format, validate, and minify JSON with syntax highlighting, tree view, and path querying"
+      },
+      "url": "/tools/json-formatter.html",
+      "icon": "📋",
+      "popular": true,
+      "features": [
+        "JSON 格式化和压缩",
+        "语法高亮显示",
+        "树形结构视图",
+        "路径查询",
+        "历史记录"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
     }
   ]
 }
