@@ -378,6 +378,31 @@
         "批量生成"
       ],
       "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "api-response-generator",
+      "name": {
+        "zh": "API 响应生成器",
+        "en": "API Response Generator"
+      },
+      "category": "data",
+      "subcategory": "数据生成",
+      "tags": ["API", "响应", "Mock", "生成器", "开发"],
+      "description": {
+        "zh": "生成常见 API 响应模板，包括成功/错误响应、分页、认证等模式",
+        "en": "Generate common API response templates including success/error, pagination, auth patterns"
+      },
+      "url": "/tools/api-response-generator.html",
+      "icon": "📡",
+      "popular": true,
+      "features": [
+        "20+ 响应模板",
+        "成功/错误响应",
+        "认证响应模式",
+        "分页和搜索",
+        "cURL/Headers 导出"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
     }
   ]
 }
