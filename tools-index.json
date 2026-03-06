@@ -38,6 +38,31 @@
       "createdAt": "2026-03-06T00:00:00Z"
     },
     {
+      "id": "webhook-tester",
+      "name": {
+        "zh": "Webhook 测试器",
+        "en": "Webhook Tester"
+      },
+      "category": "api-mock",
+      "subcategory": "模拟测试",
+      "tags": ["Webhook", "API", "测试", "调试", "开发"],
+      "description": {
+        "zh": "模拟和测试 Webhook 请求，支持常见平台模板（Stripe、GitHub、Slack、Shopify、Twilio）",
+        "en": "Simulate and test webhook requests with templates for popular platforms (Stripe, GitHub, Slack, Shopify, Twilio)"
+      },
+      "url": "/tools/webhook-tester.html",
+      "icon": "🪝",
+      "popular": true,
+      "features": [
+        "预设主流平台 Webhook 模板",
+        "自定义请求头和请求体",
+        "请求历史记录和回放",
+        "导出历史记录",
+        "请求详情查看"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
       "id": "json-formatter",
       "name": {
         "zh": "JSON 格式化",
