@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON to TypeScript - DevToolbox</title>
+  <meta name="description" content="Convert JSON to TypeScript interfaces instantly. Paste JSON, get TypeScript types.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .editor {
+      width: 100%;
+      min-height: 400px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+    }
+    .editor:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .output {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 400px;
+      overflow: auto;
+    }
+    .output pre {
+      margin: 0;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .keyword { color: #c084fc; }
+    .type { color: #22d3ee; }
+    .string { color: #4ade80; }
+    .number { color: #fb923c; }
+    .property { color: #60a5fa; }
+
+    .btn {
+      padding: 8px 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    .options {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .option input[type="checkbox"], .option input[type="text"] {
+      cursor: pointer;
+    }
+    .option input[type="text"] {
+      width: 100px;
+      padding: 6px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--error);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--error);
+      margin-bottom: 16px;
+    }
+
+    .success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--success);
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+
+    .sample-btn {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .sample-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <span>🔷</span>
+        <span>JSON to TypeScript</span>
+      </a>
+      <a href="https://spardaa.github.io/toolbox/" class="back-link">← Back to Tools</a>
+    </header>
+
+    <div class="panel" style="margin-bottom: 20px;">
+      <div class="options">
+        <label class="option">
+          <input type="checkbox" id="useInterface" checked>
+          Use interface (vs type)
+        </label>
+        <label class="option">
+          <input type="checkbox" id="optionalFields">
+          Optional fields (?)
+        </label>
+        <label class="option">
+          <input type="checkbox" id="readonly">
+          Readonly
+        </label>
+        <label class="option">
+          Root name:
+          <input type="text" id="rootName" value="RootObject" placeholder="RootObject">
+        </label>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 0.85rem; margin-right: 8px;">Samples:</span>
+        <button class="sample-btn" onclick="loadSample('user')">User</button>
+        <button class="sample-btn" onclick="loadSample('product')">Product</button>
+        <button class="sample-btn" onclick="loadSample('api')">API Response</button>
+        <button class="sample-btn" onclick="loadSample('nested')">Nested</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📥 JSON Input</div>
+          <div class="panel-actions">
+            <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+            <button class="btn" onclick="convert()">Convert →</button>
+          </div>
+        </div>
+        <textarea class="editor" id="input" placeholder='Paste your JSON here...'></textarea>
+        <div id="inputError" class="error" style="display: none; margin-top: 16px;"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📤 TypeScript Output</div>
+          <div class="panel-actions">
+            <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy</button>
+            <button class="btn btn-secondary" onclick="downloadOutput()">⬇️ Download</button>
+          </div>
+        </div>
+        <div class="output" id="output">
+          <pre style="color: var(--text-muted);">TypeScript interfaces will appear here...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SAMPLES = {
+      user: {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "isActive": true,
+        "createdAt": "2024-01-15"
+      },
+      product: {
+        "id": "prod_123",
+        "name": "Widget",
+        "price": 29.99,
+        "tags": ["electronics", "gadgets"],
+        "stock": 100,
+        "metadata": {
+          "brand": "TechCorp",
+          "warranty": 12
+        }
+      },
+      api: {
+        "success": true,
+        "data": {
+          "users": [
+            { "id": 1, "name": "Alice" },
+            { "id": 2, "name": "Bob" }
+          ],
+          "total": 2,
+          "page": 1
+        },
+        "error": null
+      },
+      nested: {
+        "company": {
+          "name": "Acme Corp",
+          "address": {
+            "street": "123 Main St",
+            "city": "New York",
+            "zip": "10001",
+            "country": "USA"
+          },
+          "employees": [
+            {
+              "id": 1,
+              "name": "Alice",
+              "department": "Engineering",
+              "skills": ["TypeScript", "React", "Node.js"]
+            }
+          ]
+        }
+      }
+    };
+
+    function loadSample(name) {
+      document.getElementById('input').value = JSON.stringify(SAMPLES[name], null, 2);
+      convert();
+    }
+
+    function clearInput() {
+      document.getElementById('input').value = '';
+      document.getElementById('output').innerHTML = '<pre style="color: var(--text-muted);">TypeScript interfaces will appear here...</pre>';
+      document.getElementById('inputError').style.display = 'none';
+    }
+
+    function getTSBasicType(value) {
+      if (value === null) return 'null';
+      if (Array.isArray(value)) return 'array';
+      if (typeof value === 'object') return 'object';
+      if (typeof value === 'string') {
+        // Check for date patterns
+        if (/^\d{4}-\d{2}-\d{2}/.test(value)) return 'string'; // Date
+        return 'string';
+      }
+      if (typeof value === 'number') return 'number';
+      if (typeof value === 'boolean') return 'boolean';
+      return 'any';
+    }
+
+    function generateTypeName(key, parentName = '') {
+      // Convert snake_case or kebab-case to PascalCase
+      const cleanKey = key.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
+      return cleanKey.charAt(0).toUpperCase() + cleanKey.slice(1);
+    }
+
+    function convertToTS(obj, name = 'RootObject', allInterfaces = []) {
+      const useInterface = document.getElementById('useInterface').checked;
+      const optionalFields = document.getElementById('optionalFields').checked;
+      const readonly = document.getElementById('readonly').checked;
+      const keyword = useInterface ? 'interface' : 'type';
+
+      if (typeof obj !== 'object' || obj === null) {
+        return { main: `${keyword} ${name} = ${getTSBasicType(obj)};`, subtypes: [] };
+      }
+
+      if (Array.isArray(obj)) {
+        if (obj.length === 0) {
+          return { main: `${keyword} ${name} = any[];`, subtypes: [] };
+        }
+        const firstItem = obj[0];
+        if (typeof firstItem === 'object' && firstItem !== null) {
+          const itemTypeName = name + 'Item';
+          const itemResult = convertToTS(firstItem, itemTypeName, allInterfaces);
+          return {
+            main: `${keyword} ${name} = ${itemTypeName}[];`,
+            subtypes: [itemResult.main, ...itemResult.subtypes]
+          };
+        } else {
+          return { main: `${keyword} ${name} = ${getTSBasicType(firstItem)}[];`, subtypes: [] };
+        }
+      }
+
+      const lines = [];
+      const subtypes = [];
+      const readonlyPrefix = readonly ? 'readonly ' : '';
+      const optionalSuffix = optionalFields ? '?' : '';
+
+      for (const [key, value] of Object.entries(obj)) {
+        const tsType = getTSBasicType(value);
+        let fieldType;
+
+        if (tsType === 'object') {
+          const nestedTypeName = name + generateTypeName(key);
+          const nestedResult = convertToTS(value, nestedTypeName, allInterfaces);
+          fieldType = nestedTypeName;
+          subtypes.push(nestedResult.main, ...nestedResult.subtypes);
+        } else if (tsType === 'array') {
+          if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {
+            const itemTypeName = name + generateTypeName(key) + 'Item';
+            const itemResult = convertToTS(value[0], itemTypeName, allInterfaces);
+            fieldType = itemTypeName + '[]';
+            subtypes.push(itemResult.main, ...itemResult.subtypes);
+          } else if (value.length > 0) {
+            fieldType = getTSBasicType(value[0]) + '[]';
+          } else {
+            fieldType = 'any[]';
+          }
+        } else if (tsType === 'null') {
+          fieldType = 'null';
+        } else {
+          fieldType = tsType;
+        }
+
+        // Handle optional null types
+        if (value === null && optionalFields) {
+          lines.push(`  ${readonlyPrefix}${key}${optionalSuffix}: ${fieldType} | undefined;`);
+        } else if (value === null) {
+          lines.push(`  ${readonlyPrefix}${key}: ${fieldType} | null;`);
+        } else {
+          lines.push(`  ${readonlyPrefix}${key}${optionalSuffix}: ${fieldType};`);
+        }
+      }
+
+      if (useInterface) {
+        return {
+          main: `${keyword} ${name} {\n${lines.join('\n')}\n}`,
+          subtypes
+        };
+      } else {
+        return {
+          main: `${keyword} ${name} = {\n${lines.join('\n')}\n};`,
+          subtypes
+        };
+      }
+    }
+
+    function convert() {
+      const input = document.getElementById('input').value.trim();
+      const errorDiv = document.getElementById('inputError');
+
+      if (!input) {
+        errorDiv.style.display = 'none';
+        return;
+      }
+
+      let json;
+      try {
+        json = JSON.parse(input);
+        errorDiv.style.display = 'none';
+      } catch (e) {
+        errorDiv.textContent = 'Invalid JSON: ' + e.message;
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const rootName = document.getElementById('rootName').value || 'RootObject';
+      const result = convertToTS(json, rootName);
+
+      // Combine all interfaces
+      const allCode = [...result.subtypes, result.main].join('\n\n');
+      const highlighted = highlightTS(allCode);
+
+      document.getElementById('output').innerHTML = `<pre>${highlighted}</pre>`;
+    }
+
+    function highlightTS(code) {
+      return code
+        .replace(/\b(interface|type|readonly|const|let|var)\b/g, '<span class="keyword">$1</span>')
+        .replace(/:\s*(string|number|boolean|any|null|undefined|object)\b/g, ': <span class="type">$1</span>')
+        .replace(/:\s*(\w+)(\[\]|Item)/g, ': <span class="type">$1$2</span>')
+        .replace(/(\w+)(\?)?:/g, '<span class="property">$1</span>$2:')
+        .replace(/'([^']+)'/g, '\'<span class="string">$1</span>\'')
+        .replace(/"([^"]+)"/g, '"<span class="string">$1</span>"')
+        .replace(/\b(\d+)\b/g, '<span class="number">$1</span>');
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(output).then(() => {
+        const btn = event.target;
+        const original = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = original, 1500);
+      });
+    }
+
+    function downloadOutput() {
+      const output = document.getElementById('output').textContent;
+      const rootName = document.getElementById('rootName').value || 'types';
+      const blob = new Blob([output], { type: 'text/typescript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${rootName.toLowerCase()}.ts`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Auto-convert on input
+    document.getElementById('input').addEventListener('input', () => {
+      clearTimeout(window.convertTimeout);
+      window.convertTimeout = setTimeout(convert, 300);
+    });
+
+    // Re-convert on option change
+    document.querySelectorAll('#useInterface, #optionalFields, #readonly, #rootName').forEach(el => {
+      el.addEventListener('change', convert);
+      el.addEventListener('input', convert);
+    });
+
+    // Load user sample by default
+    loadSample('user');
+  </script>
+</body>
+</html>

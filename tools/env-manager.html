@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Variable Manager | Developer Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4757, #ff3344);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .env-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .env-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .env-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .env-item input {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+        }
+
+        .env-item input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .env-item .btn-icon {
+            padding: 8px;
+            background: rgba(255, 71, 87, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: #ff4757;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .env-item .btn-icon:hover {
+            background: rgba(255, 71, 87, 0.4);
+        }
+
+        .textarea-container {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .presets {
+            margin-top: 20px;
+        }
+
+        .presets-title {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #2ecc71;
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .line-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .env-item.secret .value-input {
+            -webkit-text-security: disc;
+            text-security: disc;
+        }
+
+        .env-item.secret .value-input.show {
+            -webkit-text-security: none;
+            text-security: none;
+        }
+
+        .toggle-visibility {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .toggle-visibility:hover {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Environment Variable Manager</h1>
+            <p class="subtitle">Manage, export, and share .env files with ease</p>
+        </header>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="addVariable()">
+                <span>+</span> Add Variable
+            </button>
+            <button class="btn btn-secondary" onclick="loadFromTextarea()">
+                <span>↓</span> Load from Text
+            </button>
+            <button class="btn btn-secondary" onclick="copyToClipboard()">
+                <span>📋</span> Copy .env
+            </button>
+            <button class="btn btn-secondary" onclick="downloadEnv()">
+                <span>💾</span> Download .env
+            </button>
+            <button class="btn btn-secondary" onclick="importFile()">
+                <span>📂</span> Import File
+            </button>
+            <button class="btn btn-danger" onclick="clearAll()">
+                <span>🗑</span> Clear All
+            </button>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Variables</span>
+                    <span id="varCount">0 variables</span>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search variables..." oninput="filterVariables()">
+                </div>
+
+                <div class="env-list" id="envList">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <p>No variables yet</p>
+                        <p style="font-size: 0.85rem; margin-top: 5px;">Add variables or load from .env file</p>
+                    </div>
+                </div>
+
+                <div class="presets">
+                    <div class="presets-title">Quick Add Presets:</div>
+                    <div class="preset-list">
+                        <button class="preset-btn" onclick="addPreset('database')">Database</button>
+                        <button class="preset-btn" onclick="addPreset('api')">API Keys</button>
+                        <button class="preset-btn" onclick="addPreset('auth')">Auth</button>
+                        <button class="preset-btn" onclick="addPreset('app')">App Config</button>
+                        <button class="preset-btn" onclick="addPreset('email')">Email</button>
+                        <button class="preset-btn" onclick="addPreset('aws')">AWS</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">.env File Preview</span>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchFormat('env')">.env</button>
+                    <button class="tab" onclick="switchFormat('json')">JSON</button>
+                    <button class="tab" onclick="switchFormat('yaml')">YAML</button>
+                    <button class="tab" onclick="switchFormat('docker')">Docker</button>
+                </div>
+
+                <div class="textarea-container">
+                    <textarea id="envPreview" readonly placeholder="Variables will appear here..."></textarea>
+                    <span class="line-count" id="lineCount">0 lines</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="copyFormat()">
+                        Copy Current Format
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadFormat()">
+                        Download Current Format
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".env,.txt" style="display: none" onchange="handleFileImport(event)">
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let variables = [];
+        let currentFormat = 'env';
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const stored = localStorage.getItem('envVariables');
+            if (stored) {
+                variables = JSON.parse(stored);
+                renderVariables();
+            }
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('envVariables', JSON.stringify(variables));
+        }
+
+        // Add new variable
+        function addVariable(key = '', value = '', isSecret = false) {
+            const id = Date.now();
+            variables.push({ id, key, value, isSecret });
+            saveToStorage();
+            renderVariables();
+            return id;
+        }
+
+        // Remove variable
+        function removeVariable(id) {
+            variables = variables.filter(v => v.id !== id);
+            saveToStorage();
+            renderVariables();
+        }
+
+        // Update variable
+        function updateVariable(id, field, value) {
+            const variable = variables.find(v => v.id === id);
+            if (variable) {
+                variable[field] = value;
+                saveToStorage();
+                updatePreview();
+            }
+        }
+
+        // Toggle secret visibility
+        function toggleVisibility(id, btn) {
+            const input = btn.parentElement.querySelector('.value-input');
+            input.classList.toggle('show');
+            btn.textContent = input.classList.contains('show') ? '👁' : '👁‍🗨';
+        }
+
+        // Toggle secret status
+        function toggleSecret(id, checkbox) {
+            const variable = variables.find(v => v.id === id);
+            if (variable) {
+                variable.isSecret = checkbox.checked;
+                saveToStorage();
+                renderVariables();
+            }
+        }
+
+        // Render variables list
+        function renderVariables() {
+            const container = document.getElementById('envList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = variables.filter(v =>
+                v.key.toLowerCase().includes(searchTerm) ||
+                v.value.toLowerCase().includes(searchTerm)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <p>${searchTerm ? 'No matching variables' : 'No variables yet'}</p>
+                        <p style="font-size: 0.85rem; margin-top: 5px;">${searchTerm ? 'Try a different search' : 'Add variables or load from .env file'}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filtered.map(v => `
+                    <div class="env-item ${v.isSecret ? 'secret' : ''}">
+                        <input type="text" class="key-input" value="${escapeHtml(v.key)}"
+                            placeholder="KEY" onchange="updateVariable(${v.id}, 'key', this.value)">
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <input type="text" class="value-input ${v.isSecret && !v.showValue ? '' : 'show'}"
+                                value="${escapeHtml(v.value)}" placeholder="value"
+                                onchange="updateVariable(${v.id}, 'value', this.value)"
+                                style="flex: 1;">
+                            ${v.isSecret ? `
+                                <button class="toggle-visibility" onclick="toggleVisibility(${v.id}, this)">👁‍🗨</button>
+                            ` : ''}
+                        </div>
+                        <button class="btn-icon" onclick="removeVariable(${v.id})" title="Delete">✕</button>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('varCount').textContent = `${variables.length} variable${variables.length !== 1 ? 's' : ''}`;
+            updatePreview();
+        }
+
+        // Filter variables
+        function filterVariables() {
+            renderVariables();
+        }
+
+        // Update preview
+        function updatePreview() {
+            const preview = document.getElementById('envPreview');
+            const content = generateContent(currentFormat);
+            preview.value = content;
+
+            const lines = content.split('\n').length;
+            document.getElementById('lineCount').textContent = `${lines} lines`;
+        }
+
+        // Generate content based on format
+        function generateContent(format) {
+            if (variables.length === 0) return '';
+
+            switch (format) {
+                case 'env':
+                    return variables.map(v => {
+                        const value = v.value.includes(' ') || v.value.includes('#') ? `"${v.value}"` : v.value;
+                        return `${v.key}=${value}`;
+                    }).join('\n');
+
+                case 'json':
+                    const obj = {};
+                    variables.forEach(v => {
+                        obj[v.key] = v.value;
+                    });
+                    return JSON.stringify(obj, null, 2);
+
+                case 'yaml':
+                    return variables.map(v => {
+                        const value = v.value.includes(':') || v.value.includes('#') ? `"${v.value}"` : v.value;
+                        return `${v.key}: ${value}`;
+                    }).join('\n');
+
+                case 'docker':
+                    return variables.map(v => {
+                        const value = v.value.includes(' ') ? `"${v.value}"` : v.value;
+                        return `-e ${v.key}=${value}`;
+                    }).join(' \\\n');
+
+                default:
+                    return '';
+            }
+        }
+
+        // Switch format
+        function switchFormat(format) {
+            currentFormat = format;
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.toggle('active', tab.textContent.toLowerCase().includes(format));
+            });
+            updatePreview();
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const content = generateContent('env');
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Copied .env to clipboard!');
+            });
+        }
+
+        // Copy current format
+        function copyFormat() {
+            const content = generateContent(currentFormat);
+            navigator.clipboard.writeText(content).then(() => {
+                showToast(`Copied ${currentFormat.toUpperCase()} to clipboard!`);
+            });
+        }
+
+        // Download .env file
+        function downloadEnv() {
+            const content = generateContent('env');
+            downloadFile(content, '.env', 'text/plain');
+            showToast('Downloaded .env file!');
+        }
+
+        // Download current format
+        function downloadFormat() {
+            const content = generateContent(currentFormat);
+            const extensions = { env: '.env', json: '.json', yaml: '.yaml', docker: '.sh' };
+            const filename = `environment${extensions[currentFormat]}`;
+            downloadFile(content, filename, 'text/plain');
+            showToast(`Downloaded ${filename}!`);
+        }
+
+        // Download file helper
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import file
+        function importFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Handle file import
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                parseEnvFile(e.target.result);
+                showToast('File imported successfully!');
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Parse .env file
+        function parseEnvFile(content) {
+            const lines = content.split('\n');
+            let imported = 0;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line || line.startsWith('#')) return;
+
+                const match = line.match(/^([^=]+)=(.*)$/);
+                if (match) {
+                    let key = match[1].trim();
+                    let value = match[2].trim();
+
+                    // Remove quotes
+                    if ((value.startsWith('"') && value.endsWith('"')) ||
+                        (value.startsWith("'") && value.endsWith("'"))) {
+                        value = value.slice(1, -1);
+                    }
+
+                    // Check if key already exists
+                    const existing = variables.find(v => v.key === key);
+                    if (existing) {
+                        existing.value = value;
+                    } else {
+                        addVariable(key, value, key.toLowerCase().includes('secret') ||
+                                                     key.toLowerCase().includes('key') ||
+                                                     key.toLowerCase().includes('password') ||
+                                                     key.toLowerCase().includes('token'));
+                        imported++;
+                    }
+                }
+            });
+
+            saveToStorage();
+            renderVariables();
+        }
+
+        // Load from textarea
+        function loadFromTextarea() {
+            const content = prompt('Paste your .env content:');
+            if (content) {
+                parseEnvFile(content);
+                showToast('Variables loaded!');
+            }
+        }
+
+        // Clear all
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all variables?')) {
+                variables = [];
+                saveToStorage();
+                renderVariables();
+                showToast('All variables cleared!');
+            }
+        }
+
+        // Add presets
+        function addPreset(preset) {
+            const presets = {
+                database: [
+                    ['DATABASE_URL', 'postgresql://user:password@localhost:5432/dbname', true],
+                    ['DB_HOST', 'localhost', false],
+                    ['DB_PORT', '5432', false],
+                    ['DB_NAME', 'myapp', false],
+                    ['DB_USER', 'postgres', false],
+                    ['DB_PASSWORD', 'password', true]
+                ],
+                api: [
+                    ['API_KEY', 'your-api-key-here', true],
+                    ['API_SECRET', 'your-api-secret-here', true],
+                    ['API_BASE_URL', 'https://api.example.com', false]
+                ],
+                auth: [
+                    ['JWT_SECRET', 'your-jwt-secret-key', true],
+                    ['JWT_EXPIRES_IN', '7d', false],
+                    ['BCRYPT_ROUNDS', '10', false]
+                ],
+                app: [
+                    ['NODE_ENV', 'development', false],
+                    ['PORT', '3000', false],
+                    ['APP_NAME', 'My App', false],
+                    ['APP_URL', 'http://localhost:3000', false]
+                ],
+                email: [
+                    ['SMTP_HOST', 'smtp.gmail.com', false],
+                    ['SMTP_PORT', '587', false],
+                    ['SMTP_USER', 'your-email@gmail.com', false],
+                    ['SMTP_PASS', 'your-app-password', true]
+                ],
+                aws: [
+                    ['AWS_ACCESS_KEY_ID', 'AKIAIOSFODNN7EXAMPLE', true],
+                    ['AWS_SECRET_ACCESS_KEY', 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', true],
+                    ['AWS_REGION', 'us-east-1', false],
+                    ['AWS_S3_BUCKET', 'my-bucket', false]
+                ]
+            };
+
+            const items = presets[preset];
+            if (items) {
+                items.forEach(([key, value, isSecret]) => {
+                    const existing = variables.find(v => v.key === key);
+                    if (!existing) {
+                        addVariable(key, value, isSecret);
+                    }
+                });
+                showToast(`Added ${preset} preset!`);
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${isError ? 'error' : ''}`;
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        loadFromStorage();
+        renderVariables();
+    </script>
+</body>
+</html>

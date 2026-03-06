@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Budget Calculator | Developer Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .budget-overview {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .total-budget {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .total-budget.under { color: #2ecc71; }
+        .total-budget.warning { color: #f39c12; }
+        .total-budget.over { color: #e74c3c; }
+
+        .budget-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .progress-bar.under { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+        .progress-bar.warning { background: linear-gradient(90deg, #e67e22, #f39c12); }
+        .progress-bar.over { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+        .budget-input-group {
+            margin-bottom: 20px;
+        }
+
+        .budget-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .budget-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .budget-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .category-section {
+            margin-bottom: 25px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .category-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .category-icon {
+            font-size: 1.2rem;
+        }
+
+        .category-status {
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .category-status.under { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .category-status.warning { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
+        .category-status.over { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+        .resource-list {
+            padding-left: 15px;
+        }
+
+        .resource-item {
+            display: grid;
+            grid-template-columns: 1fr 100px 120px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+
+        .resource-name {
+            font-size: 0.9rem;
+        }
+
+        .resource-input {
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        .resource-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .resource-status {
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        .resource-status.under { color: #2ecc71; }
+        .resource-status.warning { color: #f39c12; }
+        .resource-status.over { color: #e74c3c; }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4757, #ff3344);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .presets-section {
+            margin-top: 20px;
+        }
+
+        .presets-title {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .recommendations {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .recommendations-title {
+            font-size: 0.9rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommendation-item {
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: #aaa;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation-icon {
+            flex-shrink: 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #2ecc71;
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .bar-value {
+            width: 70px;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .export-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .export-title {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .export-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Performance Budget Calculator</h1>
+            <p class="subtitle">Track and manage your web performance budgets</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Resource Budgets</span>
+                    <span id="resourceCount">8 categories</span>
+                </div>
+
+                <!-- JavaScript Category -->
+                <div class="category-section">
+                    <div class="category-header" onclick="toggleCategory('js')">
+                        <span class="category-name">
+                            <span class="category-icon">📜</span>
+                            JavaScript
+                        </span>
+                        <span class="category-status" id="js-status">Under Budget</span>
+                    </div>
+                    <div class="resource-list" id="js-resources">
+                        <div class="resource-item">
+                            <span class="resource-name">Main Bundle</span>
+                            <input type="number" class="resource-input" id="js-main" value="150" onchange="calculateBudget()">
+                            <span class="resource-status under" id="js-main-status">/ 200 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Vendor Bundle</span>
+                            <input type="number" class="resource-input" id="js-vendor" value="100" onchange="calculateBudget()">
+                            <span class="resource-status under" id="js-vendor-status">/ 150 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Other Scripts</span>
+                            <input type="number" class="resource-input" id="js-other" value="50" onchange="calculateBudget()">
+                            <span class="resource-status under" id="js-other-status">/ 100 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSS Category -->
+                <div class="category-section">
+                    <div class="category-header" onclick="toggleCategory('css')">
+                        <span class="category-name">
+                            <span class="category-icon">🎨</span>
+                            CSS
+                        </span>
+                        <span class="category-status" id="css-status">Under Budget</span>
+                    </div>
+                    <div class="resource-list" id="css-resources">
+                        <div class="resource-item">
+                            <span class="resource-name">Main Styles</span>
+                            <input type="number" class="resource-input" id="css-main" value="45" onchange="calculateBudget()">
+                            <span class="resource-status under" id="css-main-status">/ 100 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Critical CSS</span>
+                            <input type="number" class="resource-input" id="css-critical" value="14" onchange="calculateBudget()">
+                            <span class="resource-status under" id="css-critical-status">/ 20 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images Category -->
+                <div class="category-section">
+                    <div class="category-header" onclick="toggleCategory('images')">
+                        <span class="category-name">
+                            <span class="category-icon">🖼️</span>
+                            Images
+                        </span>
+                        <span class="category-status" id="images-status">Under Budget</span>
+                    </div>
+                    <div class="resource-list" id="images-resources">
+                        <div class="resource-item">
+                            <span class="resource-name">Hero Images</span>
+                            <input type="number" class="resource-input" id="img-hero" value="200" onchange="calculateBudget()">
+                            <span class="resource-status under" id="img-hero-status">/ 300 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Thumbnails</span>
+                            <input type="number" class="resource-input" id="img-thumb" value="80" onchange="calculateBudget()">
+                            <span class="resource-status under" id="img-thumb-status">/ 100 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Icons & Logos</span>
+                            <input type="number" class="resource-input" id="img-icons" value="30" onchange="calculateBudget()">
+                            <span class="resource-status under" id="img-icons-status">/ 50 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fonts Category -->
+                <div class="category-section">
+                    <div class="category-header" onclick="toggleCategory('fonts')">
+                        <span class="category-name">
+                            <span class="category-icon">🔤</span>
+                            Fonts
+                        </span>
+                        <span class="category-status" id="fonts-status">Under Budget</span>
+                    </div>
+                    <div class="resource-list" id="fonts-resources">
+                        <div class="resource-item">
+                            <span class="resource-name">Web Fonts</span>
+                            <input type="number" class="resource-input" id="fonts-web" value="60" onchange="calculateBudget()">
+                            <span class="resource-status under" id="fonts-web-status">/ 100 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third Party Category -->
+                <div class="category-section">
+                    <div class="category-header" onclick="toggleCategory('thirdparty')">
+                        <span class="category-name">
+                            <span class="category-icon">🔗</span>
+                            Third Party
+                        </span>
+                        <span class="category-status" id="thirdparty-status">Under Budget</span>
+                    </div>
+                    <div class="resource-list" id="thirdparty-resources">
+                        <div class="resource-item">
+                            <span class="resource-name">Analytics</span>
+                            <input type="number" class="resource-input" id="tp-analytics" value="30" onchange="calculateBudget()">
+                            <span class="resource-status under" id="tp-analytics-status">/ 50 KB</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="resource-name">Ads & Tracking</span>
+                            <input type="number" class="resource-input" id="tp-ads" value="0" onchange="calculateBudget()">
+                            <span class="resource-status under" id="tp-ads-status">/ 50 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="calculateBudget()">
+                        <span>🔄</span> Recalculate
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportBudget()">
+                        <span>📋</span> Export Config
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetBudgets()">
+                        <span>↩️</span> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Budget Overview</span>
+                </div>
+
+                <div class="budget-overview">
+                    <div class="total-budget under" id="totalUsed">739 KB</div>
+                    <div class="budget-label">of 1,120 KB budget used</div>
+                    <div class="progress-container">
+                        <div class="progress-bar under" id="progressBar" style="width: 66%"></div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="metricJs">300 KB</div>
+                        <div class="metric-label">JavaScript</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="metricCss">59 KB</div>
+                        <div class="metric-label">CSS</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="metricImages">310 KB</div>
+                        <div class="metric-label">Images</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="panel-title" style="margin-bottom: 15px;">Budget Breakdown</div>
+                    <div class="bar-chart" id="barChart">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <div class="presets-section">
+                    <div class="presets-title">Quick Presets:</div>
+                    <div class="preset-list">
+                        <button class="preset-btn" onclick="applyPreset('strict')">Strict (500KB)</button>
+                        <button class="preset-btn" onclick="applyPreset('moderate')">Moderate (1MB)</button>
+                        <button class="preset-btn" onclick="applyPreset('relaxed')">Relaxed (2MB)</button>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <div class="recommendations-title">
+                        <span>💡</span> Recommendations
+                    </div>
+                    <div id="recommendationsList">
+                        <div class="recommendation-item">
+                            <span class="recommendation-icon">✅</span>
+                            <span>All categories are within budget!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <div class="export-title">Budget Configuration (JSON)</div>
+                    <div class="export-content" id="exportContent">
+{
+  "totalBudget": 1120,
+  "categories": {
+    "javascript": { "budget": 450, "used": 300 },
+    "css": { "budget": 120, "used": 59 },
+    "images": { "budget": 450, "used": 310 },
+    "fonts": { "budget": 100, "used": 60 }
+  }
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Budget limits (in KB)
+        const budgetLimits = {
+            js: { main: 200, vendor: 150, other: 100, total: 450 },
+            css: { main: 100, critical: 20, total: 120 },
+            images: { hero: 300, thumb: 100, icons: 50, total: 450 },
+            fonts: { web: 100, total: 100 },
+            thirdparty: { analytics: 50, ads: 50, total: 100 }
+        };
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const stored = localStorage.getItem('performanceBudget');
+            if (stored) {
+                const data = JSON.parse(stored);
+                Object.keys(data).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input) {
+                        input.value = data[key];
+                    }
+                });
+            }
+            calculateBudget();
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            const data = {};
+            document.querySelectorAll('.resource-input').forEach(input => {
+                data[input.id] = input.value;
+            });
+            localStorage.setItem('performanceBudget', JSON.stringify(data));
+        }
+
+        // Calculate budget
+        function calculateBudget() {
+            saveToStorage();
+
+            // Calculate JavaScript
+            const jsMain = parseInt(document.getElementById('js-main').value) || 0;
+            const jsVendor = parseInt(document.getElementById('js-vendor').value) || 0;
+            const jsOther = parseInt(document.getElementById('js-other').value) || 0;
+            const jsTotal = jsMain + jsVendor + jsOther;
+
+            // Calculate CSS
+            const cssMain = parseInt(document.getElementById('css-main').value) || 0;
+            const cssCritical = parseInt(document.getElementById('css-critical').value) || 0;
+            const cssTotal = cssMain + cssCritical;
+
+            // Calculate Images
+            const imgHero = parseInt(document.getElementById('img-hero').value) || 0;
+            const imgThumb = parseInt(document.getElementById('img-thumb').value) || 0;
+            const imgIcons = parseInt(document.getElementById('img-icons').value) || 0;
+            const imgTotal = imgHero + imgThumb + imgIcons;
+
+            // Calculate Fonts
+            const fontsWeb = parseInt(document.getElementById('fonts-web').value) || 0;
+            const fontsTotal = fontsWeb;
+
+            // Calculate Third Party
+            const tpAnalytics = parseInt(document.getElementById('tp-analytics').value) || 0;
+            const tpAds = parseInt(document.getElementById('tp-ads').value) || 0;
+            const tpTotal = tpAnalytics + tpAds;
+
+            // Update individual statuses
+            updateResourceStatus('js-main', jsMain, budgetLimits.js.main);
+            updateResourceStatus('js-vendor', jsVendor, budgetLimits.js.vendor);
+            updateResourceStatus('js-other', jsOther, budgetLimits.js.other);
+            updateResourceStatus('css-main', cssMain, budgetLimits.css.main);
+            updateResourceStatus('css-critical', cssCritical, budgetLimits.css.critical);
+            updateResourceStatus('img-hero', imgHero, budgetLimits.images.hero);
+            updateResourceStatus('img-thumb', imgThumb, budgetLimits.images.thumb);
+            updateResourceStatus('img-icons', imgIcons, budgetLimits.images.icons);
+            updateResourceStatus('fonts-web', fontsWeb, budgetLimits.fonts.web);
+            updateResourceStatus('tp-analytics', tpAnalytics, budgetLimits.thirdparty.analytics);
+            updateResourceStatus('tp-ads', tpAds, budgetLimits.thirdparty.ads);
+
+            // Update category statuses
+            updateCategoryStatus('js', jsTotal, budgetLimits.js.total);
+            updateCategoryStatus('css', cssTotal, budgetLimits.css.total);
+            updateCategoryStatus('images', imgTotal, budgetLimits.images.total);
+            updateCategoryStatus('fonts', fontsTotal, budgetLimits.fonts.total);
+            updateCategoryStatus('thirdparty', tpTotal, budgetLimits.thirdparty.total);
+
+            // Calculate total
+            const totalUsed = jsTotal + cssTotal + imgTotal + fontsTotal + tpTotal;
+            const totalBudget = budgetLimits.js.total + budgetLimits.css.total +
+                               budgetLimits.images.total + budgetLimits.fonts.total +
+                               budgetLimits.thirdparty.total;
+            const percentage = Math.round((totalUsed / totalBudget) * 100);
+
+            // Update overview
+            document.getElementById('totalUsed').textContent = `${totalUsed.toLocaleString()} KB`;
+            document.getElementById('totalUsed').className = `total-budget ${getStatusClass(percentage)}`;
+            document.querySelector('.budget-label').textContent = `of ${totalBudget.toLocaleString()} KB budget used`;
+            document.getElementById('progressBar').style.width = `${Math.min(percentage, 100)}%`;
+            document.getElementById('progressBar').className = `progress-bar ${getStatusClass(percentage)}`;
+
+            // Update metrics
+            document.getElementById('metricJs').textContent = `${jsTotal} KB`;
+            document.getElementById('metricCss').textContent = `${cssTotal} KB`;
+            document.getElementById('metricImages').textContent = `${imgTotal} KB`;
+
+            // Update bar chart
+            updateBarChart({
+                'JavaScript': { used: jsTotal, budget: budgetLimits.js.total },
+                'CSS': { used: cssTotal, budget: budgetLimits.css.total },
+                'Images': { used: imgTotal, budget: budgetLimits.images.total },
+                'Fonts': { used: fontsTotal, budget: budgetLimits.fonts.total },
+                '3rd Party': { used: tpTotal, budget: budgetLimits.thirdparty.total }
+            });
+
+            // Update recommendations
+            updateRecommendations({
+                js: { used: jsTotal, budget: budgetLimits.js.total },
+                css: { used: cssTotal, budget: budgetLimits.css.total },
+                images: { used: imgTotal, budget: budgetLimits.images.total },
+                fonts: { used: fontsTotal, budget: budgetLimits.fonts.total },
+                thirdparty: { used: tpTotal, budget: budgetLimits.thirdparty.total }
+            });
+
+            // Update export content
+            updateExportContent({
+                jsTotal, cssTotal, imgTotal, fontsTotal, tpTotal, totalUsed, totalBudget
+            });
+        }
+
+        function updateResourceStatus(id, used, budget) {
+            const statusEl = document.getElementById(`${id}-status`);
+            const percentage = (used / budget) * 100;
+            statusEl.textContent = `/ ${budget} KB`;
+            statusEl.className = `resource-status ${getStatusClass(percentage)}`;
+        }
+
+        function updateCategoryStatus(category, used, budget) {
+            const statusEl = document.getElementById(`${category}-status`);
+            const percentage = (used / budget) * 100;
+            if (percentage > 100) {
+                statusEl.textContent = `${used} / ${budget} KB - Over!`;
+            } else if (percentage > 80) {
+                statusEl.textContent = `${used} / ${budget} KB - Warning`;
+            } else {
+                statusEl.textContent = `${used} / ${budget} KB`;
+            }
+            statusEl.className = `category-status ${getStatusClass(percentage)}`;
+        }
+
+        function getStatusClass(percentage) {
+            if (percentage > 100) return 'over';
+            if (percentage > 80) return 'warning';
+            return 'under';
+        }
+
+        function updateBarChart(data) {
+            const container = document.getElementById('barChart');
+            container.innerHTML = Object.entries(data).map(([name, { used, budget }]) => {
+                const percentage = Math.min((used / budget) * 100, 100);
+                const statusClass = getStatusClass((used / budget) * 100);
+                return `
+                    <div class="bar-row">
+                        <span class="bar-label">${name}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill ${statusClass}" style="width: ${percentage}%"></div>
+                        </div>
+                        <span class="bar-value ${statusClass}">${used}/${budget}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateRecommendations(data) {
+            const recommendations = [];
+
+            Object.entries(data).forEach(([category, { used, budget }]) => {
+                const percentage = (used / budget) * 100;
+                if (percentage > 100) {
+                    recommendations.push({
+                        type: 'error',
+                        icon: '❌',
+                        text: `${category.charAt(0).toUpperCase() + category.slice(1)} is ${(used - budget)} KB over budget! Consider optimization.`
+                    });
+                } else if (percentage > 80) {
+                    recommendations.push({
+                        type: 'warning',
+                        icon: '⚠️',
+                        text: `${category.charAt(0).toUpperCase() + category.slice(1)} is at ${Math.round(percentage)}% of budget.`
+                    });
+                }
+            });
+
+            if (recommendations.length === 0) {
+                recommendations.push({
+                    type: 'success',
+                    icon: '✅',
+                    text: 'All categories are within budget!'
+                });
+            }
+
+            const container = document.getElementById('recommendationsList');
+            container.innerHTML = recommendations.map(r => `
+                <div class="recommendation-item">
+                    <span class="recommendation-icon">${r.icon}</span>
+                    <span>${r.text}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateExportContent(data) {
+            const content = {
+                totalBudget: data.totalBudget,
+                used: data.totalUsed,
+                categories: {
+                    javascript: { budget: budgetLimits.js.total, used: data.jsTotal },
+                    css: { budget: budgetLimits.css.total, used: data.cssTotal },
+                    images: { budget: budgetLimits.images.total, used: data.imgTotal },
+                    fonts: { budget: budgetLimits.fonts.total, used: data.fontsTotal },
+                    thirdParty: { budget: budgetLimits.thirdparty.total, used: data.tpTotal }
+                },
+                timestamp: new Date().toISOString()
+            };
+            document.getElementById('exportContent').textContent = JSON.stringify(content, null, 2);
+        }
+
+        function toggleCategory(category) {
+            const list = document.getElementById(`${category}-resources`);
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function applyPreset(preset) {
+            const presets = {
+                strict: {
+                    'js-main': 100, 'js-vendor': 80, 'js-other': 20,
+                    'css-main': 30, 'css-critical': 10,
+                    'img-hero': 100, 'img-thumb': 30, 'img-icons': 10,
+                    'fonts-web': 30, 'tp-analytics': 10, 'tp-ads': 0
+                },
+                moderate: {
+                    'js-main': 150, 'js-vendor': 100, 'js-other': 50,
+                    'css-main': 45, 'css-critical': 14,
+                    'img-hero': 200, 'img-thumb': 80, 'img-icons': 30,
+                    'fonts-web': 60, 'tp-analytics': 30, 'tp-ads': 0
+                },
+                relaxed: {
+                    'js-main': 300, 'js-vendor': 200, 'js-other': 100,
+                    'css-main': 80, 'css-critical': 20,
+                    'img-hero': 400, 'img-thumb': 150, 'img-icons': 50,
+                    'fonts-web': 100, 'tp-analytics': 50, 'tp-ads': 30
+                }
+            };
+
+            const values = presets[preset];
+            Object.keys(values).forEach(key => {
+                document.getElementById(key).value = values[key];
+            });
+            calculateBudget();
+            showToast(`Applied ${preset} preset!`);
+        }
+
+        function resetBudgets() {
+            if (confirm('Reset all values to defaults?')) {
+                localStorage.removeItem('performanceBudget');
+                document.querySelectorAll('.resource-input').forEach(input => {
+                    input.value = input.defaultValue;
+                });
+                calculateBudget();
+                showToast('Budgets reset!');
+            }
+        }
+
+        function exportBudget() {
+            const content = document.getElementById('exportContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Budget configuration copied to clipboard!');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Initialize
+        loadFromStorage();
+    </script>
+</body>
+</html>

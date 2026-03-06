@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorem Ipsum Generator - DevToolbox</title>
+  <meta name="description" content="Generate placeholder text for your designs. Paragraphs, sentences, words, or lists.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .control-group {
+      flex: 1;
+      min-width: 150px;
+    }
+    .control-label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .generate-btn {
+      padding: 10px 24px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .generate-btn:hover { background: var(--primary-dark); }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .output-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .copy-btn {
+      padding: 8px 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .copy-btn:hover { background: var(--primary-dark); }
+
+    .output-text {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      min-height: 200px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .history {
+      margin-top: 20px;
+    }
+    .history-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .history-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .history-item {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .history-item:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+
+    .options {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <span>📝</span>
+        <span>Lorem Ipsum Generator</span>
+      </a>
+      <a href="https://spardaa.github.io/toolbox/" class="back-link">← Back to Tools</a>
+    </header>
+
+    <div class="panel">
+      <div class="panel-title">⚙️ Settings</div>
+      <div class="controls">
+        <div class="control-group">
+          <label class="control-label">Type</label>
+          <select id="type">
+            <option value="paragraphs">Paragraphs</option>
+            <option value="sentences">Sentences</option>
+            <option value="words">Words</option>
+            <option value="list">List Items</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Amount</label>
+          <input type="number" id="amount" value="3" min="1" max="100">
+        </div>
+        <button class="generate-btn" onclick="generate()">🎲 Generate</button>
+      </div>
+      <div class="options">
+        <label class="option">
+          <input type="checkbox" id="startWithLorem" checked>
+          Start with "Lorem ipsum dolor sit amet..."
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="output-header">
+        <span class="output-meta" id="outputMeta">0 characters, 0 words</span>
+        <button class="copy-btn" onclick="copyText()">📋 Copy to Clipboard</button>
+      </div>
+      <div class="output-text" id="output"></div>
+    </div>
+
+    <div class="panel history">
+      <div class="history-title">📜 Recent Generations</div>
+      <div class="history-items" id="historyItems"></div>
+    </div>
+  </div>
+
+  <script>
+    const LOREM_WORDS = [
+      'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
+      'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
+      'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
+      'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
+      'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate',
+      'velit', 'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint',
+      'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia',
+      'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum', 'perspiciatis', 'unde',
+      'omnis', 'iste', 'natus', 'error', 'voluptatem', 'accusantium', 'doloremque',
+      'laudantium', 'totam', 'rem', 'aperiam', 'eaque', 'ipsa', 'quae', 'ab', 'illo',
+      'inventore', 'veritatis', 'quasi', 'architecto', 'beatae', 'vitae', 'dicta',
+      'explicabo', 'nemo', 'ipsam', 'quia', 'voluptas', 'aspernatur', 'aut', 'odit',
+      'fugit', 'consequuntur', 'magni', 'dolores', 'eos', 'ratione', 'sequi',
+      'nesciunt', 'neque', 'porro', 'quisquam', 'dolorem', 'adipisci', 'numquam',
+      'eius', 'modi', 'tempora', 'magnam', 'quaerat'
+    ];
+
+    const START_TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+    let history = JSON.parse(localStorage.getItem('lorem_history') || '[]');
+
+    function getRandomWord() {
+      return LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)];
+    }
+
+    function generateSentence(minWords = 8, maxWords = 15) {
+      const wordCount = Math.floor(Math.random() * (maxWords - minWords + 1)) + minWords;
+      let sentence = [];
+      for (let i = 0; i < wordCount; i++) {
+        sentence.push(getRandomWord());
+      }
+      sentence[0] = sentence[0].charAt(0).toUpperCase() + sentence[0].slice(1);
+      return sentence.join(' ') + '.';
+    }
+
+    function generateParagraph(minSentences = 4, maxSentences = 7) {
+      const sentenceCount = Math.floor(Math.random() * (maxSentences - minSentences + 1)) + minSentences;
+      let sentences = [];
+      for (let i = 0; i < sentenceCount; i++) {
+        sentences.push(generateSentence());
+      }
+      return sentences.join(' ');
+    }
+
+    function generate() {
+      const type = document.getElementById('type').value;
+      const amount = parseInt(document.getElementById('amount').value);
+      const startWithLorem = document.getElementById('startWithLorem').checked;
+
+      let output = '';
+
+      switch (type) {
+        case 'paragraphs':
+          for (let i = 0; i < amount; i++) {
+            if (i === 0 && startWithLorem) {
+              output += START_TEXT + ' ' + generateSentence() + ' ' + generateSentence() + '\n\n';
+            } else {
+              output += generateParagraph() + '\n\n';
+            }
+          }
+          break;
+
+        case 'sentences':
+          for (let i = 0; i < amount; i++) {
+            if (i === 0 && startWithLorem) {
+              output += START_TEXT + ' ';
+            } else {
+              output += generateSentence() + ' ';
+            }
+          }
+          output = output.trim();
+          break;
+
+        case 'words':
+          for (let i = 0; i < amount; i++) {
+            if (i === 0 && startWithLorem) {
+              output += 'Lorem ipsum dolor sit amet consectetur adipiscing elit ';
+              i += 8;
+            }
+            output += getRandomWord() + ' ';
+          }
+          output = output.trim();
+          break;
+
+        case 'list':
+          for (let i = 0; i < amount; i++) {
+            output += '• ' + generateSentence(5, 10) + '\n';
+          }
+          break;
+      }
+
+      document.getElementById('output').textContent = output.trim();
+      updateMeta(output);
+
+      // Save to history
+      const historyItem = { type, amount, preview: output.substring(0, 50) + '...', timestamp: Date.now() };
+      history.unshift(historyItem);
+      if (history.length > 10) history.pop();
+      localStorage.setItem('lorem_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function updateMeta(text) {
+      const chars = text.length;
+      const words = text.split(/\s+/).filter(w => w.length > 0).length;
+      document.getElementById('outputMeta').textContent = `${chars} characters, ${words} words`;
+    }
+
+    function copyText() {
+      const text = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 1500);
+      });
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyItems');
+      if (history.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">No history yet</span>';
+        return;
+      }
+      container.innerHTML = history.map((item, index) => `
+        <div class="history-item" onclick="loadFromHistory(${index})">
+          ${item.type} × ${item.amount}
+        </div>
+      `).join('');
+    }
+
+    function loadFromHistory(index) {
+      const item = history[index];
+      document.getElementById('type').value = item.type;
+      document.getElementById('amount').value = item.amount;
+      generate();
+    }
+
+    // Initialize
+    renderHistory();
+    generate();
+  </script>
+</body>
+</html>

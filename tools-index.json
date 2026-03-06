@@ -554,6 +554,356 @@
         "JSON 导入/导出"
       ],
       "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "http-request-builder",
+      "name": {
+        "zh": "HTTP 请求构建器",
+        "en": "HTTP Request Builder"
+      },
+      "category": "api-mock",
+      "subcategory": "API测试",
+      "tags": ["HTTP", "Request", "API", "Postman", "开发"],
+      "description": {
+        "zh": "构建和发送 HTTP 请求，支持多种方法、请求头、请求体和参数配置",
+        "en": "Build and send HTTP requests with multiple methods, headers, body, and params"
+      },
+      "url": "/tools/http-request-builder.html",
+      "icon": "🌐",
+      "popular": true,
+      "features": [
+        "GET/POST/PUT/PATCH/DELETE 方法",
+        "自定义请求头",
+        "请求体编辑",
+        "查询参数",
+        "请求历史记录"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "sql-query-tester",
+      "name": {
+        "zh": "SQL 查询测试器",
+        "en": "SQL Query Tester"
+      },
+      "category": "dev-tools",
+      "subcategory": "数据库",
+      "tags": ["SQL", "SQLite", "查询", "数据库", "开发"],
+      "description": {
+        "zh": "在浏览器中测试 SQL 查询，基于 SQLite，无需数据库设置",
+        "en": "Test SQL queries in browser using SQLite, no database setup required"
+      },
+      "url": "/tools/sql-query-tester.html",
+      "icon": "🗃️",
+      "popular": true,
+      "features": [
+        "SQLite 数据库",
+        "示例数据预设",
+        "查询格式化",
+        "结果表格展示",
+        "Schema 浏览"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "csv-to-json-converter",
+      "name": {
+        "zh": "CSV 转 JSON 转换器",
+        "en": "CSV to JSON Converter"
+      },
+      "category": "data",
+      "subcategory": "数据转换",
+      "tags": ["CSV", "JSON", "转换器", "数据", "开发"],
+      "description": {
+        "zh": "将 CSV 数据转换为 JSON 格式，支持数组/对象输出、自定义缩进和空值处理",
+        "en": "Convert CSV data to JSON format with array/object output, custom indentation, and null value handling"
+      },
+      "url": "/tools/csv-to-json-converter.html",
+      "icon": "📄",
+      "popular": true,
+      "features": [
+        "CSV 文件上传",
+        "数组/对象/键值输出模式",
+        "自动类型检测",
+        "语法高亮",
+        "复制和下载"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "css-gradient-generator",
+      "name": {
+        "zh": "CSS 渐变生成器",
+        "en": "CSS Gradient Generator"
+      },
+      "category": "dev-tools",
+      "subcategory": "样式工具",
+      "tags": ["CSS", "Gradient", "渐变", "样式", "开发"],
+      "description": {
+        "zh": "可视化 CSS 渐变生成器，支持线性、径向和锥形渐变",
+        "en": "Visual CSS gradient generator with linear, radial, and conic gradients"
+      },
+      "url": "/tools/css-gradient-generator.html",
+      "icon": "🎨",
+      "popular": true,
+      "features": [
+        "线性/径向/锥形渐变",
+        "多色停止点",
+        "角度控制",
+        "预设模板",
+        "CSS 代码导出"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "lorem-ipsum-generator",
+      "name": {
+        "zh": "Lorem Ipsum 生成器",
+        "en": "Lorem Ipsum Generator"
+      },
+      "category": "data",
+      "subcategory": "文本生成",
+      "tags": ["Lorem", "占位符", "文本", "生成器", "开发"],
+      "description": {
+        "zh": "生成占位文本，支持段落、句子、单词和列表格式",
+        "en": "Generate placeholder text in paragraphs, sentences, words, or list formats"
+      },
+      "url": "/tools/lorem-ipsum-generator.html",
+      "icon": "📝",
+      "popular": true,
+      "features": [
+        "段落/句子/单词/列表",
+        "自定义数量",
+        "Lorem Ipsum 开头",
+        "一键复制",
+        "历史记录"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "json-to-typescript",
+      "name": {
+        "zh": "JSON 转 TypeScript",
+        "en": "JSON to TypeScript"
+      },
+      "category": "dev-tools",
+      "subcategory": "代码转换",
+      "tags": ["JSON", "TypeScript", "转换", "接口", "开发"],
+      "description": {
+        "zh": "将 JSON 转换为 TypeScript 接口或类型定义",
+        "en": "Convert JSON to TypeScript interfaces or type definitions"
+      },
+      "url": "/tools/json-to-typescript.html",
+      "icon": "🔷",
+      "popular": true,
+      "features": [
+        "JSON 解析验证",
+        "接口/类型选择",
+        "可选字段支持",
+        "嵌套对象处理",
+        "代码高亮"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "slug-generator",
+      "name": {
+        "zh": "Slug 生成器",
+        "en": "Slug Generator"
+      },
+      "category": "dev-tools",
+      "subcategory": "文本处理",
+      "tags": ["Slug", "URL", "转换", "SEO", "开发"],
+      "description": {
+        "zh": "将文本转换为 URL 友好的 slug 格式",
+        "en": "Convert text to URL-friendly slug format"
+      },
+      "url": "/tools/slug-generator.html",
+      "icon": "🔗",
+      "popular": true,
+      "features": [
+        "自动小写",
+        "特殊字符移除",
+        "连字符分隔",
+        "一键复制",
+        "历史记录"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "sql-formatter",
+      "name": {
+        "zh": "SQL 格式化",
+        "en": "SQL Formatter"
+      },
+      "category": "dev-tools",
+      "subcategory": "格式化",
+      "tags": ["SQL", "格式化", "数据库", "美化", "开发"],
+      "description": {
+        "zh": "格式化和美化 SQL 查询，支持多种 SQL 方言",
+        "en": "Format and beautify SQL queries with support for multiple SQL dialects"
+      },
+      "url": "/tools/sql-formatter.html",
+      "icon": "🗃️",
+      "popular": true,
+      "features": [
+        "SQL 格式化",
+        "语法高亮",
+        "多种方言支持",
+        "大小写转换",
+        "复制和下载"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "qr-code-generator",
+      "name": {
+        "zh": "二维码生成器",
+        "en": "QR Code Generator"
+      },
+      "category": "dev-tools",
+      "subcategory": "图像工具",
+      "tags": ["QR", "二维码", "生成器", "图像", "开发"],
+      "description": {
+        "zh": "生成自定义二维码，支持文本、URL、WiFi 等多种类型",
+        "en": "Generate custom QR codes for text, URL, WiFi, and more"
+      },
+      "url": "/tools/qr-code-generator.html",
+      "icon": "📱",
+      "popular": true,
+      "features": [
+        "多种内容类型",
+        "自定义颜色和大小",
+        "Logo 嵌入",
+        "SVG/PNG 导出",
+        "实时预览"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "cookie-editor",
+      "name": {
+        "zh": "Cookie 编辑器",
+        "en": "Cookie Editor"
+      },
+      "category": "dev-tools",
+      "subcategory": "浏览器工具",
+      "tags": ["Cookie", "浏览器", "编辑", "管理", "开发"],
+      "description": {
+        "zh": "查看、编辑和管理浏览器 Cookie，支持导入导出",
+        "en": "View, edit, and manage browser cookies with import/export support"
+      },
+      "url": "/tools/cookie-editor.html",
+      "icon": "🍪",
+      "popular": true,
+      "features": [
+        "Cookie 列表查看",
+        "添加/编辑/删除",
+        "JSON 导入导出",
+        "搜索过滤",
+        "安全属性显示"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "svg-path-editor",
+      "name": {
+        "zh": "SVG Path 编辑器",
+        "en": "SVG Path Editor"
+      },
+      "category": "dev-tools",
+      "subcategory": "图形工具",
+      "tags": ["SVG", "Path", "图形", "编辑器", "开发"],
+      "description": {
+        "zh": "可视化的 SVG 路径编辑器，支持绘制、编辑和导出 SVG 路径",
+        "en": "Visual SVG path editor for drawing, editing, and exporting SVG paths"
+      },
+      "url": "/tools/svg-path-editor.html",
+      "icon": "✏️",
+      "popular": true,
+      "features": [
+        "可视化路径编辑",
+        "拖拽控制点",
+        "预设图形模板",
+        "实时预览",
+        "SVG 导出"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "env-manager",
+      "name": {
+        "zh": "环境变量管理器",
+        "en": "Environment Variable Manager"
+      },
+      "category": "dev-tools",
+      "subcategory": "配置工具",
+      "tags": ["Env", "环境变量", "配置", ".env", "开发"],
+      "description": {
+        "zh": "可视化管理环境变量，支持 .env、JSON、YAML、Docker 格式导出",
+        "en": "Visual environment variable manager with .env, JSON, YAML, Docker export formats"
+      },
+      "url": "/tools/env-manager.html",
+      "icon": "⚙️",
+      "popular": true,
+      "features": [
+        "可视化管理变量",
+        "多种格式导出",
+        "预设模板",
+        "导入 .env 文件",
+        "密钥隐藏显示"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "performance-budget-calculator",
+      "name": {
+        "zh": "性能预算计算器",
+        "en": "Performance Budget Calculator"
+      },
+      "category": "dev-tools",
+      "subcategory": "性能工具",
+      "tags": ["Performance", "Budget", "性能", "预算", "开发"],
+      "description": {
+        "zh": "跟踪和管理 Web 应用的性能预算，支持多种资源类型和预设模板",
+        "en": "Track and manage web performance budgets with multiple resource types and presets"
+      },
+      "url": "/tools/performance-budget-calculator.html",
+      "icon": "📊",
+      "popular": true,
+      "features": [
+        "多种资源类别",
+        "预算状态可视化",
+        "预设模板",
+        "JSON 导出配置",
+        "实时建议"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
+    },
+    {
+      "id": "accessibility-checker",
+      "name": {
+        "zh": "无障碍检查器",
+        "en": "Accessibility Checker"
+      },
+      "category": "dev-tools",
+      "subcategory": "测试工具",
+      "tags": ["Accessibility", "WCAG", "无障碍", "测试", "开发"],
+      "description": {
+        "zh": "检查 HTML 代码的 WCAG 2.1 无障碍问题，提供修复建议",
+        "en": "Check HTML for WCAG 2.1 accessibility issues with fix suggestions"
+      },
+      "url": "/tools/accessibility-checker.html",
+      "icon": "♿",
+      "popular": true,
+      "features": [
+        "WCAG 2.1 标准检查",
+        "多种问题类型",
+        "修复建议",
+        "测试模板",
+        "无障碍评分"
+      ],
+      "createdAt": "2026-03-07T00:00:00Z"
     }
   ]
 }

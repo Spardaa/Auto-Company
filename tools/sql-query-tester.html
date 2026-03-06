@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Query Tester - DevToolbox</title>
+  <meta name="description" content="Test SQL queries in your browser using SQLite. No database setup required.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* Panel */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .schema-section {
+      margin-bottom: 20px;
+    }
+    .schema-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .table-item {
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .table-item:hover {
+      background: var(--primary);
+    }
+    .table-item.active {
+      background: var(--primary);
+    }
+    .column-list {
+      margin-top: 8px;
+      padding-left: 12px;
+    }
+    .column-item {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 4px 0;
+    }
+    .column-type {
+      font-size: 0.7rem;
+      color: var(--warning);
+      margin-left: 8px;
+    }
+
+    /* Editor */
+    .editor-area {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .editor-toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .run-btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .run-btn:hover { background: var(--primary-dark); }
+    .clear-btn {
+      padding: 10px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .clear-btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+    .format-btn {
+      padding: 10px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .format-btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    .editor {
+      width: 100%;
+      min-height: 200px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      resize: vertical;
+    }
+    .editor:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Results */
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .result-status {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .result-status.success {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+    .result-status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--error);
+    }
+    .result-meta {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .result-table th {
+      text-align: left;
+      padding: 12px;
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .result-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-table tr:hover td {
+      background: var(--bg);
+    }
+    .result-table pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-size: 0.85rem;
+    }
+
+    .result-empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    /* Sample Queries */
+    .sample-queries {
+      margin-top: 16px;
+    }
+    .sample-btn {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .sample-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+    .tab {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-radius: 6px;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      background: var(--bg);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <span>🧰</span>
+        <span>SQL Query Tester</span>
+      </a>
+      <a href="https://spardaa.github.io/toolbox/" class="back-link">← Back to Tools</a>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <div class="panel sidebar">
+        <div class="panel-title">🗃️ Schema</div>
+        <div id="schema-view">
+          <div class="schema-section">
+            <div class="schema-title">Tables</div>
+            <div id="tables-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">📝 Query Editor</div>
+
+          <div class="sample-queries">
+            <span style="color: var(--text-muted); font-size: 0.85rem; margin-right: 8px;">Examples:</span>
+            <button class="sample-btn" onclick="loadSample('select')">SELECT all</button>
+            <button class="sample-btn" onclick="loadSample('where')">WHERE clause</button>
+            <button class="sample-btn" onclick="loadSample('join')">JOIN</button>
+            <button class="sample-btn" onclick="loadSample('aggregate')">Aggregate</button>
+            <button class="sample-btn" onclick="loadSample('insert')">INSERT</button>
+            <button class="sample-btn" onclick="loadSample('create')">CREATE TABLE</button>
+          </div>
+
+          <div class="editor-toolbar">
+            <button class="run-btn" onclick="runQuery()">▶ Run Query</button>
+            <button class="format-btn" onclick="formatQuery()">Format</button>
+            <button class="clear-btn" onclick="clearEditor()">Clear</button>
+          </div>
+
+          <textarea class="editor" id="editor" placeholder="SELECT * FROM users LIMIT 10;">SELECT * FROM users LIMIT 10;</textarea>
+        </div>
+
+        <div class="panel" style="margin-top: 20px;">
+          <div class="panel-title">📊 Results</div>
+          <div id="result-container">
+            <div class="result-empty">Run a query to see results</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQL.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <script>
+    let db = null;
+    const SAMPLE_QUERIES = {
+      select: 'SELECT * FROM users LIMIT 10;',
+      where: "SELECT * FROM users WHERE department = 'Engineering' AND salary > 70000;",
+      join: `SELECT u.name, d.name as department
+FROM users u
+JOIN departments d ON u.department = d.name
+ORDER BY u.name;`,
+      aggregate: `SELECT department, COUNT(*) as count, AVG(salary) as avg_salary
+FROM users
+GROUP BY department
+ORDER BY avg_salary DESC;`,
+      insert: `INSERT INTO users (name, email, department, salary)
+VALUES ('John Doe', 'john@example.com', 'Engineering', 85000);`,
+      create: `CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  price REAL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);`
+    };
+
+    // Initialize database
+    async function initDb() {
+      try {
+        const SQL = await initSqlJs({
+          locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+        });
+        db = new SQL.Database();
+
+        // Create sample tables
+        db.run(`
+          CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE,
+            department TEXT,
+            salary REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+
+        db.run(`
+          CREATE TABLE departments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL,
+            budget REAL
+          )
+        `);
+
+        // Insert sample data
+        const departments = [
+          ['Engineering', 500000],
+          ['Marketing', 200000],
+          ['Sales', 300000],
+          ['HR', 100000],
+          ['Finance', 150000]
+        ];
+        departments.forEach(d => db.run('INSERT INTO departments (name, budget) VALUES (?, ?)', d));
+
+        const users = [
+          ['Alice Johnson', 'alice@example.com', 'Engineering', 95000],
+          ['Bob Smith', 'bob@example.com', 'Marketing', 65000],
+          ['Charlie Brown', 'charlie@example.com', 'Sales', 75000],
+          ['Diana Prince', 'diana@example.com', 'Engineering', 110000],
+          ['Eve Wilson', 'eve@example.com', 'HR', 55000],
+          ['Frank Miller', 'frank@example.com', 'Finance', 80000],
+          ['Grace Lee', 'grace@example.com', 'Engineering', 88000],
+          ['Henry Davis', 'henry@example.com', 'Sales', 72000],
+          ['Ivy Chen', 'ivy@example.com', 'Marketing', 68000],
+          ['Jack White', 'jack@example.com', 'Engineering', 95000]
+        ];
+        users.forEach(u => db.run('INSERT INTO users (name, email, department, salary) VALUES (?, ?, ?, ?)', u));
+
+        updateSchemaView();
+      } catch (error) {
+        console.error('Failed to initialize database:', error);
+        document.getElementById('result-container').innerHTML = `
+          <div class="result-empty" style="color: var(--error);">
+            Failed to load SQL.js. Please check your internet connection.
+          </div>
+        `;
+      }
+    }
+
+    function updateSchemaView() {
+      if (!db) return;
+
+      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+      const tablesList = document.getElementById('tables-list');
+
+      if (!tables.length || !tables[0].values.length) {
+        tablesList.innerHTML = '<div class="column-item">No tables yet</div>';
+        return;
+      }
+
+      tablesList.innerHTML = tables[0].values.map(([tableName]) => {
+        const columns = db.exec(`PRAGMA table_info(${tableName})`);
+        const columnHtml = columns[0]?.values.map(col => `
+          <div class="column-item">
+            ${col[1]}
+            <span class="column-type">${col[2]}</span>
+          </div>
+        `).join('') || '';
+
+        return `
+          <div class="table-item" onclick="toggleColumns(this)">
+            📋 ${tableName}
+            <div class="column-list">${columnHtml}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleColumns(el) {
+      const columnList = el.querySelector('.column-list');
+      columnList.style.display = columnList.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function runQuery() {
+      if (!db) {
+        alert('Database not initialized. Please wait...');
+        return;
+      }
+
+      const sql = document.getElementById('editor').value.trim();
+      if (!sql) {
+        document.getElementById('result-container').innerHTML = '<div class="result-empty">Please enter a query</div>';
+        return;
+      }
+
+      const startTime = performance.now();
+
+      try {
+        const results = db.exec(sql);
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+
+        renderResults(results, duration);
+        updateSchemaView();
+      } catch (error) {
+        renderError(error.message);
+      }
+    }
+
+    function renderResults(results, duration) {
+      const container = document.getElementById('result-container');
+
+      if (results.length === 0) {
+        // Query executed but returned no rows (INSERT, UPDATE, DELETE, etc.)
+        const changes = db.getRowsModified();
+        container.innerHTML = `
+          <div class="result-header">
+            <span class="result-status success">✓ Success</span>
+            <span class="result-meta">${changes} row(s) affected • ${duration}ms</span>
+          </div>
+          <div class="result-empty">Query executed successfully. ${changes} row(s) affected.</div>
+        `;
+        return;
+      }
+
+      const result = results[0];
+      const columns = result.columns;
+      const rows = result.values;
+
+      let html = `
+        <div class="result-header">
+          <span class="result-status success">✓ Success</span>
+          <span class="result-meta">${rows.length} row(s) returned • ${duration}ms</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="result-table">
+            <thead>
+              <tr>
+                ${columns.map(c => `<th>${c}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      rows.forEach(row => {
+        html += '<tr>';
+        row.forEach(cell => {
+          const displayValue = cell === null ? '<span style="color: var(--text-muted);">NULL</span>' : escapeHtml(String(cell));
+          html += `<td><pre>${displayValue}</pre></td>`;
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function renderError(message) {
+      const container = document.getElementById('result-container');
+      container.innerHTML = `
+        <div class="result-header">
+          <span class="result-status error">✗ Error</span>
+        </div>
+        <div style="padding: 16px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; color: var(--error);">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function loadSample(key) {
+      document.getElementById('editor').value = SAMPLE_QUERIES[key];
+    }
+
+    function formatQuery() {
+      const editor = document.getElementById('editor');
+      let sql = editor.value;
+
+      // Basic SQL formatting
+      const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'ON', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'HAVING', 'LIMIT', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM', 'CREATE TABLE', 'PRIMARY KEY', 'FOREIGN KEY', 'REFERENCES'];
+
+      // Add newlines before major keywords
+      keywords.forEach(kw => {
+        const regex = new RegExp('\\b' + kw + '\\b', 'gi');
+        sql = sql.replace(regex, '\n' + kw);
+      });
+
+      // Clean up multiple newlines
+      sql = sql.replace(/\n\s*\n/g, '\n').trim();
+
+      editor.value = sql;
+    }
+
+    function clearEditor() {
+      document.getElementById('editor').value = '';
+      document.getElementById('result-container').innerHTML = '<div class="result-empty">Run a query to see results</div>';
+    }
+
+    // Initialize on load
+    initDb();
+
+    // Keyboard shortcut
+    document.getElementById('editor').addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        runQuery();
+      }
+    });
+  </script>
+</body>
+</html>

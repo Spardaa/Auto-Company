@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Editor - View, Edit & Manage Cookies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .warning-box i {
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .warning-box p {
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00c853, #64dd17);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff5252, #ff1744);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2d2d44;
+            color: #e0e0e0;
+            border: 1px solid #3d3d5c;
+        }
+
+        .btn-secondary:hover {
+            background: #3d3d5c;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #3d3d5c;
+            border-radius: 8px;
+            background: #2d2d44;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .panel {
+            background: #2d2d44;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3d3d5c;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .cookie-count {
+            background: #7c3aed;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .cookie-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .cookie-item {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #3d3d5c;
+            transition: all 0.3s ease;
+        }
+
+        .cookie-item:hover {
+            border-color: #00d4ff;
+        }
+
+        .cookie-item.editing {
+            border-color: #7c3aed;
+        }
+
+        .cookie-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .cookie-name {
+            font-weight: 600;
+            color: #00d4ff;
+            word-break: break-all;
+        }
+
+        .cookie-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .cookie-actions button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .cookie-actions button:hover {
+            color: #00d4ff;
+        }
+
+        .cookie-actions button.delete:hover {
+            color: #ff5252;
+        }
+
+        .cookie-value {
+            color: #e0e0e0;
+            word-break: break-all;
+            padding: 10px;
+            background: #16213e;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .cookie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .cookie-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cookie-meta i {
+            font-size: 0.9rem;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-secure {
+            background: #00c853;
+            color: white;
+        }
+
+        .tag-httponly {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .tag-samesite {
+            background: #ff9800;
+            color: white;
+        }
+
+        .tag-session {
+            background: #2196f3;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #2d2d44;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #3d3d5c;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .import-export {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .import-export textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #3d3d5c;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .import-export textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .import-export {
+                grid-template-columns: 1fr;
+            }
+
+            .cookie-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cookie-bite"></i> Cookie Editor</h1>
+            <p class="subtitle">View, edit, and manage browser cookies</p>
+        </header>
+
+        <div class="warning-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>How it works:</strong> Due to browser security, this tool can only access cookies from the current page. To inspect cookies from a specific website, you can:
+                <ol style="margin-top: 8px; margin-left: 20px;">
+                    <li>Use the Import feature to paste exported cookies (JSON format)</li>
+                    <li>Manually add cookies for testing purposes</li>
+                    <li>Open this tool on the target website directly</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Add Cookie
+            </button>
+            <button class="btn btn-success" onclick="exportCookies()">
+                <i class="fas fa-download"></i> Export JSON
+            </button>
+            <button class="btn btn-secondary" onclick="showImportPanel()">
+                <i class="fas fa-upload"></i> Import
+            </button>
+            <button class="btn btn-danger" onclick="deleteAllCookies()">
+                <i class="fas fa-trash"></i> Delete All
+            </button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total Cookies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="secureCount">0</div>
+                <div class="stat-label">Secure</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="sessionCount">0</div>
+                <div class="stat-label">Session</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="persistentCount">0</div>
+                <div class="stat-label">Persistent</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title"><i class="fas fa-list"></i> Cookie List</span>
+                <span class="cookie-count" id="cookieCount">0 cookies</span>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search cookies by name or value..." oninput="filterCookies()">
+            </div>
+            <div class="cookie-list" id="cookieList">
+                <div class="empty-state">
+                    <i class="fas fa-cookie"></i>
+                    <p>No cookies found. Add a cookie or import from JSON.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="importPanel" style="display: none;">
+            <div class="panel-header">
+                <span class="panel-title"><i class="fas fa-file-import"></i> Import Cookies</span>
+            </div>
+            <p style="color: #888; margin-bottom: 15px;">Paste cookies in JSON format (array of cookie objects)</p>
+            <textarea id="importData" placeholder='[
+  {
+    "name": "session_id",
+    "value": "abc123",
+    "domain": "example.com",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false
+  }
+]'></textarea>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="importCookies()">
+                    <i class="fas fa-file-import"></i> Import Cookies
+                </button>
+                <button class="btn btn-secondary" onclick="hideImportPanel()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <h2 id="modalTitle"><i class="fas fa-plus"></i> Add Cookie</h2>
+                <form id="cookieForm" onsubmit="saveCookie(event)">
+                    <input type="hidden" id="editIndex" value="-1">
+
+                    <div class="form-group">
+                        <label for="cookieName">Name *</label>
+                        <input type="text" id="cookieName" required placeholder="cookie_name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cookieValue">Value *</label>
+                        <textarea id="cookieValue" required placeholder="cookie_value" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cookieDomain">Domain</label>
+                            <input type="text" id="cookieDomain" placeholder="example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="cookiePath">Path</label>
+                            <input type="text" id="cookiePath" value="/" placeholder="/">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cookieExpires">Expiration Date</label>
+                            <input type="datetime-local" id="cookieExpires">
+                        </div>
+                        <div class="form-group">
+                            <label for="cookieMaxAge">Max Age (seconds)</label>
+                            <input type="number" id="cookieMaxAge" placeholder="86400">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cookieSameSite">SameSite</label>
+                        <select id="cookieSameSite">
+                            <option value="">None</option>
+                            <option value="Strict">Strict</option>
+                            <option value="Lax" selected>Lax</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Options</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="cookieSecure">
+                                <span>Secure (HTTPS only)</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" id="cookieHttpOnly">
+                                <span>HttpOnly</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Cookie
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cookies = [];
+        let editingIndex = -1;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            loadBrowserCookies();
+            renderCookies();
+        });
+
+        function loadFromStorage() {
+            const stored = localStorage.getItem('devtools_cookies');
+            if (stored) {
+                try {
+                    cookies = JSON.parse(stored);
+                } catch (e) {
+                    cookies = [];
+                }
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('devtools_cookies', JSON.stringify(cookies));
+        }
+
+        function loadBrowserCookies() {
+            // Try to read cookies from the current page
+            try {
+                const browserCookies = document.cookie;
+                if (browserCookies) {
+                    const pairs = browserCookies.split(';');
+                    pairs.forEach(pair => {
+                        const [name, ...valueParts] = pair.trim().split('=');
+                        const value = valueParts.join('=');
+
+                        if (name && !cookies.find(c => c.name === name)) {
+                            cookies.push({
+                                name: decodeURIComponent(name),
+                                value: decodeURIComponent(value || ''),
+                                domain: window.location.hostname,
+                                path: '/',
+                                secure: window.location.protocol === 'https:',
+                                httpOnly: false,
+                                sameSite: 'Lax',
+                                session: true
+                            });
+                        }
+                    });
+                    saveToStorage();
+                }
+            } catch (e) {
+                console.log('Could not read browser cookies:', e);
+            }
+        }
+
+        function renderCookies() {
+            const list = document.getElementById('cookieList');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = cookies.filter(c =>
+                c.name.toLowerCase().includes(search) ||
+                c.value.toLowerCase().includes(search)
+            );
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-cookie"></i>
+                        <p>${search ? 'No cookies match your search.' : 'No cookies found. Add a cookie or import from JSON.'}</p>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = filtered.map((cookie, index) => {
+                    const realIndex = cookies.indexOf(cookie);
+                    return `
+                        <div class="cookie-item" id="cookie-${realIndex}">
+                            <div class="cookie-header">
+                                <span class="cookie-name">${escapeHtml(cookie.name)}</span>
+                                <div class="cookie-actions">
+                                    <button onclick="copyCookie(${realIndex})" title="Copy value">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button onclick="editCookie(${realIndex})" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete" onclick="deleteCookie(${realIndex})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="cookie-value">${escapeHtml(cookie.value)}</div>
+                            <div class="cookie-meta">
+                                ${cookie.domain ? `<span><i class="fas fa-globe"></i> ${escapeHtml(cookie.domain)}</span>` : ''}
+                                ${cookie.path ? `<span><i class="fas fa-folder"></i> ${escapeHtml(cookie.path)}</span>` : ''}
+                                ${cookie.secure ? '<span class="tag tag-secure"><i class="fas fa-lock"></i> Secure</span>' : ''}
+                                ${cookie.httpOnly ? '<span class="tag tag-httponly"><i class="fas fa-eye-slash"></i> HttpOnly</span>' : ''}
+                                ${cookie.sameSite ? `<span class="tag tag-samesite">SameSite: ${cookie.sameSite}</span>` : ''}
+                                ${cookie.session ? '<span class="tag tag-session">Session</span>' : ''}
+                                ${cookie.expires ? `<span><i class="fas fa-clock"></i> ${formatDate(cookie.expires)}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateStats();
+        }
+
+        function updateStats() {
+            const total = cookies.length;
+            const secure = cookies.filter(c => c.secure).length;
+            const session = cookies.filter(c => c.session).length;
+            const persistent = total - session;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('secureCount').textContent = secure;
+            document.getElementById('sessionCount').textContent = session;
+            document.getElementById('persistentCount').textContent = persistent;
+            document.getElementById('cookieCount').textContent = `${total} cookie${total !== 1 ? 's' : ''}`;
+        }
+
+        function filterCookies() {
+            renderCookies();
+        }
+
+        function openAddModal() {
+            editingIndex = -1;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Add Cookie';
+            document.getElementById('cookieForm').reset();
+            document.getElementById('editIndex').value = -1;
+            document.getElementById('cookiePath').value = '/';
+            document.getElementById('cookieSameSite').value = 'Lax';
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function editCookie(index) {
+            editingIndex = index;
+            const cookie = cookies[index];
+
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Cookie';
+            document.getElementById('editIndex').value = index;
+            document.getElementById('cookieName').value = cookie.name;
+            document.getElementById('cookieValue').value = cookie.value;
+            document.getElementById('cookieDomain').value = cookie.domain || '';
+            document.getElementById('cookiePath').value = cookie.path || '/';
+            document.getElementById('cookieSameSite').value = cookie.sameSite || '';
+            document.getElementById('cookieSecure').checked = cookie.secure || false;
+            document.getElementById('cookieHttpOnly').checked = cookie.httpOnly || false;
+
+            if (cookie.expires) {
+                const date = new Date(cookie.expires);
+                document.getElementById('cookieExpires').value = date.toISOString().slice(0, 16);
+            }
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function saveCookie(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('cookieName').value.trim();
+            const value = document.getElementById('cookieValue').value;
+            const domain = document.getElementById('cookieDomain').value.trim();
+            const path = document.getElementById('cookiePath').value || '/';
+            const sameSite = document.getElementById('cookieSameSite').value;
+            const secure = document.getElementById('cookieSecure').checked;
+            const httpOnly = document.getElementById('cookieHttpOnly').checked;
+            const maxAge = document.getElementById('cookieMaxAge').value;
+            const expiresInput = document.getElementById('cookieExpires').value;
+
+            let expires = null;
+            let session = true;
+
+            if (expiresInput) {
+                expires = new Date(expiresInput).toISOString();
+                session = false;
+            } else if (maxAge) {
+                expires = new Date(Date.now() + parseInt(maxAge) * 1000).toISOString();
+                session = false;
+            }
+
+            const cookie = {
+                name,
+                value,
+                domain,
+                path,
+                secure,
+                httpOnly,
+                sameSite,
+                expires,
+                session,
+                maxAge: maxAge ? parseInt(maxAge) : null
+            };
+
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+
+            if (editIndex >= 0) {
+                cookies[editIndex] = cookie;
+            } else {
+                cookies.push(cookie);
+            }
+
+            // Try to set the actual cookie
+            try {
+                let cookieStr = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+                if (path) cookieStr += `; path=${path}`;
+                if (maxAge) cookieStr += `; max-age=${maxAge}`;
+                else if (expires) cookieStr += `; expires=${new Date(expires).toUTCString()}`;
+                if (secure) cookieStr += '; secure';
+                if (sameSite) cookieStr += `; samesite=${sameSite}`;
+
+                document.cookie = cookieStr;
+            } catch (e) {
+                console.log('Could not set browser cookie:', e);
+            }
+
+            saveToStorage();
+            renderCookies();
+            closeModal();
+        }
+
+        function deleteCookie(index) {
+            if (confirm('Delete this cookie?')) {
+                const cookie = cookies[index];
+
+                // Try to delete from browser
+                try {
+                    document.cookie = `${encodeURIComponent(cookie.name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${cookie.path || '/'}`;
+                } catch (e) {
+                    console.log('Could not delete browser cookie:', e);
+                }
+
+                cookies.splice(index, 1);
+                saveToStorage();
+                renderCookies();
+            }
+        }
+
+        function deleteAllCookies() {
+            if (confirm('Delete all cookies? This cannot be undone.')) {
+                // Try to delete from browser
+                cookies.forEach(cookie => {
+                    try {
+                        document.cookie = `${encodeURIComponent(cookie.name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${cookie.path || '/'}`;
+                    } catch (e) {}
+                });
+
+                cookies = [];
+                saveToStorage();
+                renderCookies();
+            }
+        }
+
+        function copyCookie(index) {
+            const cookie = cookies[index];
+            navigator.clipboard.writeText(cookie.value).then(() => {
+                showToast('Cookie value copied!');
+            });
+        }
+
+        function exportCookies() {
+            const json = JSON.stringify(cookies, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cookies.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showImportPanel() {
+            document.getElementById('importPanel').style.display = 'block';
+            document.getElementById('importData').focus();
+        }
+
+        function hideImportPanel() {
+            document.getElementById('importPanel').style.display = 'none';
+        }
+
+        function importCookies() {
+            const data = document.getElementById('importData').value.trim();
+
+            try {
+                const imported = JSON.parse(data);
+
+                if (!Array.isArray(imported)) {
+                    throw new Error('Data must be an array of cookies');
+                }
+
+                imported.forEach(cookie => {
+                    if (cookie.name) {
+                        // Check if cookie already exists
+                        const existingIndex = cookies.findIndex(c => c.name === cookie.name);
+                        const newCookie = {
+                            name: cookie.name,
+                            value: cookie.value || '',
+                            domain: cookie.domain || '',
+                            path: cookie.path || '/',
+                            secure: cookie.secure || false,
+                            httpOnly: cookie.httpOnly || false,
+                            sameSite: cookie.sameSite || 'Lax',
+                            expires: cookie.expires || null,
+                            session: !cookie.expires && !cookie.maxAge,
+                            maxAge: cookie.maxAge || null
+                        };
+
+                        if (existingIndex >= 0) {
+                            cookies[existingIndex] = newCookie;
+                        } else {
+                            cookies.push(newCookie);
+                        }
+                    }
+                });
+
+                saveToStorage();
+                renderCookies();
+                hideImportPanel();
+                document.getElementById('importData').value = '';
+                showToast(`Imported ${imported.length} cookie(s)`);
+            } catch (e) {
+                alert('Invalid JSON format: ' + e.message);
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #00d4ff, #7c3aed);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-weight: 500;
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                hideImportPanel();
+            }
+            if (e.key === 'n' && e.ctrlKey) {
+                e.preventDefault();
+                openAddModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slug Generator - DevToolbox</title>
+  <meta name="description" content="Convert text to URL-friendly slugs. Lowercase, hyphen-separated, special characters removed.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+    .input-label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .text-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .slug-output {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .slug-text {
+      flex: 1;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 1.1rem;
+      color: var(--success);
+      word-break: break-all;
+    }
+    .copy-btn {
+      padding: 8px 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--primary-dark); }
+
+    .options {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .examples {
+      display: grid;
+      gap: 12px;
+    }
+    .example-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .example-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+    .example-input, .example-output {
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .example-input {
+      color: var(--text-muted);
+    }
+    .example-output {
+      color: var(--success);
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+    .arrow {
+      color: var(--text-muted);
+    }
+
+    .history {
+      margin-top: 20px;
+    }
+    .history-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .history-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .history-item {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+    .history-item:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <span>🔗</span>
+        <span>Slug Generator</span>
+      </a>
+      <a href="https://spardaa.github.io/toolbox/" class="back-link">← Back to Tools</a>
+    </header>
+
+    <div class="panel">
+      <div class="panel-title">📝 Input Text</div>
+      <div class="input-group">
+        <input type="text" class="text-input" id="input" placeholder="Enter text to convert to slug..." oninput="generateSlug()">
+      </div>
+      <div class="options">
+        <label class="option">
+          <input type="checkbox" id="lowercase" checked>
+          Lowercase
+        </label>
+        <label class="option">
+          <input type="checkbox" id="trimSpaces" checked>
+          Trim spaces
+        </label>
+        <label class="option">
+          <input type="checkbox" id="removeSpecial" checked>
+          Remove special chars
+        </label>
+        <label class="option">
+          <input type="checkbox" id="replaceUnderscore">
+          Replace underscores
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🔗 Generated Slug</div>
+      <div class="slug-output">
+        <span class="slug-text" id="output">-</span>
+        <button class="copy-btn" onclick="copySlug()">📋 Copy</button>
+      </div>
+      <div class="stats">
+        <span id="charCount">0 characters</span>
+        <span id="wordCount">0 words</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">💡 Examples</div>
+      <div class="examples">
+        <div class="example-row">
+          <div class="example-input">Hello World!</div>
+          <span class="arrow">→</span>
+          <div class="example-output">hello-world</div>
+        </div>
+        <div class="example-row">
+          <div class="example-input">My Awesome Blog Post Title</div>
+          <span class="arrow">→</span>
+          <div class="example-output">my-awesome-blog-post-title</div>
+        </div>
+        <div class="example-row">
+          <div class="example-input">Product: iPhone 15 Pro Max (2024)</div>
+          <span class="arrow">→</span>
+          <div class="example-output">product-iphone-15-pro-max-2024</div>
+        </div>
+        <div class="example-row">
+          <div class="example-input">C++ Tutorial for Beginners</div>
+          <span class="arrow">→</span>
+          <div class="example-output">c-tutorial-for-beginners</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel history">
+      <div class="history-title">📜 History</div>
+      <div class="history-items" id="historyItems"></div>
+    </div>
+  </div>
+
+  <script>
+    let history = JSON.parse(localStorage.getItem('slug_history') || '[]');
+
+    function generateSlug() {
+      const input = document.getElementById('input').value;
+      const lowercase = document.getElementById('lowercase').checked;
+      const trimSpaces = document.getElementById('trimSpaces').checked;
+      const removeSpecial = document.getElementById('removeSpecial').checked;
+      const replaceUnderscore = document.getElementById('replaceUnderscore').checked;
+
+      let slug = input;
+
+      // Replace underscores if option is checked
+      if (replaceUnderscore) {
+        slug = slug.replace(/_/g, '-');
+      }
+
+      // Convert to lowercase if option is checked
+      if (lowercase) {
+        slug = slug.toLowerCase();
+      }
+
+      // Remove special characters if option is checked
+      if (removeSpecial) {
+        // Keep alphanumeric, hyphens, and spaces
+        slug = slug.replace(/[^\w\s-]/g, '');
+      }
+
+      // Replace spaces with hyphens
+      slug = slug.replace(/\s+/g, '-');
+
+      // Trim spaces/hyphens if option is checked
+      if (trimSpaces) {
+        slug = slug.replace(/^-+|-+$/g, '');
+      }
+
+      // Replace multiple hyphens with single hyphen
+      slug = slug.replace(/-+/g, '-');
+
+      const output = document.getElementById('output');
+      output.textContent = slug || '-';
+
+      // Update stats
+      document.getElementById('charCount').textContent = slug.length + ' characters';
+      const words = slug.split('-').filter(w => w.length > 0).length;
+      document.getElementById('wordCount').textContent = words + ' words';
+
+      // Save to history
+      if (slug && slug !== '-') {
+        addToHistory(slug);
+      }
+    }
+
+    function addToHistory(slug) {
+      if (!history.includes(slug)) {
+        history.unshift(slug);
+        if (history.length > 10) history.pop();
+        localStorage.setItem('slug_history', JSON.stringify(history));
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyItems');
+      if (history.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">No history yet</span>';
+        return;
+      }
+      container.innerHTML = history.map(slug => `
+        <div class="history-item" onclick="loadFromHistory('${slug}')">${slug}</div>
+      `).join('');
+    }
+
+    function loadFromHistory(slug) {
+      document.getElementById('output').textContent = slug;
+      navigator.clipboard.writeText(slug).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy', 1500);
+      });
+    }
+
+    function copySlug() {
+      const slug = document.getElementById('output').textContent;
+      if (slug && slug !== '-') {
+        navigator.clipboard.writeText(slug).then(() => {
+          const btn = document.querySelector('.copy-btn');
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => btn.textContent = '📋 Copy', 1500);
+        });
+      }
+    }
+
+    // Re-generate on option change
+    document.querySelectorAll('#lowercase, #trimSpaces, #removeSpecial, #replaceUnderscore').forEach(el => {
+      el.addEventListener('change', generateSlug);
+    });
+
+    // Initialize
+    renderHistory();
+
+    // Load example
+    document.getElementById('input').value = 'My Awesome Blog Post Title';
+    generateSlug();
+  </script>
+</body>
+</html>
