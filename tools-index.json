@@ -303,6 +303,56 @@
         "历史记录"
       ],
       "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "graphql-mock",
+      "name": {
+        "zh": "GraphQL 模拟器",
+        "en": "GraphQL Mock"
+      },
+      "category": "api-mock",
+      "subcategory": "模拟测试",
+      "tags": ["GraphQL", "API", "Mock", "测试", "开发"],
+      "description": {
+        "zh": "模拟 GraphQL API 响应，支持 Schema 定义、查询执行和 Mock 数据配置",
+        "en": "Simulate GraphQL API responses with schema definition, query execution, and mock data configuration"
+      },
+      "url": "/tools/graphql-mock.html",
+      "icon": "🔷",
+      "popular": true,
+      "features": [
+        "GraphQL Schema 定义",
+        "查询执行和验证",
+        "Mock 数据配置",
+        "预设示例模板",
+        "延迟模拟和错误注入"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "websocket-mock",
+      "name": {
+        "zh": "WebSocket 模拟器",
+        "en": "WebSocket Mock"
+      },
+      "category": "api-mock",
+      "subcategory": "模拟测试",
+      "tags": ["WebSocket", "API", "Mock", "实时", "开发"],
+      "description": {
+        "zh": "模拟 WebSocket 连接，支持消息收发、自动响应和预设模板",
+        "en": "Simulate WebSocket connections with message sending/receiving, auto-response, and preset templates"
+      },
+      "url": "/tools/websocket-mock.html",
+      "icon": "🔌",
+      "popular": true,
+      "features": [
+        "WebSocket 连接测试",
+        "消息收发和日志",
+        "自动响应规则",
+        "预设模板（聊天、股票、通知）",
+        "历史记录和导出"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
     }
   ]
 }
