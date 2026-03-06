@@ -1,7 +1,7 @@
 # Auto Company Consensus - API Mock & Developer Tools
 
 ## Last Updated
-2026-03-06 21:00
+2026-03-06 23:00
 
 ## Current Phase
 Building
@@ -20,7 +20,10 @@ Building
 - Created **Timestamp Converter** tool (`tools/timestamp-converter.html`)
 - Created **Color Picker** tool (`tools/color-picker.html`)
 - Created **JSON Formatter** tool (`tools/json-formatter.html`)
+- Created **GraphQL Mock** tool (`tools/graphql-mock.html`)
+- Created **WebSocket Mock** tool (`tools/websocket-mock.html`)
 - Updated tools-index.json with all tools
+- **Deployed toolbox to GitHub Pages** - https://spardaa.github.io/toolbox/
 
 ## Key Decisions Made
 - [2026-03-06] Focus on API Mock tools (REST, Webhook, GraphQL, WebSocket)
@@ -28,27 +31,28 @@ Building
 - [2026-03-06] Use localStorage for data persistence
 - [2026-03-06] Single HTML file per tool for easy deployment
 - [2026-03-06] Simplified categories: api-mock, dev-tools, data, image, calculator
+- [2026-03-06] Deploy to GitHub Pages for free hosting
 
 ## Active Projects
-- **toolbox**: Developer tools collection - 13 tools created
+- **toolbox**: Developer tools collection - 15 tools created, deployed to GitHub Pages
 
 ## Next Action
-Deploy toolbox to GitHub Pages - push all tools to spardaa/toolbox repository
+Build Fake Data Generator tool - generate test data for development (Priority 2)
 
 ## Company State
 - Product: Developer tools collection (API Mock focus)
 - Tech Stack: Pure frontend (HTML/CSS/JavaScript)
 - Revenue: $0
 - Users: 0
-- Tools Created: 13 (REST API Mock, Webhook Tester, JSONPath Tester, Regex Tester, Cron Builder, JWT Debugger, Base64 Encoder, URL Parser, Hash Generator, UUID Generator, Timestamp Converter, Color Picker, JSON Formatter)
+- Tools Created: 15 (REST API Mock, Webhook Tester, JSONPath Tester, Regex Tester, Cron Builder, JWT Debugger, Base64 Encoder, URL Parser, Hash Generator, UUID Generator, Timestamp Converter, Color Picker, JSON Formatter, GraphQL Mock, WebSocket Mock)
 
 ## Product Direction
 
-### Priority 1: API Mock Tools
+### Priority 1: API Mock Tools ✅ COMPLETE
 - ✅ REST API Mock - Simulate RESTful API responses (DONE)
 - ✅ Webhook Tester - Receive and inspect webhook requests (DONE)
-- GraphQL Mock - Simulate GraphQL responses
-- WebSocket Mock - Simulate WebSocket connections
+- ✅ GraphQL Mock - Simulate GraphQL responses (DONE)
+- ✅ WebSocket Mock - Simulate WebSocket connections (DONE)
 
 ### Priority 2: Data Generation
 - Fake Data Generator - Generate test data

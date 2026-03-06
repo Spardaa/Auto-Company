@@ -353,6 +353,31 @@
         "历史记录和导出"
       ],
       "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "fake-data-generator",
+      "name": {
+        "zh": "假数据生成器",
+        "en": "Fake Data Generator"
+      },
+      "category": "data",
+      "subcategory": "数据生成",
+      "tags": ["Fake Data", "测试数据", "生成器", "Mock", "开发"],
+      "description": {
+        "zh": "生成测试数据，支持姓名、邮箱、地址、信用卡等多种字段，导出 JSON/CSV/SQL 格式",
+        "en": "Generate fake test data with names, emails, addresses, credit cards, and more in JSON/CSV/SQL formats"
+      },
+      "url": "/tools/fake-data-generator.html",
+      "icon": "🎲",
+      "popular": true,
+      "features": [
+        "40+ 数据字段类型",
+        "JSON/CSV/SQL/TypeScript 导出",
+        "快速预设模板",
+        "自定义模板支持",
+        "批量生成"
+      ],
+      "createdAt": "2026-03-06T00:00:00Z"
     }
   ]
 }
